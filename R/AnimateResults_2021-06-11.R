@@ -6,7 +6,7 @@ finalResults = read.csv("D:/School stuff/Manuscripts/3DLocalization/Surveys/2020
 library(sp)
 lengthInSeconds=180
 projection = CRS("+proj=utm +zone=12")
-googleKey = "AIzaSyDiY0WJ_HdhaPK9CPSV-3U8hKa-X8Wqxyk"
+googleKey = ""
 
 outputFolder="D:/School stuff/Manuscripts/3DLocalization/Surveys/20200613_0500/Final/Animation"
 
