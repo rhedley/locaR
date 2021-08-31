@@ -32,7 +32,6 @@
 makeSearchMap  <- function(easting, northing, elevation, margin = 10, zMin = -1, zMax = 10, resolution = 1) {
 
   #Offset X, Y and Z coordinates to UTM grid.
-  posdf <- as.data.frame(NodeInfo$Pos)
 
   XLim1 <- min(easting) - margin
   XLim2 <- max(easting) + margin

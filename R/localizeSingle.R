@@ -1,46 +1,54 @@
+#localizeSingle####
+
+#Localize detection with a specified index in a settings object.
 
 
+localizeSingle = function(st, index, tempC=15, plot=TRUE, InitData=NULL,
+                             keep.InitData=TRUE, keep.SearchMap=FALSE) {
+  require(tuneR)
+  require(oce)
 
-#localize####
+  locFolder = file.path(st$outputFolder, 'Localizations')
+  dir.create(locFolder, showWarnings = FALSE)
 
+  #Get detections data frame
+  d = st$detections
 
-localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resolution=1,
-                     F_Low=2000, F_High=8000, locFolder=NULL, tempC=15, plot=TRUE, InitData=NULL,
-                     keep.InitData=TRUE, keep.SearchMap=FALSE) {
+  #Check if the row index has data.
+  if(is.na(d$Station1[index])) {
+    location = data.frame(Easting = NA, Northing = NA, Elevation = NA, Power = NA)
+    return(list(location=location))
+  }
 
-  #check that names of wavList correspond with names of coordinates.
-  colnames(coordinates) <- tolower(colnames(coordinates))
-  if(sum(!names(wavList) %in% coordinates$station) > 0) {stop('Some names in wavList not found
-                                                              in coordinates!')}
-
-  #Check that locFolder was specified.
-  if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
-  if(!dir.exists(locFolder)) {stop('locFolder does not exist.')}
+  #Extract row with data.
+  row = d[index,]
 
   #Get station names
-  stations <- names(wavList)
+  stations = sort(as.vector(as.matrix(row[1, paste0('Station', 1:6)])))
 
   #Create NodePos object from station names
-  row.names(coordinates) <- coordinates$station
-  NodePos <- as.matrix(coordinates[stations,c('easting', 'northing', 'elevation')])
-  colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')
+  row.names(st$files) = st$files$Station
+  NodePos = as.matrix(st$files[stations,c('Easting', 'Northing', 'Elevation')])
 
   #Create NodeInfo (Num and Pos)
-  NodeInfo = list(Num = nrow(NodePos), Pos = NodePos)
+  NodeInfo = list()
+  NodeInfo$Num = nrow(NodePos)
+  NodeInfo$Pos = NodePos
 
   #Create SearchMap (Grid around Nodes, plus user-specified margins around outside)
   SearchMap = makeSearchMap(easting = NodeInfo$Pos[,'Easting'],
                             northing = NodeInfo$Pos[,'Northing'],
                             elevation = NodeInfo$Pos[,'Elevation'],
-                            margin = margin, zMin = zMin, zMax = zMax,
-                            resolution = resolution)
+                            margin = st$margin, zMin = st$zMin, zMax = st$zMax,
+                            resolution = st$resolution)
   #Create Para list.
   #Get sample rate
-  Fs = wavList[[1]]@samp.rate
+  exampleWav = st$files$Path[min(which(!is.na(st$files$Path)))]
+  Fs = readWave(exampleWav, header=T)$sample.rate
 
   #Get DataLen
 
-  DataLen = length(wavList[[1]]@left)
+  DataLen = Fs * (row$Last - row$First + 2*st$buffer)
 
   #Define speed of sound.
 
@@ -53,8 +61,8 @@ localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resoluti
   Para$DataLen = DataLen
   Para$Vc = Vc
   Para$tempC = tempC
-  Para$FL = F_Low
-  Para$FH = F_High
+  Para$FL = row$F_Low
+  Para$FH = row$F_High
 
   #LevelFlag
   LevelFlag = 2
@@ -72,19 +80,40 @@ localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resoluti
   Data=matrix(0,nrow=NodeInfo$Num, ncol=Para$DataLen)
   #Assign row names to Data - same order as NodeInfo$Pos.
   row.names(Data) = row.names(NodeInfo$Pos)
-
   for(i in 1:NodeInfo$Num) {
     #Station name
     name = row.names(NodeInfo$Pos)[i]
 
-    #Subtract DC offset and round
-    Data[i,] = round(wavList[[name]]@left - mean(wavList[[name]]@left))
+    #File path
+    wav = st$files$Path[st$files$Station == name]
+
+    #Channel to read.
+    channel = st$channels$Channel[st$channels$Station == name]
+
+    #Amount to adjust start time (taking into account file names as well as user-specified adjustments)
+    adj = st$files$Adjustment[st$files$Station == name]
+
+    #Check that the data to be read does not reach negative numbers.
+    if((row$First-st$buffer-adj)<0) {
+      warning(paste('Index', index, 'had negative start time relative to file start'))
+    }
+
+    #Read wav file.
+    W=readWave(wav, from = row$First-st$buffer-adj, to=row$Last+st$buffer-adj, units='seconds')
+
+    #Extract correct channel.
+    if(channel == 1) {
+      Data[i,] = W@left - mean(W@left)
+    } else {
+      Data[i,] = W@right - mean(W@right)
+    }
+    Data[i,] = round(Data[i,])
   }
 
   locstarttime = proc.time()
   #Run MRSP
   SMap = MSRP_RIJ_HT(NodeInfo,SearchMap,Data,Para,LevelFlag,InitData)
-  print(paste('Localized detection in',round((proc.time()-locstarttime)['elapsed'],1),'seconds.'))
+  print(paste('Localized detection',index,'in',round((proc.time()-locstarttime)['elapsed'],1),'seconds.'))
 
   #Extract global maximum location.
   locationInd = which(SMap == max(SMap), arr.ind = T)
@@ -133,10 +162,4 @@ localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resoluti
   }
 
   return(OUT)
-
 }
-
-
-
-
-
