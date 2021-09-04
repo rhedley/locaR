@@ -61,7 +61,9 @@ processSettings <- function(settingsFile, getFilepaths = FALSE) {
     detections <- read.csv(detectionsFile, stringsAsFactors=F)
   } else {detections <- NA}
 
-  adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
+  if(!is.na(adjustmentsFile)) {
+    adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
+  } else {adjustments <- NA}
 
   channels <- read.csv(channelsFile, stringsAsFactors=F)
 

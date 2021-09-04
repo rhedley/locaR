@@ -50,6 +50,29 @@ for(i in 1:length(wavs)) {
 
 #Then manually delete wavs.
 
+#Create settingsFile. MOVE THIS TO A PART OF THE VIGNETTE SHOWING localizeSingle.
+
+datf = paste0(system.file(package='solo'), '/data/')
+
+sf <- emptySettings(projectName = 'Ex',
+              outputFolder = datf,
+              detectionsFile = 'Vignette_Detections_20200617_090000.csv',
+              coordinatesFile = file.path(datf,'Vignette_Coordinates.csv'),
+              siteWavsFolder = datf,
+              channelsFile = file.path(datf,'Vignette_Channels.csv'),
+              adjustmentsFile = NA,
+              date = 20200617,
+              time = 090000,
+              surveyLengthInSeconds = 7)
+
+st <- processSettings(sf)
+
+
+
+
+
+
+
 
 
 
