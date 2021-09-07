@@ -1,0 +1,4 @@
+Deal with capitalization issues in csv headers, and toLower() function in localize, etc.
+This has been causing some problems, and in general it is not standardized and is messy.
+
+Add on.exit() code, especially when printing jpegs where I need dev.off().

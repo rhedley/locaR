@@ -4,8 +4,9 @@
 #localize####
 
 
-localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resolution=1,
-                     F_Low=2000, F_High=8000, locFolder=NULL, tempC=15, plot=TRUE, InitData=NULL,
+localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, resolution = 1,
+                     F_Low = 2000, F_High = 8000, locFolder = NULL, jpegName = '000.jpeg',
+                     tempC=15, plot=TRUE, InitData=NULL,
                      keep.InitData=TRUE, keep.SearchMap=FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
@@ -94,7 +95,8 @@ localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resoluti
   location = data.frame(Easting = xInd, Northing = yInd, Elevation = zInd, Power = max(SMap))
 
   if(plot) {
-    jpeg(file.path(locFolder, paste0(formatC(index,width=4,flag='0'), '.jpeg')),
+
+    jpeg(file.path(locFolder, jpegName),
          width = 15, height = 15, units = 'in', res=100)
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))
@@ -102,22 +104,11 @@ localize <- function(wavList, coordinates, margin=10, zMin=-1, zMax=20, resoluti
     layout(m)
 
     #Plot 1
-    validationSpec(st, index = index, locationEstimate = location, tempC = tempC)
-
-    #Empty plots if needed.
-    if(length(stations)<6) {
-      for(i in 1:(6-length(stations))) {
-        plot.new()
-      }
-    }
+    validationSpec(wavList = wavList, coordinates = coordinates, locationEstimate = location, tempC = tempC, F_Low = F_Low, F_High = F_High, from = NULL, to = NULL)
 
     #Plot 2
-    xyMap = apply(SMap, c(1,2), FUN = mean)
-    imagep(x=SearchMap$XMap[1,,1], y=SearchMap$YMap[,1,1], t(xyMap), las=1,
-           drawPalette=F)
-    points(NodeInfo$Pos[,c('Easting', 'Northing')], cex=3)
-    text(x = NodeInfo$Pos[,'Easting'], y = NodeInfo$Pos[,'Northing'], labels = row.names(NodeInfo$Pos), pos=3, cex=2)
-    points(x=xInd, y=yInd, pch=21, bg='gray', cex=3)
+    locHeatmap(SearchMap = SearchMap, SMap = SMap, NodeInfo = NodeInfo,
+               location = location, mar = c(9,3,8,0))
     dev.off()
   }
 

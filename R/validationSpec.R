@@ -4,17 +4,22 @@
 #is reasonable.
 #Need to change the arguments to align with localize() rather than localizeSingle().
 
-validationSpec = function(st, index, locationEstimate = x$location, tempC=15) {
+validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
+                           to = NULL, tempC = 15, F_Low, F_High) {
+#validationSpec = function(st, index, locationEstimate = x$location, tempC=15) {
 
-  #Get station info.
-  sts = st$files[st$files$Station %in% st$detections[index, paste0('Station', 1:6)],]
-  sts = sts[order(sts$Station),]
+  # #Get station info.
+  # sts = st$files[st$files$Station %in% st$detections[index, paste0('Station', 1:6)],]
+  # sts = sts[order(sts$Station),]
 
   #combined bird location and station coordinates.
 
-  all = data.frame(ID=c('bird', sts$Station), Easting = c(locationEstimate$Easting, sts$Easting),
-                   Northing = c(locationEstimate$Northing, sts$Northing),
-                   Elevation = c(locationEstimate$Elevation, sts$Elevation))
+  coordinates$station = as.character(coordinates$station)
+
+  all = data.frame(ID=c('bird', coordinates$station),
+                   Easting = c(locationEstimate$Easting, coordinates$easting),
+                   Northing = c(locationEstimate$Northing, coordinates$northing),
+                   Elevation = c(locationEstimate$Elevation, coordinates$elevation))
 
   D = as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
   colnames(D) = all$ID
@@ -25,42 +30,38 @@ validationSpec = function(st, index, locationEstimate = x$location, tempC=15) {
   #Time delays.
   Delays = (Dists - min(Dists))/Vc
 
-  first = st$detections$First[index]
-  last = st$detections$Last[index]
-  Length = last-first
+  if(is.null(from) & is.null(to)) {
+    from = 0.2
+    Length = length(wavList[[1]]@left) / wavList[[1]]@samp.rate
+    to = Length - 0.2
+  } else {
+    Length = to - from
+  }
 
+  nmics = nrow(coordinates)
 
-  nmics = nrow(sts)
-
-  i=1
   for(i in 1:nmics) {
-    #get file path
-    file = sts$Path[i]
+
     #get sample rate
-    Fs=readWave(file, header=T)$sample.rate
+    Fs <- wavList[[1]]@samp.rate
     #get bitrate
-    Br=readWave(file, header=T)$bits
-    #get adjustment
-    A=sts$Adjustment[i]
-    Ch = sts$Channel[i]
+    Br <- wavList[[1]]@bit
+
     #Adjust start time. Simultaneously adjusting for recording start time offset, and
     #transmission delay. Start 0.1 seconds before detection to get visual of onset.
-    ADJ.first = first + Delays[sts$Station[i]] - A - 0.1
+    ADJ.first = from + Delays[coordinates$station[i]] - 0.1
     #Adjust end time in same way. For detection longer than
-    ADJ.last = max(last + Delays[sts$Station[i]] - A, ADJ.first + 2.1)
+    ADJ.last = to + Delays[coordinates$station[i]]
 
-    if(Ch==1 | is.na(Ch)){
-      sound1 = readWave(file, from=ADJ.first, to=ADJ.last, units='seconds')@left
-    } else {
-      sound1 = readWave(file, from=ADJ.first, to=ADJ.last, units='seconds')@right
-    }
-    sound1 = spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
+    sound1 = tuneR::extractWave(wavList[[i]], from=ADJ.first, to=ADJ.last, xunit='time')
 
-    sound1$mic=sts$Station[i]
-    sound1$channel=Ch
-    sound1$first=first
-    sound1$last=last
-    sound1$distance=Dists[sts$Station[i]]
+    sound1 = seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
+
+    sound1$mic=coordinates$station[i]
+    sound1$channel=1
+    sound1$from=from
+    sound1$to=to
+    sound1$distance=Dists[coordinates$station[i]]
     if(i==1) {
       SoundList=list(a=sound1)
     } else {
@@ -70,12 +71,16 @@ validationSpec = function(st, index, locationEstimate = x$location, tempC=15) {
   #SpatialAliasingIndex=SpatialAlias(MicCoords=sts, BirdCoords=data.frame(Easting=Data$Easting[i], Northing=Data$Northing[i], Elevation=Data$Elevation[i]))
 
   #get box to draw on spectrogram.
-  xbox = c(0.1, Length+0.1)
-  ybox = c(st$detections$F_Low[index], st$detections$F_High[index])
+  xbox = c(0.1, Length-0.2)
+  ybox = c(F_Low, F_High)
 
-  for(k in 1:length(SoundList)) {
-    mySpectro(SoundList[[k]])
-    if(k==1) legend('topright', legend=paste0('Spatial Aliasing Index = ', NA), cex=2, bty='n')
+  for(k in 1:6) {
+    if(k > length(SoundList)) {
+      plot.new()
+      next
+    }
+
+    mySpectro(ListOfData = SoundList[[k]])
     rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000, border='red', lty=2, lwd=2)
   }
 }

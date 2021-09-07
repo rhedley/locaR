@@ -1,4 +1,4 @@
-#Code to extract nine 10-second recordings for the vignette.
+#Code to extract nine 7-second recordings for the vignette.
 #Need to have ffmpeg installed, for conversion.
 
 library(tuneR)
@@ -22,21 +22,23 @@ files = c("E:/TDLO/TDLO-001/TDLO-001-122/TDLO-001-122_0+1_20200617$090000.wav",
 adj = c(0,0,0,0,0,1,0,0,0)
 
 #Extract and copy wav files.
-i=1
+
 for(i in 1:length(files)) {
   #Note I am taking the time period from 11 to 18 seconds in the recording (9:00:11).
   #Yet I am keeping the original file names,
   #since this is just an example, and I would want to emphasize that people should always start
   #recordings on the minute when possible.
-  wav <- readWave(files[i], from = 11 - adj[i], to = 18 - adj[i], units = 'seconds')
+  wav <- tuneR::readWave(files[i], from = 11 - adj[i], to = 18 - adj[i], units = 'seconds')
+  #left channel for all files.
+  wav <- tuneR::mono(wav, which = c('left'))
+  #remove DC offset for all files.
+  wav@left <- round(wav@left - mean(wav@left))
   newFile <- paste0(outputFolder, basename(files[i]))
-  writeWave(wav, filename = newFile, extensible = FALSE)
+  tuneR::writeWave(wav, filename = newFile, extensible = FALSE)
 }
 
-
-
 #list files.
-wavs <- list.files('./data/', full.names=T)
+wavs <- list.files('./data/', full.names=T, pattern='*.wav')
 
 #Run mp3 to wav conversion using ffmpeg.
 i=1
