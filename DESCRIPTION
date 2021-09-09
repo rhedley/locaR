@@ -14,3 +14,4 @@ LazyData: true
 URL: https://github.com/mabecker89/solo
 BugReports: https://github.com/mabecker89/solo/issues
 RoxygenNote: 7.1.1
+Imports: seewave, tuneR, matrixStats, oce

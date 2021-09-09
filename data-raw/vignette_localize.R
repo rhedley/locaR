@@ -1,9 +1,5 @@
 #vignette using solo::localize().
 
-library(tuneR)
-library(oce)
-library(seewave)
-
 #loop to read mp3 files.
 
 devtools::load_all()
