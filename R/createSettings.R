@@ -1,7 +1,7 @@
-#emptySettings
+#createSettings
 
-emptySettings <- function(projectName,
-                          outputFolder,
+createSettings <- function(projectName,
+                           run = 1,
                           detectionsFile,
                           coordinatesFile,
                           siteWavsFolder,
@@ -10,19 +10,14 @@ emptySettings <- function(projectName,
                           date,
                           time,
                           surveyLengthInSeconds,
-                          margin=10,
-                          zMin=-1,
-                          zMax=10,
-                          resolution=1,
-                          buffer=0.2) {
+                          margin = 10,
+                          zMin = -1,
+                          zMax = 10,
+                          resolution = 1,
+                          buffer = 0.2, write.csv = TRUE) {
 
-
-
-
-
-
-  settings <- data.frame(Setting = c('OutputFolder',
-                                     'DetectionsFile',
+  #create settings data frame.
+  settings <- data.frame(Setting = c('DetectionsFile',
                                      'CoordinatesFile',
                                      'SiteWavsFolder',
                                      'AdjustmentsFile',
@@ -35,8 +30,7 @@ emptySettings <- function(projectName,
                                      'Zmax',
                                      'Resolution',
                                      'Buffer'),
-                        Value = c(outputFolder,
-                                  detectionsFile,
+                        Value = c(detectionsFile,
                                   coordinatesFile,
                                   siteWavsFolder,
                                   adjustmentsFile,
@@ -50,14 +44,16 @@ emptySettings <- function(projectName,
                                   resolution,
                                   buffer))
 
-  path = paste0(outputFolder, '/', projectName, '_', date, '_', formatC(time, width=6, flag='0', format='d'), '_Settings.csv')
+  #write to file, if needed.
+  if(write.csv) {
+    path = paste0(dirname(detectionsFile), '/', projectName, '_', date, '_', formatC(time, width=6, flag='0', format='d'), '_Run', run, '_Settings.csv')
 
-  write.csv(settings, file = path, row.names = F)
+    write.csv(settings, file = path, row.names = F)
+  }
 
-  return(path)
+  return(settings)
 }
 
-?formatC
 
 
 

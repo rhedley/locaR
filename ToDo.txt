@@ -2,3 +2,9 @@ Deal with capitalization issues in csv headers, and toLower() function in locali
 This has been causing some problems, and in general it is not standardized and is messy.
 
 Add on.exit() code, especially when printing jpegs where I need dev.off().
+
+Change name of First and Last to From and To for consistency.
+
+Remove need for outputFolder in settings file. Infer from detectionsFile path.
+
+change surveyLengthInSeconds to surveyLength.

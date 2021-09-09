@@ -4,15 +4,22 @@
 #' combines them into a list for subsequent localization.
 #'
 #' @param settingsFile Filepath to the settings file (csv format).
+#' @param settings data.frame created either by reading a settings file (csv) or
+#'     using the \code{\link{createSettings}} function.
 #' @param getFilepaths Logical, indicating whether to add filepath information
 #'     using \code{\link{getFilepaths}}.
 #' @return A list with information needed for sound localization, including
 #'     microphone coordinates, the existing detections, channels to use
 #'     for each recording unit, and information specifying the size and
 #'     resolution of the grid within which to localize sound sources.
-processSettings <- function(settingsFile, getFilepaths = FALSE) {
+processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths = FALSE) {
 
-  Settings <- read.csv(settingsFile, stringsAsFactors=F)
+  #Either use settings or read settingsFile.
+  if(is.data.frame(settings)) {Settings <- settings} else {
+    if(file.exists(settingsFile)) {
+      Settings <- read.csv(settingsFile, stringsAsFactors=F)
+    } else {stop('settingsFile or settings must be specified.')}
+  }
 
   Settings <- split(Settings$Value, f = Settings$Setting)
 
