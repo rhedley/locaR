@@ -1,4 +1,4 @@
-Station1,Station2,Station3,Station4,Station5,Station6,First,Last,F_Low,F_High,Species,Individual,Comments
+Station1,Station2,Station3,Station4,Station5,Station6,From,To,F_Low,F_High,Species,Individual,Comments
 Ex-8,Ex-5,Ex-6,Ex-9,Ex-4,,0.8,1.1,2000,6500,REVI,1,
 Ex-8,Ex-5,Ex-6,Ex-9,Ex-4,,1.9,2.2,2000,6500,REVI,1,
 Ex-8,Ex-5,Ex-6,Ex-9,Ex-4,,2.8,3.1,2000,6500,REVI,1,

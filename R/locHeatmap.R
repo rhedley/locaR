@@ -4,7 +4,7 @@ locHeatmap = function(SearchMap, SMap, NodeInfo, location, mar) {
 
   xyMap = apply(SMap, c(1,2), FUN = mean)
 
-  imagep(x = SearchMap$XMap[1,,1], y = SearchMap$YMap[,1,1], t(xyMap), las=1,
+  oce::imagep(x = SearchMap$XMap[1,,1], y = SearchMap$YMap[,1,1], t(xyMap), las=1,
          drawPalette=F, xlab = 'Easting', ylab = 'Northing', mar = mar)
 
   points(NodeInfo$Pos[,c('Easting', 'Northing')], cex=3)

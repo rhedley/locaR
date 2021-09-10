@@ -4,10 +4,13 @@
 \alias{processSettings}
 \title{Process settings file to extract relevant information.}
 \usage{
-processSettings(settingsFile, getFilepaths = FALSE)
+processSettings(settingsFile = NULL, settings = NULL, getFilepaths = FALSE)
 }
 \arguments{
 \item{settingsFile}{Filepath to the settings file (csv format).}
+
+\item{settings}{data.frame created either by reading a settings file (csv) or
+using the \code{\link{createSettings}} function.}
 
 \item{getFilepaths}{Logical, indicating whether to add filepath information
 using \code{\link{getFilepaths}}.}

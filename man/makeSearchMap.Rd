@@ -21,8 +21,9 @@ makeSearchMap(
 
 \item{elevation}{vector of z coordinates of microphones.}
 
-\item{margin}{distance (in meters) to buffer around the outside of the
-microphone locations. The same buffer is applied to x and y coordinates.}
+\item{margin}{distance (in meters) to extend the search grid
+beyond the x-y limits of the microphone locations. The same buffer is
+applied to x and y coordinates.}
 
 \item{zMin}{distance (in meters) to begin search relative to the microphone
 with the lowest elevation. Typically a small negative number to ensure

@@ -16,7 +16,7 @@ mySpectro= function(ListOfData) {
       par(mar=c(0,0,0,0))
       par(oma=c(0,0,0,0))
     }
-    imagep(ListOfData$time, ListOfData$freq, t(ListOfData$amp),
+    oce::imagep(ListOfData$time, ListOfData$freq, t(ListOfData$amp),
            drawPalette=F, ylim=c(0,10),xlim=c(0,1), mar=rep(0,4), axes=F,
            breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
     legend('topleft', legend=paste0(Mic, ifelse(Channel==2,'b','a')), bty='n', cex=2)

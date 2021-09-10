@@ -4,15 +4,27 @@
 #localize####
 
 
-localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, resolution = 1,
-                     F_Low = 2000, F_High = 8000, locFolder = NULL, jpegName = '000.jpeg',
-                     tempC=15, plot=TRUE, InitData=NULL,
-                     keep.InitData=TRUE, keep.SearchMap=FALSE) {
+localize <- function(wavList,
+                     coordinates,
+                     margin = 10,
+                     zMin = -1,
+                     zMax = 20,
+                     resolution = 1,
+                     F_Low = 2000,
+                     F_High = 8000,
+                     locFolder = NULL,
+                     jpegName = '000.jpeg',
+                     tempC=15,
+                     plot=TRUE,
+                     InitData=NULL,
+                     keep.InitData=TRUE,
+                     keep.SearchMap=FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
   colnames(coordinates) <- tolower(colnames(coordinates))
-  if(sum(!names(wavList) %in% coordinates$station) > 0) {stop('Some names in wavList not found
-                                                              in coordinates!')}
+  if(sum(!names(wavList) %in% coordinates$station) > 0) {
+    stop('Some names in wavList not found in coordinates!')
+  }
 
   #Check that locFolder was specified.
   if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
@@ -26,13 +38,10 @@ localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, re
   NodePos <- as.matrix(coordinates[stations,c('easting', 'northing', 'elevation')])
   colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')
 
-  #Create NodeInfo (Num and Pos)
-  NodeInfo = list(Num = nrow(NodePos), Pos = NodePos)
-
   #Create SearchMap (Grid around Nodes, plus user-specified margins around outside)
-  SearchMap = makeSearchMap(easting = NodeInfo$Pos[,'Easting'],
-                            northing = NodeInfo$Pos[,'Northing'],
-                            elevation = NodeInfo$Pos[,'Elevation'],
+  SearchMap = makeSearchMap(easting = NodePos[,'Easting'],
+                            northing = NodePos[,'Northing'],
+                            elevation = NodePos[,'Elevation'],
                             margin = margin, zMin = zMin, zMax = zMax,
                             resolution = resolution)
   #Create Para list.
@@ -62,7 +71,8 @@ localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, re
 
   #Create InitData if needed.
   if(is.null(InitData)) {
-    InitData = MSRP_Init(NodeInfo,SearchMap,Para,LevelFlag)
+    InitData = MSRP_Init(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
+                         SearchMap, Para, LevelFlag)
   } else {
     print('Inherited InitData in 0 seconds.')
   }
@@ -70,13 +80,13 @@ localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, re
   #area we want to search.
 
   #Create FrameData.
-  Data=matrix(0,nrow=NodeInfo$Num, ncol=Para$DataLen)
-  #Assign row names to Data - same order as NodeInfo$Pos.
-  row.names(Data) = row.names(NodeInfo$Pos)
+  Data=matrix(0,nrow=nrow(NodePos), ncol=Para$DataLen)
+  #Assign row names to Data - same order as NodePos.
+  row.names(Data) = row.names(NodePos)
 
-  for(i in 1:NodeInfo$Num) {
+  for(i in 1:nrow(NodePos)) {
     #Station name
-    name = row.names(NodeInfo$Pos)[i]
+    name = row.names(NodePos)[i]
 
     #Subtract DC offset and round
     Data[i,] = round(wavList[[name]]@left - mean(wavList[[name]]@left))
@@ -84,7 +94,8 @@ localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, re
 
   locstarttime = proc.time()
   #Run MRSP
-  SMap = MSRP_RIJ_HT(NodeInfo,SearchMap,Data,Para,LevelFlag,InitData)
+  SMap = MSRP_RIJ_HT(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
+                     SearchMap, Data, Para, LevelFlag, InitData)
   print(paste('Localized detection in',round((proc.time()-locstarttime)['elapsed'],1),'seconds.'))
 
   #Extract global maximum location.
@@ -104,10 +115,13 @@ localize <- function(wavList, coordinates, margin = 10, zMin = -1, zMax = 20, re
     layout(m)
 
     #Plot 1
-    validationSpec(wavList = wavList, coordinates = coordinates, locationEstimate = location, tempC = tempC, F_Low = F_Low, F_High = F_High, from = NULL, to = NULL)
+    validationSpec(wavList = wavList, coordinates = coordinates,
+                   locationEstimate = location, tempC = tempC, F_Low = F_Low,
+                   F_High = F_High, from = NULL, to = NULL)
 
     #Plot 2
-    locHeatmap(SearchMap = SearchMap, SMap = SMap, NodeInfo = NodeInfo,
+    locHeatmap(SearchMap = SearchMap, SMap = SMap,
+               NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                location = location, mar = c(9,3,8,0))
     dev.off()
   }

@@ -3,7 +3,7 @@
 #' \code{processSettings} reads information from a settings file (csv) and
 #' combines them into a list for subsequent localization.
 #'
-#' @param settingsFile Filepath to the settings file (csv format).
+#' @param settingsFile Filepath to the settings file (csv).
 #' @param settings data.frame created either by reading a settings file (csv) or
 #'     using the \code{\link{createSettings}} function.
 #' @param getFilepaths Logical, indicating whether to add filepath information
@@ -29,15 +29,13 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
 
   detectionsFile <- Settings$DetectionsFile
 
-  outputFolder <- Settings$OutputFolder
+  outputFolder <- dirname(Settings$DetectionsFile)
 
   adjustmentsFile <- Settings$AdjustmentsFile
 
   channelsFile <- Settings$ChannelsFile
 
-  MSRPFolder <- Settings$MSRPFunctionsFolder #To be deprecated.
-
-  detectionsFile <- paste0(outputFolder, '/',detectionsFile)
+  detectionsFile <- Settings$DetectionsFile
 
   margin <- as.numeric(Settings$Margin)
 
@@ -47,17 +45,13 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
 
   resolution <- as.numeric(Settings$Resolution)
 
-  intervals <- as.numeric(Settings$Intervals)
-
   buffer <- as.numeric(Settings$Buffer) #Can this be deprecated?
-
-  spacing <- as.numeric(Settings$Spacing) #Can this be deprecated? Only used when one microphone is defined... Could easily use nearest neighbour for that.
 
   date <- Settings$Date
 
   time <- Settings$Time
 
-  time <- formatC(as.numeric(time), width=4, flag="0")
+  time <- formatC(as.numeric(time), width=6, flag="0", format = 'd')
 
   surveyLength <- as.numeric(Settings$SurveyLengthInSeconds)
 
@@ -68,30 +62,50 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
     detections <- read.csv(detectionsFile, stringsAsFactors=F)
   } else {detections <- NA}
 
-  if(!is.na(adjustmentsFile)) {
+  if(!is.na(adjustmentsFile) & adjustmentsFile != "" & !is.null(adjustmentsFile)) {
     adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
   } else {adjustments <- NA}
 
   channels <- read.csv(channelsFile, stringsAsFactors=F)
 
-  coords <- coords[coords$Station %in% channels$Station,]
+  if(nrow(channels) > 0) {
+    coords <- coords[coords$Station %in% channels$Station,]
 
-  #Check that all stations listed in channels file have coordinates.
-  if(sum(channels$Station %in% coords$Station) != nrow(channels)) {stop('Some stations listed in channelsFile were missing coordinates')}
-  if(sum(is.na(coords$Easting)) > 0 | sum(is.na(coords$Northing)) > 0 | sum(is.na(coords$Elevation)) > 0) {stop('Some stations listed in channelsFile were missing coordinates')}
+    #Check that all stations listed in channels file have coordinates.
+    if(sum(channels$Station %in% coords$Station) != nrow(channels)) {
+      stop('Some stations listed in channelsFile were missing coordinates')
+    }
+    if(sum(is.na(coords$Easting)) > 0 |
+       sum(is.na(coords$Northing)) > 0 |
+       sum(is.na(coords$Elevation)) > 0) {
+      stop('Some stations listed in channelsFile were missing coordinates')
+    }
 
-  #Check that all stations listed in detections file have coordinates.
-  statVec <- unique(unlist(c(detections[paste0('Station', 1:6)])))
-  statVec <- statVec[!is.na(statVec) & statVec != '']
-  if(sum(statVec %in% coords$Station) != length(statVec)) {stop('Some stations listed in detectionsFile were missing coordinates')}
+    #Check that all stations listed in detections file have coordinates.
+    statVec <- unique(unlist(c(detections[paste0('Station', 1:6)])))
+    statVec <- statVec[!is.na(statVec) & statVec != '']
+    if(sum(statVec %in% coords$Station) != length(statVec)) {
+      stop('Some stations listed in detectionsFile were missing coordinates')
+    }
+  }
 
-
-  st <- list(detections = detections, coords=coords, channels=channels, adjustments=adjustments, siteFolder = siteFolder, date=date, time=time, intervals=intervals,
-            MSRPFolder = MSRPFolder, outputFolder = outputFolder, resolution = resolution,
-            spacing = spacing, margin = margin, zMin = zMin, zMax = zMax, buffer = buffer, surveyLength = surveyLength)
+  st <- list(detections = detections,
+            coords=coords,
+            channels=channels,
+            adjustments=adjustments,
+            siteFolder = siteFolder,
+            date=date,
+            time=time,
+            outputFolder = outputFolder,
+            resolution = resolution,
+            margin = margin,
+            zMin = zMin,
+            zMax = zMax,
+            buffer = buffer,
+            surveyLength = surveyLength)
 
   if(getFilepaths) {
-    st$files = getFilepaths(st)
+    st$files = getFilepaths(settings = st)
   }
 
   return(st)

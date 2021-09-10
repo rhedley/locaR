@@ -19,8 +19,9 @@
 #' @param easting vector of x coordinates of microphones.
 #' @param northing vector of y coordinates of microphones.
 #' @param elevation vector of z coordinates of microphones.
-#' @param margin distance (in meters) to buffer around the outside of the
-#'     microphone locations. The same buffer is applied to x and y coordinates.
+#' @param margin distance (in meters) to extend the search grid
+#'     beyond the x-y limits of the microphone locations. The same buffer is
+#'     applied to x and y coordinates.
 #' @param zMin distance (in meters) to begin search relative to the microphone
 #'     with the lowest elevation. Typically a small negative number to ensure
 #'     that the grid search begins slightly below the lowest microphone.

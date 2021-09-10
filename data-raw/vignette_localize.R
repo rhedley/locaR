@@ -11,7 +11,7 @@ files <- paste0('Ex-', 1:9, '_0+1_20200617$090000.mp3')
 wavList = list()
 
 for(i in 1:9) {
-  wav <- readMP3(system.file('data',files[i], package = 'solo'))
+  wav <- tuneR::readMP3(system.file('data',files[i], package = 'solo'))
 
   wavList <- append(wavList, wav)
 
@@ -55,8 +55,8 @@ for(i in 1:nrow(detections)) {
   #Note: I "Buffer" them out by 0.2 seconds, to account for the fact that
   #start and end times may not be exact, and the transmission delay means the
   #sound arrives at different times to different microphones.
-  from <- row$First - 0.2
-  to <- row$Last + 0.2
+  from <- row$From - 0.2
+  to <- row$To + 0.2
 
   #Get low and high frequency.
   F_Low <- row$F_Low
@@ -88,14 +88,12 @@ for(i in 1:nrow(detections)) {
   jpg <- paste0(formatC(i,width=4,flag='0'), '.jpeg')
 
   #localize(). Will leave most parameters at their default values.
-
   loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
                   F_Low = F_Low, F_High = F_High, jpegName = jpg, keep.SearchMap = T)
 
   if(i == 1) {OUT = cbind(row,loc$location)} else {OUT = rbind(OUT, cbind(row,loc$location))}
 
 }
-
 
 
 
