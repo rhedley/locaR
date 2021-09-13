@@ -8,3 +8,9 @@ Change name of First and Last to From and To for consistency.
 Remove need for outputFolder in settings file. Infer from detectionsFile path.
 
 change surveyLengthInSeconds to surveyLength.
+
+Add info to checking spectrogram to show info on start/end time, species, etc.
+
+Change setupSurvey to work with existing surveys.
+
+Use Matlab to check: does order matter? Weird quirk of R code thus far is that the order of wavList changes the outcome ever so slightly... Very minor differences in outcome, but they are confusing! My guess is it might have to do with InitData being slightly different based on order of definition (one-two is not same as two-one).

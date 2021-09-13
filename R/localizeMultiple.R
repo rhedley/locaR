@@ -6,6 +6,18 @@
 
 localizeMultiple = function(st, indices, tempC = 15, plot=TRUE, InitData=NULL) {
 
+  #Remove Null detections.
+  detect <- st$detections
+
+  detect <- detect[detect$Station1 != "" & !is.na(detect$Station1),]
+
+  #replace original.
+  st$detections <- detect
+
+  if(is.character(indices)) {
+    if(indices == 'all') {indices <- 1:nrow(st$detections)}
+  }
+
   for(i in 1:length(indices)) {
 
     #First check whether InitData should be kept for index i
@@ -26,7 +38,7 @@ localizeMultiple = function(st, indices, tempC = 15, plot=TRUE, InitData=NULL) {
 
     #InitData will generally be NULL for the first detection, inherited (sometimes) thereafter.
 
-    loc = localizeDetection(st, index = indices[i], plot=plot,
+    loc = localizeSingle(st, index = indices[i], plot=plot,
                             keep.InitData = keep.InitData, InitData = InitData)
 
     currentRow$Easting = loc$location$Easting

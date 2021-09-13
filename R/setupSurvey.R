@@ -14,7 +14,7 @@ setupSurvey <- function(folder,
                         surveyLengthInSeconds,
                         margin = 10,
                         zMin = -1,
-                        zMax = 10,
+                        zMax = 20,
                         resolution = 1,
                         buffer = 0.2) {
 

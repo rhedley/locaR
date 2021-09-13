@@ -22,6 +22,7 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
 
   #Get station names
   stations <- sort(as.vector(as.matrix(row[1, paste0('Station', 1:6)])))
+  stations <- stations[stations != "" & !is.na(stations)]
 
   #Create coordinates to be passed to localize().
   row.names(st$files) <- st$files$Station

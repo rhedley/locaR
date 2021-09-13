@@ -95,5 +95,5 @@ for(i in 1:nrow(detections)) {
 
 }
 
-
+write.csv(OUT, file.path(locFolder, 'vignette_localizations.csv'))
 

@@ -25,7 +25,6 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
   colnames(D) = all$ID
   rownames(D) = all$ID
   Dists = D['bird',2:ncol(D)]
-  print(Dists)
   #Speed of sound
   Vc = 331.45*sqrt(1+tempC/273.15)
   #Time delays.

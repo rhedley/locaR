@@ -44,7 +44,7 @@ settings <- setupSurvey(folder = folder,
             channelsFile = NULL,
             date = date,
             time = time,
-            surveyLengthInSeconds = surveyLengthInSeconds)
+            surveyLengthInSeconds = surveyLengthInSeconds, zMax = 20)
 settings
 
 
@@ -64,13 +64,13 @@ st$outputFolder <- file.path(folder, paste0(date, '_',
 
 #Now everything is set up, so we can run localizeSingle.
 
-loc <- localizeSingle(st = st, index = 1)
+# loc <- localizeSingle(st = st, index = 1)
+#
+# loc$location
 
-loc$location
+locs <- localizeMultiple(st = st, indices = 'all')
 
-
-
-
+write.csv(locs, 'D:/20200617_090000/Run1/Localizations/vignette_locs.csv')
 
 
 
