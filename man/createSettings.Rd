@@ -14,7 +14,7 @@ createSettings(
   channelsFile,
   date,
   time,
-  surveyLengthInSeconds,
+  surveyLength,
   margin = 10,
   zMin = -1,
   zMax = 10,
@@ -40,7 +40,8 @@ can improve results.}
 audio files. The folder path will be searched recursively if using
 \code{\link{localizeSingle}} or \code{\link{localizeMultiple}}.}
 
-\item{adjustmentsFile}{Character. File path to the adjustments file (csv).}
+\item{adjustmentsFile}{Character. File path to the adjustments file (csv).
+Set to NULL if no adjustments to file start times are needed.}
 
 \item{channelsFile}{Character. File path to the channels file (csv),
 specifying which channel (1 or 2) to use for each recording unit.}
@@ -51,7 +52,7 @@ YYYYMMDD.}
 \item{time}{Numeric. Five or six digit number representing the start time
 of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).}
 
-\item{surveyLengthInSeconds}{Numeric. Length of the survey, in seconds.}
+\item{surveyLength}{Numeric. Length of the survey, in seconds.}
 
 \item{margin}{distance (in meters) to extend the search grid
 beyond the x-y limits of the microphone locations. The same buffer is

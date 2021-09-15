@@ -1,37 +1,73 @@
 #' Localize detected sounds
 #'
 #' \code{localize} and the two related functions \code{localizeSingle} and \code{localizeMultiple}
-#' are the basic functions for localizing sounds. The basis of the functions is to take wav files
-#' as inputs, alongside relevant metadata (e.g. coordinates and a variety of settings), and to
-#' output the location of the sound source.
+#' are the basic functions for localizing sounds. They take audio data as inputs, alongside relevant
+#'  metadata (e.g. coordinates and a variety of settings), and estimate the location of the
+#'  dominant sound source. The \code{localize} function takes as arguments the minimal
+#' amount of information needed for localization. Localization is conducted on the
+#' full duration of the Wave objects in wavList. Effectively this means the user
+#' must wrangle the data and clip the audio themselves, but this affords the greatest
+#' flexibility in terms of how the user chooses to organize their data.
+#' The \code{localizeSingle} and \code{localizeMultiple} functions, in contrast,
+#' automate much of the data wrangling process, but require data to be organized in a
+#' very specific way (e.g. folder structure, file structures). Thus, the latter two
+#' functions tradeoff flexibility for increased automation. All three functions use the
+#' same underlying localization algorithm (\code{localizeSingle} and \code{localizeMultiple}
+#' pass their data to \code{localize} after the data has been wrangled).
 #'
-#'
+#' @param wavList list of Wave objects. The name of the Wave objects MUST be
+#'     present in the coordinates data.frame.
+#' @param coordinates data.frame. Must contain four required columns:
+#'     column Station contains a character string with names of each recording
+#'     station, while Easting, Northing and Elevation contain the x, y, and z
+#'     coordinates of the station, in meters (E.g. UTM coordinates).
+#' @param margin,zMin,zMax,resolution Arguments describing the area to be searched
+#'     for sound sources. Passed to \code{\link{makeSearchMap}}.
+#' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
+#'     to be localized.
+#' @param tempC Numeric. Temperature in degrees C, which affects the speed of sound.
+#' @param plot Logical. Whether to plot jpegs.
+#' @param locFolder Character. File path to the folder where localization jpegs
+#'     (heatmaps and spectrograms) are to be created. Only required if plot = TRUE.
+#' @param jpegName Character. Name of the jpeg, ending in extension .jpeg.
+#'     Only required if plot = TRUE.
+#' @param InitData List. An InitData list created by running localization with
+#'     keep.InitData = TRUE. Providing an InitData list saves computation time,
+#'     but is only possible if the SearchGrid and stations used for localization
+#'     remain unchanged. Default is NULL, which means the InitData will be
+#'     calculated anew.
+#' @param keep.InitData Logical. Whether to store the InitData list.
+#' @param keep.SearchMap Logical. Whether to keep the SearchMap list with
+#'     power estimates and coordinates of each grid cell.
+#'     Should only be set to TRUE if the SearchMap is needed
+#'     for some other reason (e.g. making a publication-ready figure or
+#'     conducting more involved analysis with overlapping sources, etc.).
+#' @param st List. Localization settings object generated using
+#'     \code{\link{processSettings}}. Only needed for \code{localizeSingle} or
+#'     \code{localizeMultiple}.
+#' @param index,indices Numeric or 'all'. Indices to be localized within a detection file.
+#'     Setting to 1 localizes the first row, c(7:10) localizes rows 7-10, and 'all'
+#'     localizes all rows (ignoring rows that have no entry in the Station1 column).
+#' @return List, containing the location of the sound source (global maximum),
+#'     and optionally the InitData and SearchMap lists.
+#' @describeIn localize localize a single sound, using a wavList produced by the user.
+#' @export
 
-localize <- function(wavList,
-                     coordinates,
-                     margin = 10,
-                     zMin = -1,
-                     zMax = 20,
-                     resolution = 1,
-                     F_Low = 2000,
-                     F_High = 8000,
-                     locFolder = NULL,
-                     jpegName = '000.jpeg',
-                     tempC=15,
-                     plot=TRUE,
-                     InitData=NULL,
-                     keep.InitData=TRUE,
-                     keep.SearchMap=FALSE) {
+localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
+                     resolution = 1, F_Low = 2000, F_High = 8000, tempC = 15,
+                     plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
+                     InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
   colnames(coordinates) <- tolower(colnames(coordinates))
+
+  if(length(names(wavList)) < length(wavList)) {
+    stop('wavList must be named.')
+  }
+
   if(sum(!names(wavList) %in% coordinates$station) > 0) {
     stop('Some names in wavList not found in coordinates!')
   }
-
-  #Check that locFolder was specified.
-  if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
-  if(!dir.exists(locFolder)) {stop('locFolder does not exist.')}
 
   #Get station names
   stations <- names(wavList)
@@ -60,16 +96,10 @@ localize <- function(wavList,
   Vc = 331.45*sqrt(1+tempC/273.15)
 
   #Create Para list.
-  Para=list()
-  Para$GCCMethod = 'PHAT'
-  Para$Fs = Fs
-  Para$DataLen = DataLen
-  Para$Vc = Vc
-  Para$tempC = tempC
-  Para$FL = F_Low
-  Para$FH = F_High
+  Para=list(GCCMethod = "PHAT", Fs=Fs, DataLen=DataLen, Vc=Vc, tempC=tempC,
+            F_Low = F_Low, F_High=F_High)
 
-  #LevelFlag
+  #LevelFlag (not really needed, since there is only one option)
   LevelFlag = 2
 
   #Create InitData if needed.
@@ -99,7 +129,7 @@ localize <- function(wavList,
   #Run MRSP
   SMap = MSRP_RIJ_HT(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                      SearchMap, Data, Para, LevelFlag, InitData)
-  print(paste('Localized detection in',round((proc.time()-locstarttime)['elapsed'],1),'seconds.'))
+  message('Localized detection in ',round((proc.time()-locstarttime)['elapsed'],1),' seconds.')
 
   #Extract global maximum location.
   locationInd = which(SMap == max(SMap), arr.ind = T)
@@ -109,6 +139,10 @@ localize <- function(wavList,
   location = data.frame(Easting = xInd, Northing = yInd, Elevation = zInd, Power = max(SMap))
 
   if(plot) {
+
+    #Check that locFolder was specified.
+    if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
+    if(!dir.exists(locFolder)) {stop('locFolder does not exist.')}
 
     jpeg(file.path(locFolder, jpegName),
          width = 15, height = 15, units = 'in', res=100)
@@ -144,7 +178,7 @@ localize <- function(wavList,
 
 }
 
-#' @describeIn localize Localize single detection within a standardized survey workflow.
+#' @describeIn localize Localize single detection in a standardized survey workflow.
 localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
                            keep.InitData = TRUE, keep.SearchMap = FALSE) {
 
@@ -233,28 +267,37 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
 }
 
 #' @describeIn localize Localize multiple detections in a standardized survey workflow.
-localizeMultiple = function(st, indices, tempC = 15, plot=TRUE, InitData=NULL) {
+localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData=NULL) {
 
-  #Remove Null detections.
   detect <- st$detections
 
+  #If indices is numeric, extract those first.
+  if(is.numeric(indices)) {
+    detect <- detect[indices,]
+  }
+
+  #Remove NULL detections.
   detect <- detect[detect$Station1 != "" & !is.na(detect$Station1),]
 
   #replace original.
   st$detections <- detect
 
+  #Replace "all" with numbers.
   if(is.character(indices)) {
     if(indices == 'all') {indices <- 1:nrow(st$detections)}
   }
 
-  for(i in 1:length(indices)) {
+  #New indices to correct for removed rows.
+  newIndices <- 1:nrow(st$detections)
+
+  for(i in 1:length(newIndices)) {
 
     #First check whether InitData should be kept for index i
 
-    currentRow = st$detections[indices[i],]
+    currentRow = st$detections[newIndices[i],]
 
-    if(i < length(indices)) {
-      nextRow = st$detections[indices[i+1],]
+    if(i < length(newIndices)) {
+      nextRow = st$detections[newIndices[i+1],]
 
       currentStations = as.vector(as.matrix(currentRow[,paste0('Station', 1:6)]))
 
@@ -267,7 +310,7 @@ localizeMultiple = function(st, indices, tempC = 15, plot=TRUE, InitData=NULL) {
 
     #InitData will generally be NULL for the first detection, inherited (sometimes) thereafter.
 
-    loc = localizeSingle(st, index = indices[i], plot=plot,
+    loc = localizeSingle(st, index = newIndices[i], plot=plot,
                          keep.InitData = keep.InitData, InitData = InitData)
 
     currentRow$Easting = loc$location$Easting
@@ -287,8 +330,6 @@ localizeMultiple = function(st, indices, tempC = 15, plot=TRUE, InitData=NULL) {
   return(OUT)
 
 }
-
-
 
 
 

@@ -53,7 +53,7 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
 
   time <- formatC(as.numeric(time), width=6, flag="0", format = 'd')
 
-  surveyLength <- as.numeric(Settings$SurveyLengthInSeconds)
+  surveyLength <- as.numeric(Settings$SurveyLength)
 
   coords <- read.csv(coordsFile, stringsAsFactors=F)
   coords <- coords[,c('Station', 'Zone', 'Easting', 'Northing', 'Elevation')]

@@ -16,13 +16,14 @@
 #'     audio files. The folder path will be searched recursively if using
 #'     \code{\link{localizeSingle}} or \code{\link{localizeMultiple}}.
 #' @param adjustmentsFile Character. File path to the adjustments file (csv).
+#'     Set to NULL if no adjustments to file start times are needed.
 #' @param channelsFile Character. File path to the channels file (csv),
 #'     specifying which channel (1 or 2) to use for each recording unit.
 #' @param date Numeric. Eight digit number representing a date in the format
 #'     YYYYMMDD.
 #' @param time Numeric. Five or six digit number representing the start time
 #'     of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).
-#' @param surveyLengthInSeconds Numeric. Length of the survey, in seconds.
+#' @param surveyLength Numeric. Length of the survey, in seconds.
 #' @param margin distance (in meters) to extend the search grid
 #'     beyond the x-y limits of the microphone locations. The same buffer is
 #'     applied to x and y coordinates.
@@ -51,7 +52,7 @@ createSettings <- function(projectName,
                           channelsFile,
                           date,
                           time,
-                          surveyLengthInSeconds,
+                          surveyLength,
                           margin = 10,
                           zMin = -1,
                           zMax = 10,
@@ -66,7 +67,7 @@ createSettings <- function(projectName,
                                      'ChannelsFile',
                                      'Date',
                                      'Time',
-                                     'SurveyLengthInSeconds',
+                                     'SurveyLength',
                                      'Margin',
                                      'Zmin',
                                      'Zmax',
@@ -75,11 +76,11 @@ createSettings <- function(projectName,
                         Value = c(detectionsFile,
                                   coordinatesFile,
                                   siteWavsFolder,
-                                  adjustmentsFile,
+                                  ifelse(is.null(adjustmentsFile), '', adjustmentsFile),
                                   channelsFile,
                                   date,
                                   formatC(time, width=6, flag='0', format='d'),
-                                  surveyLengthInSeconds,
+                                  surveyLength,
                                   margin,
                                   zMin,
                                   zMax,
@@ -88,9 +89,10 @@ createSettings <- function(projectName,
 
   #write to file, if needed.
   if(write.csv) {
-    path = paste0(dirname(detectionsFile), '/', projectName, '_', date, '_', formatC(time, width=6, flag='0', format='d'), '_Run', run, '_Settings.csv')
+    settingsPath <- settingsPath(detectionsFile, projectName, date,
+                        timeChar = formatC(time, width=6, flag='0', format='d'), run)
 
-    write.csv(settings, file = path, row.names = F)
+    write.csv(settings, file = settingsPath, row.names = F)
   }
 
   return(settings)

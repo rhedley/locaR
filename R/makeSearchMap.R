@@ -30,6 +30,7 @@
 #'     that the grid search ends well above the highest microphone.
 #' @param resolution resolution of the search map, in meters.
 #' @return A list defining the search map.
+#' @export
 makeSearchMap  <- function(easting, northing, elevation, margin = 10, zMin = -1, zMax = 10, resolution = 1) {
 
   #Offset X, Y and Z coordinates to UTM grid.

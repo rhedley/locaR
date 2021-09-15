@@ -7,7 +7,7 @@
 processSettings(settingsFile = NULL, settings = NULL, getFilepaths = FALSE)
 }
 \arguments{
-\item{settingsFile}{Filepath to the settings file (csv format).}
+\item{settingsFile}{Filepath to the settings file (csv).}
 
 \item{settings}{data.frame created either by reading a settings file (csv) or
 using the \code{\link{createSettings}} function.}
