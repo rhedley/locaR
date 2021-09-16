@@ -57,7 +57,7 @@ createSettings <- function(projectName,
                           zMin = -1,
                           zMax = 10,
                           resolution = 1,
-                          buffer = 0.2, write.csv = TRUE) {
+                          buffer = 0.2, write.csv = FALSE) {
 
   #create settings data frame.
   settings <- data.frame(Setting = c('DetectionsFile',
@@ -89,10 +89,10 @@ createSettings <- function(projectName,
 
   #write to file, if needed.
   if(write.csv) {
-    settingsPath <- settingsPath(detectionsFile, projectName, date,
-                        timeChar = formatC(time, width=6, flag='0', format='d'), run)
+    sp <- surveyPaths(folder = dirname(dirname(dirname(detectionsFile))), projectName, date,
+                        time = time, run = run)
 
-    write.csv(settings, file = settingsPath, row.names = F)
+    write.csv(settings, file = sp['settingsFile'], row.names = F)
   }
 
   return(settings)

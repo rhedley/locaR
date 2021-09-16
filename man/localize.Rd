@@ -103,12 +103,3 @@ functions tradeoff flexibility for increased automation. All three functions use
 same underlying localization algorithm (\code{localizeSingle} and \code{localizeMultiple}
 pass their data to \code{localize} after the data has been wrangled).
 }
-\section{Functions}{
-\itemize{
-\item \code{localize}: localize a single sound, using a wavList produced by the user.
-
-\item \code{localizeSingle}: Localize single detection in a standardized survey workflow.
-
-\item \code{localizeMultiple}: Localize multiple detections in a standardized survey workflow.
-}}
-

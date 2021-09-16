@@ -43,91 +43,65 @@ setupSurvey <- function(folder,
   #Check if base folder exists.
   if(!dir.exists(folder)) {stop('specify an existing base folder for surveys.')}
 
-  #time to character.
-  timeChar <- formatC(as.numeric(time),
-                      width = 6, flag = '0', format = 'd')
+  #Get named vector of survey paths.
+  sp <- surveyPaths(folder = folder, projectName = projectName, date = date,
+                    time = time, run = run)
 
-  #Name for surveyFolder.
-  surveyFolder = file.path(folder, paste0(date, '_', timeChar))
-  #Name for runFolder.
-  runFolder = file.path(surveyFolder, paste0('Run',run))
-  #Name for specFolder.
-  specFolder = file.path(runFolder, 'Spectrograms')
-  #Name for locFolder.
-  locFolder = file.path(runFolder, 'Localizations')
-  #name for detections csv.
-  detectionsFile <- file.path(runFolder,
-                              paste0(projectName, "_", date, '_', timeChar,
-                                     '_Run', run, '_Detections.csv'))
+  #If run == 1 and survey folder exists, all the function does is check
+  #folder structure for validity.
+  if(run == 1 & dir.exists(sp['surveyFolder'])) {
+    #If survey folder already exists, check its structure and print a statement.
+    check <- all(dir.exists(c(sp['runFolder'], sp['specFolder'], sp['locFolder'])),
+                 file.exists(sp['detectionsFile']),
+                 is.null(channelsFile) | file.exists(channelsFile),
+                 file.exists(sp['settingsFile']))
 
-  #If run == 1, check that date_time folder does not exist, then create.
-  if(run == 1) {
+    message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\n
+                          New files not written. Folder structure appears to be ',
+            ifelse(check,'correct','incorrect'))
 
-    if(dir.exists(surveyFolder)) {
-      #If survey folder already exists, check its structure and print a statement.
-      check <- all(dir.exists(c(runFolder, specFolder, locFolder)),
-                              file.exists(detectionsFile),
-                              is.null(ChannelsFile) | file.exists(ChannelsFile))
-
-      message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\n
-                          Folders not over-written. Folder structure appears to be ',
-                          ifelse(check,'correct','incorrect'))
-
-      #return the settings file.
-      settingsPath <-  settingsPath(detectionsFile, projectName, date, timeChar, run)
-
-      if(file.exists(settingsPath)) {
-        settings <- read.csv(settingsPath, stringsAsFactors = F)
-        return(settings)
-      } else {return(NA)}
-    }
-
-    if(!dir.exists(surveyFolder)) {
-      #If the survey folder does not exist, create the appropriate folder structure.
-      dir.create(surveyFolder)
-      dir.create(runFolder)
-      dir.create(specFolder)
-      dir.create(locFolder)
-    }
+    if(file.exists(sp['settingsFile'])) {
+      settings <- read.csv(sp['settingsFile'], stringsAsFactors = F)
+      return(settings)
+    } else {return(NA)}
   }
 
-  #If run > 1, check that date_time folder exists, and create new run folder.
-  if(run > 1) {
-    if(!dir.exists(surveyFolder)) {
-      stop('If run > 1, survey folder (i.e. folder/date_time) must exist.')
-    } else {
-      dir.create(runFolder)
-      dir.create(specFolder)
-      dir.create(locFolder)
-    }
+  #If run > 1 & surveyFolder doesn't exist, throw an error.
+  if(run > 1 & !dir.exists(sp['surveyFolder'])) {
+    stop('If run > 1, survey folder (i.e. folder/date_time) must exist.')
   }
 
-  #create empty detections file.
-  detections <- read.csv(system.file('data', 'Empty_Detections.csv', package = 'solo'))
+  #Create folder structure. Note that dir.create fails if a folder already exists.
+  #User will see warnings.
+  dir.create(sp['surveyFolder'])
+  dir.create(sp['runFolder'])
+  dir.create(sp['specFolder'])
+  dir.create(sp['locFolder'])
 
-  #write empty detections file.
-  write.csv(detections, detectionsFile, row.names = F)
+  #write empty detections file if one doesn't exist.
+  if(file.exists(sp['detectionsFile'])) {
+    message('Detections file already exists. File not overwritten.')
+  } else {
+    #create and write empty detections file.
+    detections <- read.csv(system.file('data', 'Empty_Detections.csv', package = 'solo'))
+    write.csv(detections, sp['detectionsFile'], row.names = F)
+  }
 
-  #create empty channels file if channels is NULL.
+  #create and write empty channels file if channels is NULL.
   if(is.null(channelsFile)) {
     channels <- read.csv(system.file('data', 'Empty_Channels.csv', package = 'solo'))
-
-    #name for channels csv.
-    channelsFile <- file.path(surveyFolder,
-                              paste0(projectName, "_", date, '_',
-                                     timeChar, '_Channels.csv'))
-    #write empty channels file.
-    write.csv(channels, channelsFile, row.names = F)
+    write.csv(channels, sp['channelsFile'], row.names = F)
   }
 
 
   settings <- createSettings(projectName = projectName,
                              run = run,
-                             detectionsFile = detectionsFile,
+                             detectionsFile = sp['detectionsFile'],
                              coordinatesFile = coordinatesFile,
                              siteWavsFolder = siteWavsFolder,
                              adjustmentsFile = ifelse(is.null(adjustmentsFile), '', adjustmentsFile),
-                             channelsFile = channelsFile,
+                             channelsFile = ifelse(is.null(channelsFile),
+                                                   sp['channelsFile'], channelsFile),
                              date = date,
                              time = time,
                              surveyLength = surveyLength,
@@ -135,9 +109,16 @@ setupSurvey <- function(folder,
                              zMin = zMin,
                              zMax = zMax,
                              resolution = resolution,
-                             buffer = buffer, write.csv = TRUE)
+                             buffer = buffer, write.csv = FALSE)
 
-  message('Survey successfully created at ', surveyFolder)
+  #Create and write Settings File if one does not exist.
+  if(file.exists(sp['settingsFile'])) {
+    message('Settings file already exists. File not overwritten.')
+  } else {
+    write.csv(settings, file = sp['settingsFile'], row.names = F)
+  }
+
+  message('Survey successfully created at ', sp['surveyFolder'])
 
   return(settings)
 }

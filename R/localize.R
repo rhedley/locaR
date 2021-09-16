@@ -50,7 +50,6 @@
 #'     localizes all rows (ignoring rows that have no entry in the Station1 column).
 #' @return List, containing the location of the sound source (global maximum),
 #'     and optionally the InitData and SearchMap lists.
-#' @describeIn localize localize a single sound, using a wavList produced by the user.
 #' @export
 
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
@@ -78,29 +77,29 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
   colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')
 
   #Create SearchMap (Grid around Nodes, plus user-specified margins around outside)
-  SearchMap = makeSearchMap(easting = NodePos[,'Easting'],
+  SearchMap <- makeSearchMap(easting = NodePos[,'Easting'],
                             northing = NodePos[,'Northing'],
                             elevation = NodePos[,'Elevation'],
                             margin = margin, zMin = zMin, zMax = zMax,
                             resolution = resolution)
   #Create Para list.
   #Get sample rate
-  Fs = wavList[[1]]@samp.rate
+  Fs <- wavList[[1]]@samp.rate
 
   #Get DataLen
 
-  DataLen = length(wavList[[1]]@left)
+  DataLen <- length(wavList[[1]]@left)
 
   #Define speed of sound.
 
-  Vc = 331.45*sqrt(1+tempC/273.15)
+  Vc <- 331.45*sqrt(1+tempC/273.15)
 
   #Create Para list.
-  Para=list(GCCMethod = "PHAT", Fs=Fs, DataLen=DataLen, Vc=Vc, tempC=tempC,
+  Para <- list(GCCMethod = "PHAT", Fs=Fs, DataLen=DataLen, Vc=Vc, tempC=tempC,
             F_Low = F_Low, F_High=F_High)
 
   #LevelFlag (not really needed, since there is only one option)
-  LevelFlag = 2
+  LevelFlag <- 2
 
   #Create InitData if needed.
   if(is.null(InitData)) {
@@ -113,39 +112,39 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
   #area we want to search.
 
   #Create FrameData.
-  Data=matrix(0,nrow=nrow(NodePos), ncol=Para$DataLen)
+  Data <- matrix(0,nrow=nrow(NodePos), ncol=Para$DataLen)
   #Assign row names to Data - same order as NodePos.
-  row.names(Data) = row.names(NodePos)
+  row.names(Data) <- row.names(NodePos)
 
   for(i in 1:nrow(NodePos)) {
     #Station name
-    name = row.names(NodePos)[i]
+    name <- row.names(NodePos)[i]
 
     #Subtract DC offset and round
-    Data[i,] = round(wavList[[name]]@left - mean(wavList[[name]]@left))
+    Data[i,] <- round(wavList[[name]]@left - mean(wavList[[name]]@left))
   }
 
-  locstarttime = proc.time()
+  locstarttime <- proc.time()
   #Run MRSP
-  SMap = MSRP_RIJ_HT(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
+  SMap <- MSRP_RIJ_HT(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                      SearchMap, Data, Para, LevelFlag, InitData)
   message('Localized detection in ',round((proc.time()-locstarttime)['elapsed'],1),' seconds.')
 
   #Extract global maximum location.
-  locationInd = which(SMap == max(SMap), arr.ind = T)
-  xInd = SearchMap$XMap[locationInd]
-  yInd = SearchMap$YMap[locationInd]
-  zInd = SearchMap$ZMap[locationInd]
-  location = data.frame(Easting = xInd, Northing = yInd, Elevation = zInd, Power = max(SMap))
+  locationInd <- which(SMap == max(SMap), arr.ind = T)
+  xInd <- SearchMap$XMap[locationInd]
+  yInd <- SearchMap$YMap[locationInd]
+  zInd <- SearchMap$ZMap[locationInd]
+  location <- data.frame(Easting = xInd, Northing = yInd, Elevation = zInd, Power = max(SMap))
 
   if(plot) {
-
     #Check that locFolder was specified.
     if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
     if(!dir.exists(locFolder)) {stop('locFolder does not exist.')}
 
     jpeg(file.path(locFolder, jpegName),
          width = 15, height = 15, units = 'in', res=100)
+    on.exit(dev.off(), add = TRUE)
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))
     m <- matrix(c(1:6,0,rep(7,4),0), ncol = 2)
@@ -160,25 +159,25 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     locHeatmap(SearchMap = SearchMap, SMap = SMap,
                NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                location = location, mar = c(9,3,8,0))
-    dev.off()
   }
 
   #Return list with location data.
-  OUT = list(location=location)
+  OUT <- list(location = location)
 
   if(keep.InitData) {
-    OUT = append(OUT, list(InitData = InitData))
+    OUT <- append(OUT, list(InitData = InitData))
   }
 
   if(keep.SearchMap) {
-    OUT = append(OUT, list(SearchMap = SearchMap, SMap = SMap))
+    OUT <- append(OUT, list(SearchMap = SearchMap, SMap = SMap))
   }
 
   return(OUT)
 
 }
 
-#' @describeIn localize Localize single detection in a standardized survey workflow.
+
+#' @rdname localize
 localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
                            keep.InitData = TRUE, keep.SearchMap = FALSE) {
 
@@ -262,11 +261,11 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
                   InitData = InitData, keep.InitData = keep.InitData,
                   keep.SearchMap = keep.SearchMap)
 
-
   return(OUT)
 }
 
-#' @describeIn localize Localize multiple detections in a standardized survey workflow.
+
+#' @rdname localize
 localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData=NULL) {
 
   detect <- st$detections

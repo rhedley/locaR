@@ -9,6 +9,7 @@
 #'     \code{\link{processSettings}}.
 #' @return A data frame with station names, coordinates, filepaths, and any
 #'     recording start-time adjustments.
+#' @export
 getFilepaths <- function(settings) {
 
   #Load settings to a list.
@@ -22,11 +23,16 @@ getFilepaths <- function(settings) {
       stop('settings must be a filepath or a list')
   }
 
+  #Change time to represent minutes rather than seconds.
+  timeChar <- formatC(as.numeric(st$time), width = 6, flag = '0', format = 'd')
+  minute <- substr(timeChar, 1, 4)
+
+
   #Load the files from that date and time.
   Files <- c(list.files(st$siteFolder, recursive = T, full.names = T,
-                      pattern = paste0(st$date,'.*', st$time, '.*wav')),
+                      pattern = paste0(st$date,'.*', minute, '.*wav')),
              list.files(st$siteFolder, recursive = T, full.names = T,
-                        pattern = paste0(st$date,'.*', st$time, '.*mp3')))
+                        pattern = paste0(st$date,'.*', minute, '.*mp3')))
   Files <- data.frame(Path = Files, CorrFile = basename(Files),
                       Station = parseWAFileNames(filenames = basename(Files),
                                                  model = 'SM3')$prefix,

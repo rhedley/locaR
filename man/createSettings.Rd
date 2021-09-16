@@ -20,7 +20,7 @@ createSettings(
   zMax = 10,
   resolution = 1,
   buffer = 0.2,
-  write.csv = TRUE
+  write.csv = FALSE
 )
 }
 \arguments{
