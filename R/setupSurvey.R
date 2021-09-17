@@ -53,12 +53,10 @@ setupSurvey <- function(folder,
     #If survey folder already exists, check its structure and print a statement.
     check <- all(dir.exists(c(sp['runFolder'], sp['specFolder'], sp['locFolder'])),
                  file.exists(sp['detectionsFile']),
-                 is.null(channelsFile) | file.exists(channelsFile),
+                 ifelse(is.null(channelsFile),TRUE,file.exists(channelsFile)),
                  file.exists(sp['settingsFile']))
 
-    message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\n
-                          New files not written. Folder structure appears to be ',
-            ifelse(check,'correct','incorrect'))
+    message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\nNew files not written. Folder structure appears to be ', ifelse(check,'correct','incorrect'))
 
     if(file.exists(sp['settingsFile'])) {
       settings <- read.csv(sp['settingsFile'], stringsAsFactors = F)

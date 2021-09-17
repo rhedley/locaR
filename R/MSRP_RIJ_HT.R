@@ -197,7 +197,7 @@ MSRP_HT_Level2 = function(NodeInfo,SearchMap,Data,Para,InitData) {
     for (j in (i+1):NodeInfo$Num) {
       k  = k+1
       #Rij(k,:) = Rij_GCC(Data(j,:),Data(i,:),Para)
-      Rij[k,] = abs(seewave::hilbert(Rij_GCC(Data[j,],Data[i,],Para), f=Para$Fs)) #Check this.
+      Rij[k,] = abs(seewave::hilbert(Rij_GCC(data1=Data[j,],data2=Data[i,],Para), f=Para$Fs)) #Check this.
     }
   }
 

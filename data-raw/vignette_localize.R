@@ -4,29 +4,19 @@
 
 devtools::load_all()
 
-#Create list of file names (these are the example data provided in the solo package).
-files <- paste0('Ex-', 1:9, '_0+1_20200617$090000.mp3')
 
-#initialize wavList
-wavList = list()
+#prepare the necessary pieces to use the createWavList function.
+#Two basic things needed for now: file paths to each file and file names.
 
-for(i in 1:9) {
-  wav <- tuneR::readMP3(system.file('data',files[i], package = 'solo'))
+#paths to example data provided in the solo package.
+filepaths = list.files(system.file('data', package = 'solo'), pattern = '.mp3', full.names = T)
 
-  wavList <- append(wavList, wav)
+#Add station names to wavList. Note the order of the vector stationNames must be the
+#same as the order of the file paths. The following code maintains the order.
+stationNames <- sapply(strsplit(basename(filepaths), '_'), '[[', 1)
 
-}
-
-#clean up workspace.
-rm(wav)
-
-#Add station names to wavList.
-stations <- sapply(strsplit(files, '_'), '[[', 1)
-
-names(wavList) <- stations
-
-#clean up workspace.
-rm(stations)
+#Apply these as names to the filepaths vector (useful later).
+names(filepaths) <- stationNames
 
 #read coordinates.
 
@@ -51,38 +41,37 @@ for(i in 1:nrow(detections)) {
 
   if(row$Station1 == "" | is.na(row$Station1)) {next}
 
-  #Get start and end of detection.
-  #Note: I "Buffer" them out by 0.2 seconds, to account for the fact that
-  #start and end times may not be exact, and the transmission delay means the
-  #sound arrives at different times to different microphones.
-  from <- row$From - 0.2
-  to <- row$To + 0.2
+  #get names of relevant stations for this detection.
+  stationSubset <- unlist(row[1,paste0('Station',1:6)])
+  #remove NA stations, if applicable.
+  stationSubset <- stationSubset[!is.na(stationSubset)]
+  stationSubset <- stationSubset[stationSubset != '']
+
+
+  #make a new wavList containing only the stations of interest.
+
+  pathSubset = filepaths[stationSubset]
+
+
+  #use createWavList() to create a list of wave objects.
+  #The arguments from and to are from row$From and row$To.
+  #Buffer is set to 0.2 seconds (added to either side of the detection)
+  #channels can be set to NULL, since we want to use the left channel (default).
+  #adjustments can be set to NULL, since all files were well synchronized in advance.
+  #We can set index = i, so that if there is an error, we can pinpoint which detection
+  #it came from.
+  wl <- createWavList(paths = pathSubset, names = stationSubset,
+                      from = row$From, to = row$To, buffer = 0.2, index=i)
 
   #Get low and high frequency.
   F_Low <- row$F_Low
   F_High <- row$F_High
 
-  #get names of relevant stations.
-  stations <- unlist(row[1,paste0('Station',1:6)])
-
-  #remove NA stations, if applicable.
-  stations <- stations[!is.na(stations)]
-  stations <- stations[stations != '']
-
-  #make a new wavList containing only the stations of interest.
-
-  wl <- wavList[stations]
-
-  #extract relevant times from wavs.
-  for(j in 1:length(wl)) {
-    wl[[j]] <- tuneR::extractWave(wl[[j]], from = from, to = to, xunit = 'time')
-  }
-
   #make a new coordinates data.frame with only relevant stations.
   #Subsetting by the stations vector ensures that the order is the
   #same as the wl object.
 
-  crd <- coordinates[stations,]
+  crd <- coordinates[stationSubset,]
 
   #Create jpeg name.
   jpg <- paste0(formatC(i,width=4,flag='0'), '.jpeg')

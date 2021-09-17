@@ -12,14 +12,22 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
   # sts = st$files[st$files$Station %in% st$detections[index, paste0('Station', 1:6)],]
   # sts = sts[order(sts$Station),]
 
+  if(is.matrix(coordinates)) {
+    coordinates <- as.data.frame(coordinates)
+  }
+
   #combined bird location and station coordinates.
+  if(!'Station' %in% colnames(coordinates)) {
+    coordinates$Station <- row.names(coordinates)
+  } else {
+    coordinates$Station = as.character(coordinates$Station)
+  }
 
-  coordinates$station = as.character(coordinates$station)
 
-  all = data.frame(ID=c('bird', coordinates$station),
-                   Easting = c(locationEstimate$Easting, coordinates$easting),
-                   Northing = c(locationEstimate$Northing, coordinates$northing),
-                   Elevation = c(locationEstimate$Elevation, coordinates$elevation))
+  all = data.frame(ID=c('bird', coordinates$Station),
+                   Easting = c(locationEstimate$Easting, coordinates$Easting),
+                   Northing = c(locationEstimate$Northing, coordinates$Northing),
+                   Elevation = c(locationEstimate$Elevation, coordinates$Elevation))
 
   D = as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
   colnames(D) = all$ID
@@ -49,19 +57,19 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
 
     #Adjust start time. Simultaneously adjusting for recording start time offset, and
     #transmission delay. Start 0.1 seconds before detection to get visual of onset.
-    ADJ.first = from + Delays[coordinates$station[i]] - 0.1
+    ADJ.first = from + Delays[coordinates$Station[i]] - 0.1
     #Adjust end time in same way. For detection longer than
-    ADJ.last = to + Delays[coordinates$station[i]]
+    ADJ.last = to + Delays[coordinates$Station[i]]
 
     sound1 = tuneR::extractWave(wavList[[i]], from=ADJ.first, to=ADJ.last, xunit='time')
 
     sound1 = seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
 
-    sound1$mic=coordinates$station[i]
+    sound1$mic=coordinates$Station[i]
     sound1$channel=1
     sound1$from=from
     sound1$to=to
-    sound1$distance=Dists[coordinates$station[i]]
+    sound1$distance=Dists[coordinates$Station[i]]
     if(i==1) {
       SoundList=list(a=sound1)
     } else {

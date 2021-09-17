@@ -58,23 +58,24 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
                      InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
-  colnames(coordinates) <- tolower(colnames(coordinates))
 
   if(length(names(wavList)) < length(wavList)) {
     stop('wavList must be named.')
   }
 
-  if(sum(!names(wavList) %in% coordinates$station) > 0) {
+  if(sum(!names(wavList) %in% coordinates$Station) > 0) {
     stop('Some names in wavList not found in coordinates!')
   }
 
   #Get station names
   stations <- names(wavList)
 
-  #Create NodePos object from station names
-  row.names(coordinates) <- coordinates$station
-  NodePos <- as.matrix(coordinates[stations,c('easting', 'northing', 'elevation')])
+  #Create NodePos object from station names. This also filters out stations
+  #in the coordinates that are not in wavList.
+  row.names(coordinates) <- coordinates$Station
+  NodePos <- as.matrix(coordinates[stations,c('Easting', 'Northing', 'Elevation')])
   colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')
+  row.names(NodePos) <- stations
 
   #Create SearchMap (Grid around Nodes, plus user-specified margins around outside)
   SearchMap <- makeSearchMap(easting = NodePos[,'Easting'],
@@ -96,7 +97,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
   #Create Para list.
   Para <- list(GCCMethod = "PHAT", Fs=Fs, DataLen=DataLen, Vc=Vc, tempC=tempC,
-            F_Low = F_Low, F_High=F_High)
+            FL = F_Low, FH=F_High)
 
   #LevelFlag (not really needed, since there is only one option)
   LevelFlag <- 2
@@ -151,7 +152,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     layout(m)
 
     #Plot 1
-    validationSpec(wavList = wavList, coordinates = coordinates,
+    validationSpec(wavList = wavList, coordinates = NodePos,
                    locationEstimate = location, tempC = tempC, F_Low = F_Low,
                    F_High = F_High, from = NULL, to = NULL)
 
@@ -205,50 +206,20 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
   coordinates <- st$files[stations,c('Station','Easting', 'Northing', 'Elevation')]
 
   #create wavList to be passed to localize().
-  for(i in 1:nrow(coordinates)) {
-    #Station name
-    name <- row.names(coordinates)[i]
+  #Station names
+  names <- row.names(coordinates)
 
-    #File path
-    wav <- st$files$Path[st$files$Station == name]
+  #File paths
+  paths <- st$files[names,'Path']
 
-    #Channel to read.
-    channel <- st$files$Channel[st$files$Station == name]
+  #Channel to read.
+  channels <- st$files[names,'Channel']
 
-    #Amount to adjust start time (taking into account file names as well as user-specified adjustments)
-    adj <- st$files$Adjustment[st$files$Station == name]
+  #Amount to adjust start time (taking into account file names as well as user-specified adjustments)
+  adjustments <- st$files[names,'Adjustment']
 
-    #Check that the data to be read does not reach negative numbers.
-    if((row$From - st$buffer - adj) < 0) {
-      warning(paste('Index', index, 'had negative start time relative to file start'))
-    }
-
-    #Read wav or mp3 file.
-    if(substr(wav, nchar(wav)-2, nchar(wav)) == 'wav') {
-      W <- tuneR::readWave(wav, from = row$From-st$buffer-adj,
-                           to=row$To+st$buffer-adj, units='seconds')
-    }
-    if(substr(wav, nchar(wav)-2, nchar(wav)) == 'mp3') {
-      W <- tuneR::readMP3(wav)
-      W <- tuneR::extractWave(W, from = row$From-st$buffer-adj,
-                              to=row$To+st$buffer-adj, xunit = 'time')
-    }
-
-    #Extract correct channel.
-    if(channel == 1) {
-      W <- tuneR::mono(W, which = 'left')
-    }
-    if(channel == 2) {
-      W <- tuneR::mono(W, which = 'right')
-    }
-
-    #W@left <- round(W@left - mean(W@left))
-
-    if(i == 1) {wavList <- list(W)} else {wavList <- append(wavList, list(W))}
-
-  }
-
-  names(wavList) <- row.names(coordinates)
+  wavList <- createWavList(paths = paths, names = names, from = row$From, to = row$To, buffer = st$buffer,
+                channels = channels, adjustments = adjustments, index = index)
 
   #make name for jpeg.
   jpegName <- paste0(formatC(index,width=4,flag='0'), '.jpeg')

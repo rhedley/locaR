@@ -44,7 +44,7 @@ settings <- setupSurvey(folder = folder,
             channelsFile = NULL,
             date = date,
             time = time,
-            surveyLengthInSeconds = surveyLengthInSeconds, zMax = 20)
+            surveyLength = surveyLength, zMax = 20)
 settings
 
 
