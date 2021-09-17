@@ -29,7 +29,7 @@ date <- 20200617
 time <- 90000
 
 #Survey length for this example is just 7 seconds.
-surveyLengthInSeconds <- 7
+surveyLength <- 7
 
 #run the setupSurvey function. Note, we are not specifying an adjustmentsFile, because
 #all the files were well synchronized, and we are not specifying a channelsFile because
