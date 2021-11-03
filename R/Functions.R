@@ -2,10 +2,10 @@
 
 
 
-#mySpectro####
+#validSpectro####
 
 #Spectrogram function
-mySpectro= function(ListOfData) {
+validSpectro= function(ListOfData) {
   if(is.na(ListOfData)[1]) {plot(0, axes=F, xlab=NA, ylab=NA, col='white')} else{
     Mic=ListOfData$mic
     Channel=ListOfData$channel
@@ -28,42 +28,6 @@ mySpectro= function(ListOfData) {
     box()
   }
 }
-
-
-#SpatialAlias####
-
-#Spatial aliasing index function.
-SpatialAlias = function(MicCoords, BirdCoords) {
-  BirdCoords[2:9,]=BirdCoords
-  BirdCoords$Easting=BirdCoords$Easting+c(0,5,sqrt(12.5),0,-sqrt(12.5),-5,-sqrt(12.5),0,sqrt(12.5))
-  BirdCoords$Northing=BirdCoords$Northing+c(0,0,sqrt(12.5),5,sqrt(12.5),0,-sqrt(12.5),-5,-sqrt(12.5))
-
-  #Combine bird and microphone coordinates.
-  all=rbind(BirdCoords,data.frame(Easting=MicCoords$Easting, Northing=MicCoords$Northing, Elevation=MicCoords$Elevation))
-  BirdIDs=paste0('Bird',c('C', 'E', 'NE', 'N', 'NW', 'W' ,'SW', 'S', 'SE'))
-  all$ID=c(BirdIDs, MicCoords$Station)
-  D = as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
-  colnames(D) = all$ID
-  rownames(D) = all$ID
-  Dists = D[BirdIDs,10:ncol(D)]
-  Delays = Dists
-  for(i in 1:nrow(Delays)) {
-    x=Delays[i,]
-    x = (x - min(x))/345
-    Delays[i,]=x
-  }
-  Diffs=Delays[2:9,]
-  for(i in 1:nrow(Diffs)) {
-    Diffs[i,]=abs(Diffs[i,]-Delays[1,])
-  }
-  Change=rowSums(Diffs)
-  names(Change)=BirdIDs[2:9]
-
-  TheoreticalMax=0.06
-  Index=(0.06-min(Change))/0.06
-  return(round(Index,2)) #Higher values of Index mean more spatial aliasing.
-}
-
 
 #parseWAFileName####
 

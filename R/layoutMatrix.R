@@ -13,18 +13,18 @@
 #' Note that this layout function is provided for convenience, but users can easily
 #' specify their own custom layouts manually.
 #'
-#'  @param st List. Localization settings object generated using
+#' @param st List. Localization settings object generated using
 #'      \code{\link{processSettings}}.
-#'  @param stationNames Character vector. Vector of station names. Not required if st is provided.
-#'  @param start Character. When sorted alphabetically, the location of the first station name.
-#'  @param byrow Logical. An indicator of whether station names increase along
-#'      rows (TRUE) or along columns (FALSE)
-#'  @param nrow Numeric. The number of rows of microphones in the layout.
-#'  @param ncol Numeric. The number of columns of microphones in the layout.
-#'  @return Matrix, containing the station names within the array. If done correctly,
-#'  the matrix rows and columns should align with the spatial layout of the stations
-#'  in the field.
-#'  @export
+#' @param stationNames Character vector. Vector of station names. Not required if st is provided.
+#' @param start Character. When sorted alphabetically, the location of the first station name.
+#' @param byrow Logical. An indicator of whether station names increase along
+#'     rows (TRUE) or along columns (FALSE)
+#' @param nrow Numeric. The number of rows of microphones in the layout.
+#' @param ncol Numeric. The number of columns of microphones in the layout.
+#' @return Matrix, containing the station names within the array. If done correctly,
+#'     the matrix rows and columns should align with the spatial layout of the stations
+#'     in the field.
+#' @export
 
 layoutMatrix = function(st, stationNames = NULL,
                         start = c('topleft', 'topright', 'bottomleft', 'bottomright'),

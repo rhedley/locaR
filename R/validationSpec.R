@@ -6,11 +6,6 @@
 
 validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
                            to = NULL, tempC = 15, F_Low, F_High) {
-#validationSpec = function(st, index, locationEstimate = x$location, tempC=15) {
-
-  # #Get station info.
-  # sts = st$files[st$files$Station %in% st$detections[index, paste0('Station', 1:6)],]
-  # sts = sts[order(sts$Station),]
 
   if(is.matrix(coordinates)) {
     coordinates <- as.data.frame(coordinates)
@@ -76,7 +71,6 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
       SoundList=append(SoundList, list(a=sound1))
     }
   }
-  #SpatialAliasingIndex=SpatialAlias(MicCoords=sts, BirdCoords=data.frame(Easting=Data$Easting[i], Northing=Data$Northing[i], Elevation=Data$Elevation[i]))
 
   #get box to draw on spectrogram.
   xbox = c(0.1, Length-0.2)
@@ -88,7 +82,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
       next
     }
 
-    mySpectro(ListOfData = SoundList[[k]])
+    validSpectro(ListOfData = SoundList[[k]])
     rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000, border='red', lty=2, lwd=2)
   }
 }

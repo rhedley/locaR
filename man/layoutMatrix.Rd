@@ -13,6 +13,26 @@ layoutMatrix(
   ncol
 )
 }
+\arguments{
+\item{st}{List. Localization settings object generated using
+\code{\link{processSettings}}.}
+
+\item{stationNames}{Character vector. Vector of station names. Not required if st is provided.}
+
+\item{start}{Character. When sorted alphabetically, the location of the first station name.}
+
+\item{byrow}{Logical. An indicator of whether station names increase along
+rows (TRUE) or along columns (FALSE)}
+
+\item{nrow}{Numeric. The number of rows of microphones in the layout.}
+
+\item{ncol}{Numeric. The number of columns of microphones in the layout.}
+}
+\value{
+Matrix, containing the station names within the array. If done correctly,
+    the matrix rows and columns should align with the spatial layout of the stations
+    in the field.
+}
 \description{
 \code{layoutMatrix} creates a matrix of station names, which correspond to
 the layout of stations in space.This is passed to the \code{omniSpectro} function
@@ -26,18 +46,4 @@ ncol indicate how many rows and columns of microphones there are
 (assuming the array has a rectangular shape).
 Note that this layout function is provided for convenience, but users can easily
 specify their own custom layouts manually.
-}
-\details{
-@param st List. Localization settings object generated using
-     \code{\link{processSettings}}.
- @param stationNames Character vector. Vector of station names. Not required if st is provided.
- @param start Character. When sorted alphabetically, the location of the first station name.
- @param byrow Logical. An indicator of whether station names increase along
-     rows (TRUE) or along columns (FALSE)
- @param nrow Numeric. The number of rows of microphones in the layout.
- @param ncol Numeric. The number of columns of microphones in the layout.
- @return Matrix, containing the station names within the array. If done correctly,
- the matrix rows and columns should align with the spatial layout of the stations
- in the field.
- @export
 }
