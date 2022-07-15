@@ -1,6 +1,3 @@
-#Put all R functions here.
-
-
 
 #validSpectro####
 

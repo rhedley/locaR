@@ -1,0 +1,126 @@
+---
+title: "Introduction to locaR"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to locaR}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(solo)
+```
+
+# Introduction to Sound Localization.
+
+Sound localization is a method for pinpointing the location of a sound source in three-dimensional space. This package implements the steered response power method of Cobos et al. (REF) to estimate a source location. This is intended to analyze data coming from multiple time-synchronized recordings made with an array of widely spaced microphones. (Side note: other methods of sound localization estimate the direction towards an incoming sound using microphones in very close proximity, i.e. a few centimeters. This package does not do direction-of-arrival localization). To localize sound sources with this package, there are 3 basic data requirements:
+
+1. Synchronized recordings (typically synchronized within about 1 ms).
+2. Known microphone locations (more accurate microphone locations will translate into more accurate source localization).
+3. Microphones placed within earshot (sounds must reach multiple microphones. Typically it is best if each sound reaches at least four microphones. For birds, this typically means adjacent microphones can be separated by 35-40 meters in a grid formation).
+
+Achieving these stringent data collection requirements can be challenging in practice. At the present time, for example, most commercially available recording units are not capable of producing synchronized recordings. Current models (2022) that are capable of doing this are the Wildlife Acoustics SM3 (with GPS attachment), the Wildlife Acoustics SM4TS (with GPS attachment), and the Frontier Labs BAR-LT. In the future, this list will grow, for example there are currently plans to incorporate GPS synchronization into Audiomoth units. Other challenges include acquiring accurate microphone locations, for which it may be desirable to use a centimeter-accurate GPS (e.g. an RTK).
+
+The `locaR` package is designed to work with any synchronized recordings via the `localize()` function. However, many of the functions, most notably the `localizeSingle()` and `localizeMultiple()` functions, have been written specifically to work with Wildlife Acoustics (SM3 or SM4) recordings; these functions are intended to ease the user's data wrangling and data management burden.
+
+This vignette will introduce users to the localize function. 
+
+Data for this vignette was collected from nine synchronized recordings with Wildlife Acoustics SM3 units (with GPS attachment). The basic layout of microphones was in a square 3x3 grid, with adjacent microphones separated by 40 meters. Thus the array covers approximately 0.64 hectares. The environment was a mix of wetlands and forest, and the target species were birds. It is generally good practice to only localize sounds coming from within the convex hull of the array, since accuracy deteriorates outside of this area. This can be tricky, since by definition we don't know the location of the sounds. In this vignette we will ignore the issue. 
+
+Arranging data for input to the localize function involves two steps: 1) creating a named list of Wave objects; and 2) arranging the microphone coordinates in a data frame.
+
+# Creating a named list of Wave objects.
+
+This step is the most laborious, because generally speaking the .wav files we work with are long and contain many sound sources. Localizing the entire file would produce nonsensical results. Instead, what we need to do is extract one relevant portion of the .wav file at a time, and feed it into the localize function.
+
+To organize the recordings for input to the localize function, we will need to read them into R to create Wave objects using the tuneR package, then create a named list of Wave objects.
+
+
+```{r}
+#Get the absolute filepaths to example data provided in the solo package.
+#filepaths <- list.files(system.file('data', package = 'solo'), pattern = '.mp3', full.names = T)
+
+#Add location names as names to the vector, to create a named vector of filepaths. This will be useful later.
+#names(filepaths) <- sapply(strsplit(basename(filepaths), '_'), '[[', 1)
+```
+
+
+
+#read coordinates.
+
+coordinates <- read.csv(system.file('data', 'Vignette_Coordinates.csv', package = 'solo'), stringsAsFactors = F)
+
+#add stations as row names (useful for later).
+row.names(coordinates) <- coordinates$Station
+
+#read detections.
+
+detections <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'solo'), stringsAsFactors=F)
+
+#specify locFolder, where jpegs will be created. For this example, I created a folder in my D:/ drive.
+
+locFolder <- "D:/soloVignette"
+
+#now use a loop to localize.
+
+i <- 1
+for(i in 1:nrow(detections)) {
+  row <- detections[i,]
+
+  if(row$Station1 == "" | is.na(row$Station1)) {next}
+
+  #get names of relevant stations for this detection.
+  stationSubset <- unlist(row[1,paste0('Station',1:6)])
+  #remove NA stations, if applicable.
+  stationSubset <- stationSubset[!is.na(stationSubset)]
+  stationSubset <- stationSubset[stationSubset != '']
+
+
+  #make a new wavList containing only the stations of interest.
+
+  pathSubset = filepaths[stationSubset]
+
+
+  #use createWavList() to create a list of wave objects.
+  #The arguments from and to are from row$From and row$To.
+  #Buffer is set to 0.2 seconds (added to either side of the detection)
+  #channels can be set to NULL, since we want to use the left channel (default).
+  #adjustments can be set to NULL, since all files were well synchronized in advance.
+  #We can set index = i, so that if there is an error, we can pinpoint which detection
+  #it came from.
+  wl <- createWavList(paths = pathSubset, names = stationSubset,
+                      from = row$From, to = row$To, buffer = 0.2, index=i)
+
+  #Get low and high frequency.
+  F_Low <- row$F_Low
+  F_High <- row$F_High
+
+  #make a new coordinates data.frame with only relevant stations.
+  #Subsetting by the stations vector ensures that the order is the
+  #same as the wl object.
+
+  crd <- coordinates[stationSubset,]
+
+  #Create jpeg name.
+  jpg <- paste0(formatC(i,width=4,flag='0'), '.jpeg')
+
+  #localize(). Will leave most parameters at their default values.
+  loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
+                  F_Low = F_Low, F_High = F_High, jpegName = jpg, keep.SearchMap = T)
+
+  if(i == 1) {OUT = cbind(row,loc$location)} else {OUT = rbind(OUT, cbind(row,loc$location))}
+
+}
+
+write.csv(OUT, file.path(locFolder, 'vignette_localizations.csv'))
+
+
+
+

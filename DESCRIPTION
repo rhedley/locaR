@@ -16,5 +16,8 @@ BugReports: https://github.com/mabecker89/solo/issues
 RoxygenNote: 7.1.1
 Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
 Suggests: 
-    testthat (>= 2.0.0)
+    testthat (>= 2.0.0),
+    knitr,
+    rmarkdown
 Config/testthat/edition: 2
+VignetteBuilder: knitr
