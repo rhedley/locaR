@@ -15,40 +15,56 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(solo)
+#library(locaR)
 ```
 
-# Introduction to Sound Localization.
+# Introduction to the locaR package.
 
-Sound localization is a method for pinpointing the location of a sound source in three-dimensional space. This package implements the steered response power method of Cobos et al. (REF) to estimate a source location. This is intended to analyze data coming from multiple time-synchronized recordings made with an array of widely spaced microphones. (Side note: other methods of sound localization estimate the direction towards an incoming sound using microphones in very close proximity, i.e. a few centimeters. This package does not do direction-of-arrival localization). To localize sound sources with this package, there are 3 basic data requirements:
+Sound localization is a method for pinpointing the location of a sound source in three-dimensional space. It helps answer the question, where did that sound originate from? Answering this question can be valuable in the fields of ecology and behaviour, as knowing an animal's location can provide important insights into various aspects of their biology. The functions in this package may also work on other sound localization applications (e.g. gunshot localization), but have only been tested for localizing birds. 
 
-1. Synchronized recordings (typically synchronized within about 1 ms).
-2. Known microphone locations (more accurate microphone locations will translate into more accurate source localization).
-3. Microphones placed within earshot (sounds must reach multiple microphones. Typically it is best if each sound reaches at least four microphones. For birds, this typically means adjacent microphones can be separated by 35-40 meters in a grid formation).
+This package implements the modified steered response power method of Cobos et al. (2010) to estimate a source location. This is intended to analyze data from multiple time-synchronized recordings made with an array of widely spaced microphones. (Side note: other types of sound localization methods focus on estimating the direction towards an incoming sound using microphones in very close proximity, i.e. a few centimeters. This package does not do direction-of-arrival localization). Besides the actual localization, this package includes various functions to help manage and organize localization data, to help with detecting sounds of interest in a localization array, and to validate localization estimates.
+
+To localize sound sources with this package, there are 3 basic data requirements:
+
+1. Recordings must be synchronized (typically within about 1 ms).
+2. Microphone locations are known (more accurate microphone locations will translate into more accurate source localization).
+3. Microphones must be placed within earshot (sounds must reach multiple microphones. Typically it is best if each sound reaches at least four microphones. For birds, this typically means adjacent microphones can be separated by 35-40 meters in a grid formation).
 
 Achieving these stringent data collection requirements can be challenging in practice. At the present time, for example, most commercially available recording units are not capable of producing synchronized recordings. Current models (2022) that are capable of doing this are the Wildlife Acoustics SM3 (with GPS attachment), the Wildlife Acoustics SM4TS (with GPS attachment), and the Frontier Labs BAR-LT. In the future, this list will grow, for example there are currently plans to incorporate GPS synchronization into Audiomoth units. Other challenges include acquiring accurate microphone locations, for which it may be desirable to use a centimeter-accurate GPS (e.g. an RTK).
 
-The `locaR` package is designed to work with any synchronized recordings via the `localize()` function. However, many of the functions, most notably the `localizeSingle()` and `localizeMultiple()` functions, have been written specifically to work with Wildlife Acoustics (SM3 or SM4) recordings; these functions are intended to ease the user's data wrangling and data management burden.
+I often say that sound localization is an art as much as a science. The reason is that achieving the most accurate localization results requires a skeptical eye and careful attention to detail. In other words, blindly trusting the localization algorithm output is likely to lead to some number of incorrect location estimates. For some research applications, some amount of error may be acceptable, and for others not. Fortunately, by developing an intuition for localization, erroneous estimates can be identified and either removed or improved. The `locaR` package includes some tools for validating localization outputs. I also recommend reading the Sound Localization Basics vignette, as it introduces some of the issues one is likely to encounter.
 
-This vignette will introduce users to the localize function. 
+The `locaR` package is designed to work with any synchronized recordings via the `localize()` function. However, many of the functions, most notably the `localizeSingle()` and `localizeMultiple()` functions, have been written specifically to work with Wildlife Acoustics (SM3 or SM4) recordings; these functions are intended to ease the user's data wrangling and data management burden. 
 
-Data for this vignette was collected from nine synchronized recordings with Wildlife Acoustics SM3 units (with GPS attachment). The basic layout of microphones was in a square 3x3 grid, with adjacent microphones separated by 40 meters. Thus the array covers approximately 0.64 hectares. The environment was a mix of wetlands and forest, and the target species were birds. It is generally good practice to only localize sounds coming from within the convex hull of the array, since accuracy deteriorates outside of this area. This can be tricky, since by definition we don't know the location of the sounds. In this vignette we will ignore the issue. 
+# The localize() function.
 
-Arranging data for input to the localize function involves two steps: 1) creating a named list of Wave objects; and 2) arranging the microphone coordinates in a data frame.
+The remainder of this vignette will introduce users to the `localize()` function, which is the backbone of the package. 
 
-# Creating a named list of Wave objects.
+## Loading the example data.
 
-This step is the most laborious, because generally speaking the .wav files we work with are long and contain many sound sources. Localizing the entire file would produce nonsensical results. Instead, what we need to do is extract one relevant portion of the .wav file at a time, and feed it into the localize function.
+Example data included with the `locaR` package was collected from nine synchronized recordings with Wildlife Acoustics SM3 units (with GPS attachment). The basic layout of microphones was in a square 3x3 grid, with adjacent microphones separated by 40 meters. Thus the array covers approximately 0.64 hectares. The environment was a mix of wetlands and forest, and the target species were birds. Note that the example data was converted to .mp3 format to reduce the size of the package; these become Wave objects once read into R.
+
+To access the location of the data, use the `system.file()` function, as follows:
+
+```{r, eval = FALSE}
+list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
+```
+
+Arranging data for input to the localize function involves three steps: 1) creating a named list of Wave objects; 2) arranging the microphone coordinates in a data frame; and 3) specifying several pieces of ancillary information.
+
+## Creating a named list of Wave objects.
+
+This step can be laborious, because generally speaking the .wav files we work with are long and contain many sound sources. Localizing the entire file would produce nonsensical results. Instead, what we need to do is extract one relevant portion of the .wav file at a time, and feed it into the localize function.
 
 To organize the recordings for input to the localize function, we will need to read them into R to create Wave objects using the tuneR package, then create a named list of Wave objects.
 
 
 ```{r}
-#Get the absolute filepaths to example data provided in the solo package.
-#filepaths <- list.files(system.file('data', package = 'solo'), pattern = '.mp3', full.names = T)
+#Get a list of file paths to the example data.
+filepaths <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
 
 #Add location names as names to the vector, to create a named vector of filepaths. This will be useful later.
-#names(filepaths) <- sapply(strsplit(basename(filepaths), '_'), '[[', 1)
+names(filepaths) <- sapply(strsplit(basename(filepaths), '_'), '[[', 1)
 ```
 
 
