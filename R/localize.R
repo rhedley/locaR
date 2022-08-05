@@ -25,7 +25,12 @@
 #'     for sound sources. Passed to \code{\link{makeSearchMap}}.
 #' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
 #'     to be localized.
-#' @param tempC Numeric. Temperature in degrees C, which affects the speed of sound.
+#' @param tempC Numeric. Temperature in degrees C, which is used to calculate
+#'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
+#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
+#'     NULL, in which case the speed of sound is calculated based on the specified
+#'     temperature (assuming the transmission medium is air). If soundSpeed is
+#'     specified, the tempC value is over-ridden.
 #' @param plot Logical. Whether to plot jpegs.
 #' @param locFolder Character. File path to the folder where localization jpegs
 #'     (heatmaps and spectrograms) are to be created. Only required if plot = TRUE.
@@ -54,17 +59,23 @@
 
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
                      resolution = 1, F_Low = 2000, F_High = 8000, tempC = 15,
-                     plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
+                     soundSpeed = NULL, plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
                      InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
-
   if(length(names(wavList)) < length(wavList)) {
     stop('wavList must be named.')
   }
 
   if(sum(!names(wavList) %in% coordinates$Station) > 0) {
     stop('Some names in wavList not found in coordinates!')
+  }
+
+  #Define speed of sound based on speed in air if not already defined.
+  if(is.null(soundSpeed)) {
+    Vc <- 331.45*sqrt(1+tempC/273.15)
+  } else {
+    Vc <- soundSpeed
   }
 
   #Get station names
@@ -88,12 +99,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
   Fs <- wavList[[1]]@samp.rate
 
   #Get DataLen
-
   DataLen <- length(wavList[[1]]@left)
-
-  #Define speed of sound.
-
-  Vc <- 331.45*sqrt(1+tempC/273.15)
 
   #Create Para list.
   Para <- list(GCCMethod = "PHAT", Fs=Fs, DataLen=DataLen, Vc=Vc, tempC=tempC,

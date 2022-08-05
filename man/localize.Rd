@@ -16,6 +16,7 @@ localize(
   F_Low = 2000,
   F_High = 8000,
   tempC = 15,
+  soundSpeed = NULL,
   plot = TRUE,
   locFolder = NULL,
   jpegName = "000.jpeg",
@@ -51,7 +52,13 @@ for sound sources. Passed to \code{\link{makeSearchMap}}.}
 \item{F_Low, F_High}{Numeric. The low and high frequency, in Hz, of the sound
 to be localized.}
 
-\item{tempC}{Numeric. Temperature in degrees C, which affects the speed of sound.}
+\item{tempC}{Numeric. Temperature in degrees C, which is used to calculate
+the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).}
+
+\item{soundSpeed}{Numeric. The speed of sound in meters per second. Default is
+NULL, in which case the speed of sound is calculated based on the specified
+temperature (assuming the transmission medium is air). If soundSpeed is
+specified, the tempC value is over-ridden.}
 
 \item{plot}{Logical. Whether to plot jpegs.}
 

@@ -1,4 +1,4 @@
-Package: solo
+Package: locaR
 Type: Package
 Title: Sound Localization in R
 Version: 0.1.0
@@ -11,8 +11,8 @@ Description: More about what it does (maybe more than one line)
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/mabecker89/solo
-BugReports: https://github.com/mabecker89/solo/issues
+URL: https://github.com/mabecker89/locaR
+BugReports: https://github.com/mabecker89/locaR/issues
 RoxygenNote: 7.1.1
 Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
 Suggests: 
