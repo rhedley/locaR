@@ -18,6 +18,11 @@ knitr::opts_chunk$set(
 #library(locaR)
 ```
 
+```{r echo=FALSE}
+devtools::load_all()
+```
+
+
 The `locaR` package is designed to work with any synchronized recordings via the `localize()` function. However, many of the functions, most notably the `localizeSingle()` and `localizeMultiple()` functions, have been written specifically to work with Wildlife Acoustics (SM3 or SM4TS) recordings; those functions are intended to ease the user's data wrangling and data management burden. Even if those functions are used, the final localization is conducted via a call to the `localize()` function. Therefore, users should understand how the `localize()` function works. This vignette aims to provide that basic understanding by way of a worked example.
 
 # The localize() function.
@@ -47,7 +52,12 @@ First, let's create a vector of file paths:
 ```{r eval=FALSE}
 #Get a list of file paths to the example data.
 filepaths <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
-
+```
+```{r echo=FALSE}
+#Get a list of file paths to the example data.
+filepaths <- list.files('../data/', pattern = '.mp3', full.names = T)
+```
+```{r}
 #Add location names as names to the vector, to create a named vector of filepaths. 
 #In this case, the location names appear as the first part of the file name before the first underscore.
 #Adding these as names to the vector will be useful later.
@@ -62,14 +72,18 @@ Let's read in detection data, which contains the above information.
 #Read detection data.
 detections <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors=F)
 ```
+```{r echo=FALSE}
+#Read detection data.
+detections <- read.csv('../data/Vignette_Detections_20200617_090000.csv', stringsAsFactors=F)
+```
 
 We then need to use the detection information to extract the relevant portions of the relevant .wav files. This can be done using the `createWavList()` function. For illustrative purposes, let's read the first sound of interest now. Later, we will create a loop to run through all seven sounds of interest in the example data.
 
 The first sound of interest occurred from 0.8 seconds to 1.1 seconds, and was a Red-eyed Vireo (REVI) in the frequency range of 2000 to 6500 Hz. Five microphones have been selected for localization: Ex-4, Ex-5, Ex-6, Ex-8, and Ex-9. These microphones were selected because they were the ones on which the sound was clearest. The main goal was to select microphones such that the source would lie within the convex hull of the microphones (see the [introductory vignette](Intro_To_locaR.html)).
 
-Let's read in the data.
+Let's organize the detection data, and run the `createWavList()` function:
 
-```{r eval=FALSE}
+```{r}
 #Extract the first row of the detections data.
 row <- detections[1,]
 
@@ -91,16 +105,23 @@ wl <- createWavList(paths = paths, names = stationSubset,
 
 We have now loaded a named list of Wave objects pertaining to the first sound of interest in the .wav files. If you inspect the wl object, you will see that it includes five Wave objects of the same length (16801 samples or 0.7 seconds). 
 
+```{r}
+head(wl)
+```
+
 ## Step 2: Arrange the microphone coordinates in a data frame.
 
-The coordinates are stored in a csv file called Vignette_Coordinates.csv. **Important: Coordinates must always have units of meters. E.g. a UTM-type coordinate system is appropriate**.
+Now we need to organize the coordinates so that the `localize()` function knows the spatial configuration of the microphones. The coordinates are stored in a csv file called Vignette_Coordinates.csv. **Important: coordinates must always have units of meters. E.g. a UTM-type coordinate system is appropriate**.
 
 Read the coordinates with the read.csv function:
 
 ```{r eval=FALSE}
-
 coordinates <- read.csv(system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
-
+```
+```{r echo=FALSE}
+coordinates <- read.csv('../data/Vignette_Coordinates.csv', stringsAsFactors = F)
+```
+```{r}
 #Add location names (in the Station column) as row names. This will be useful later.
 row.names(coordinates) <- coordinates$Station
 
@@ -115,10 +136,13 @@ Only a few other pieces of information need to be specified. First, an output di
 ```{r eval=FALSE}
 locFolder <- system.file('data', package = 'locaR')
 ```
+```{r echo=FALSE}
+locFolder <- '../data/'
+```
 
 Next, create a name for the jpeg to be created. If working within a loop, I would create a name based on the loop index or some other identifier, to best keep track of which sound it pertains to. Here I'll just call it 0001.jpeg.
 
-```{r eval=FALSE}
+```{r}
 jpg <- '0001.jpeg'
 ```
 
@@ -126,7 +150,7 @@ jpg <- '0001.jpeg'
 
 Time to localize the sound of interest. We will leave most parameters at their default values.
 
-```{r eval=FALSE}
+```{r}
 loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
                   F_Low = row$F_Low, F_High = row$F_High, jpegName = jpg, keep.SearchMap = T)
 ```
