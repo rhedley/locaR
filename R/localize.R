@@ -159,7 +159,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
     #Plot 1
     validationSpec(wavList = wavList, coordinates = NodePos,
-                   locationEstimate = location, tempC = tempC, F_Low = F_Low,
+                   locationEstimate = location, soundSpeed = Vc, F_Low = F_Low,
                    F_High = F_High, from = NULL, to = NULL)
 
     #Plot 2

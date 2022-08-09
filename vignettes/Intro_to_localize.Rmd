@@ -35,8 +35,9 @@ Example data included with the `locaR` package was collected from nine synchroni
 
 To access the location of the data, use the `system.file()` function, as follows:
 
-```{r eval=FALSE}
-list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
+```{r}
+f <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
+basename(f)
 ```
 
 Arranging data for input to the localize function involves three steps: 1) create a named list of Wave objects; 2) arrange the microphone coordinates in a data frame; and 3) specify several pieces of ancillary information.
@@ -49,15 +50,10 @@ To organize the recordings for input to the localize function, we will need to r
 
 First, let's create a vector of file paths:
 
-```{r eval=FALSE}
+```{r}
 #Get a list of file paths to the example data.
 filepaths <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
-```
-```{r echo=FALSE}
-#Get a list of file paths to the example data.
-filepaths <- list.files('../data/', pattern = '.mp3', full.names = T)
-```
-```{r}
+
 #Add location names as names to the vector, to create a named vector of filepaths. 
 #In this case, the location names appear as the first part of the file name before the first underscore.
 #Adding these as names to the vector will be useful later.
@@ -68,13 +64,9 @@ The above file path information leads to the full .wav files. To localize birds,
 
 Let's read in detection data, which contains the above information.
 
-```{r eval=FALSE}
+```{r}
 #Read detection data.
 detections <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors=F)
-```
-```{r echo=FALSE}
-#Read detection data.
-detections <- read.csv('../data/Vignette_Detections_20200617_090000.csv', stringsAsFactors=F)
 ```
 
 We then need to use the detection information to extract the relevant portions of the relevant .wav files. This can be done using the `createWavList()` function. For illustrative purposes, let's read the first sound of interest now. Later, we will create a loop to run through all seven sounds of interest in the example data.
@@ -115,13 +107,9 @@ Now we need to organize the coordinates so that the `localize()` function knows 
 
 Read the coordinates with the read.csv function:
 
-```{r eval=FALSE}
-coordinates <- read.csv(system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
-```
-```{r echo=FALSE}
-coordinates <- read.csv('../data/Vignette_Coordinates.csv', stringsAsFactors = F)
-```
 ```{r}
+coordinates <- read.csv(system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
+
 #Add location names (in the Station column) as row names. This will be useful later.
 row.names(coordinates) <- coordinates$Station
 
@@ -133,11 +121,8 @@ crd <- coordinates[stationSubset,]
 
 Only a few other pieces of information need to be specified. First, an output directory where the `localize()` function can create a JPEG file for data visualization. Select/create a folder that suits you, or use the following:
 
-```{r eval=FALSE}
+```{r}
 locFolder <- system.file('data', package = 'locaR')
-```
-```{r echo=FALSE}
-locFolder <- '../data/'
 ```
 
 Next, create a name for the jpeg to be created. If working within a loop, I would create a name based on the loop index or some other identifier, to best keep track of which sound it pertains to. Here I'll just call it 0001.jpeg.
@@ -157,27 +142,50 @@ loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
 
 The process takes some time to run. A significant part (about half) of this computational process involves creating the "InitData", which is related to the spatial grid to be searched during localization. In this case, we are searching an area 64 meters by 101 meters by 28 meters, with a 1 meter resolution. There are therefore 180,992 grid cells to be searched, and each involves some computation. Fortunately, if localizing multiple sounds using the same set of microphones (as in the case of our Red-eyed Vireo, which sang six times in seven seconds), the InitData can be saved and re-used to speed up computation (argument keep.InitData = TRUE).
 
-Great, now let's look at the output. If the code ran successfully, it should have created the following jpeg image in the folder you specified (locFolder).
+Great, now let's look at the results. There are two relevant outputs. First, the object `loc`, which contains the results of the localization; second, a jpeg image for validation and quality control. 
+
+### The list of results.
+
+The `loc` object includes multiple components combined into a list object. The first of these is the location estimate, which was calculated via a grid search followed by selecting the grid cell with the highest "power". The power can be thought of as a (unitless) estimate of the likelihood that the sound of interest originated from that location.
+
+```{r}
+loc$location
+```
+The other three components of the `loc` list are less important. The InitData, as mentioned above, can be recycled to save computation time when multiple localizations are being run using the same microphones. The SearchMap contains the x-, y- and z-coordinates of all the cells in the search grid. The SMap contains the power values of each grid cell. SearchMap and SMap objects would only be important if one wanted to do more involved analysis or a new visualization of the search grid - this is likely to be very rare.
+
+So to summarize, the most critical piece of the resulting list is the estimated location of the sound source.
+
+### The jpeg image for validation.
+
+The `localize()` function also created a .jpeg image in the folder you specified (`locFolder`). It should look like this:
 
 ![](0001.jpeg){width=100% height=100%}
+There are two panels, and it is worth understanding both. The left panel shows the spectrograms of the sound of interest **after correcting for the time delays to each microphone**. Put another way, the source's location is estimated first, then the delays are estimated from that source to each microphone, and those delays are subtracted out prior to creating the spectrograms. This is a very useful visualization, because a trained user can quickly compare all of the spectrograms. If the location is correct, all of the spectrograms will have successfully been brought into alignment, and no channel will be delayed relative to any other. If the localization algorithm failed in some way, then one or more channel will appear delayed relative to the others. Vertical lines occur every 0.05 seconds to facilitate comparison, and one second of sound is shown (unless, as is the case above, the sound is less than 1 second long). In the example above, it can be seen that the localization was successful, because the five spectrograms line up. 
 
+Here's what the plot would have looked like if the estimated location had been 10 meters farther east:
 
+![](fakeLoc.png)
 
-The first thing we need to do is to load "detection data", which contains information about *when* within the file each sound of interest occurred, and *which* microphones to use for localization. Although the example data contains nine microphones, they are not all needed for localization. I usually select five or six microphones to conduct the localization. These are generally the set of microphones on which the sound of interest appears clearest. As mentioned in the [introductory vignette](Intro_To_locaR.html), the aim is to ensure that the sound source lies within the convex hull of the selected microphones.
+In the above image, the top two spectrograms and the bottom spectrogram are shifted slightly to the left, while the third and fourth are shifted slightly to the right. This is subtle, but a trained eye can very quickly check these spectrograms and see immediately that the localization algorithm selected the wrong location. In fact, with practice, one can infer roughly where the true location must be based on which microphones are shifted left versus right. In this case, the true location must be closer to microphones Ex-4, Ex-5 and Ex-8 (those that are left-shifted) and farther from Ex-6 and Ex-9 (right-shifted).
 
-This step has already been completed for the example data, and the detection data is stored in a csv file called Vignette_Detections_20200617_090000.csv.
+A note worth driving home is that this method of validation can only check for errors in the algorithm (see the Intro to locaR vignette for details). In other words, it checks that the algorithm did its job, given the data, but cannot check errors in microphone locations, errors in synchronization, or errors due to the source's location.
 
+The right panel is also useful, as it provides a spatial visualization of the source location (gray dot = the estimated source location). Two things to check for are 1) how concentrated the heat map is around the source, and 2) how close the source's estimated position is to the edge of the array. In this case, the heat map is well concentrated around the source, which tends to indicate an accurate location estimate. Sometimes, the heat map will appear "washed out", such that the highest power estimates are spread all across the array; this tends to correspond with a poor localization. The source is also estimated to be several meters from the edge of the convex hull around the microphones. So this localization looks great.
 
-#specify locFolder, where jpegs will be created. For this example, I created a folder in my D:/ drive.
+When localization results don't look good, there are a few options. Re-running the localization with different settings often gives a better result. For example, in my work, overlapping non-target species can disrupt a localization (the non-target bird gets localized instead of the target bird). In such cases, I will sometimes try to adjust the start/end time of the detection to only localize a short portion of the song that is not overlapped. This can be very effective. Adjusting the frequency bounds can also be worth trying. Selecting a different set of microphones (if other options are available) can also work very well. For example, if the source is too close to the edge of the array, are there other microphones that could be selected to surround the source? 
 
-locFolder <- "D:/soloVignette"
+If all else fails, it worth asking is whether the data point can be discarded. If a bird sings multiple times in a row, I can often reasonably assume the bird hasn't moved (especially if I can localize the songs before and after the problem song). Sometimes, discarding the data point is the best option, since some sounds can't be localized.
 
-#now use a loop to localize.
+# Creating a loop with the localize() function.
 
-i <- 1
+It is impractical to write all the above code to localize a single sound. Naturally, it makes sense to use loops to run through many detections at once. Using the code above, let's use a loop to localize all seven detections in the example data.
+
+```{r}
 for(i in 1:nrow(detections)) {
+  #Select the ith row.
   row <- detections[i,]
 
+  #Skip rows that don't have a value in the Station1 column.
   if(row$Station1 == "" | is.na(row$Station1)) {next}
 
   #get names of relevant stations for this detection.
@@ -188,15 +196,9 @@ for(i in 1:nrow(detections)) {
 
 
   #make a new wavList containing only the stations of interest.
-
   pathSubset = filepaths[stationSubset]
 
-
   #use createWavList() to create a list of wave objects.
-  #The arguments from and to are from row$From and row$To.
-  #Buffer is set to 0.2 seconds (added to either side of the detection)
-  #channels can be set to NULL, since we want to use the left channel (default).
-  #adjustments can be set to NULL, since all files were well synchronized in advance.
   #We can set index = i, so that if there is an error, we can pinpoint which detection
   #it came from.
   wl <- createWavList(paths = pathSubset, names = stationSubset,
@@ -207,9 +209,6 @@ for(i in 1:nrow(detections)) {
   F_High <- row$F_High
 
   #make a new coordinates data.frame with only relevant stations.
-  #Subsetting by the stations vector ensures that the order is the
-  #same as the wl object.
-
   crd <- coordinates[stationSubset,]
 
   #Create jpeg name.
@@ -223,7 +222,19 @@ for(i in 1:nrow(detections)) {
 
 }
 
-write.csv(OUT, file.path(locFolder, 'vignette_localizations.csv'))
+```
 
+Now we have localized all of the example sounds. Seven different jpegs have been created (0001.jpeg to 0007.jpeg), and the locations are stored in the OUT dataframe.
 
+```{r}
+OUT
+```
+
+From looking at the locations in the OUT dataframe, we can see that the six Red-eyed Vireo (REVI) songs all were localized within about 2 meters of one another in the x-y plane, suggesting that the bird didn't move within the recording. Note that the z-axis locations are a bit more variable, because all the microphones were placed on a flat surface, which makes it difficult to resolve the z-axis. I don't generally trust the z-axis estimates much, but theoretically better 3D results could be attained by placing some microphones at different elevations (e.g. up in trees). 
+
+The final detection was of a Clay-colored Sparrow (CCSP) about 40 meters away from the Red-eyed Vireo. That was a very low quality localization, since the song was delivered very faintly and was essentially inaudible on all but two microphones. Still, the estimated location was placed close to microphone Ex-5, which could be correct simply based on the relative clarity of the song on the microphones (it is clearest on Ex-5). If I had to guess, I would be fairly confident that that song was localized within about 10 meters of its true location, but I am not confident beyond that.
+
+# Conclusion.
+
+The `localize()` function is the backbone of the `locaR` package, as it is the function that localizes sounds and creates the visualizations needed for validation/quality control. This vignette has introduced how to use this function, which can be adapted to any localization project. Quality control requires a sharp eye and a solid understanding of the localization fundamentals, but can help ensure that the estimated locations are as accurate as possible.
 

@@ -5,7 +5,7 @@
 #Need to change the arguments to align with localize() rather than localizeSingle().
 
 validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
-                           to = NULL, tempC = 15, F_Low, F_High) {
+                           to = NULL, tempC = 15, soundSpeed = NULL, F_Low, F_High) {
 
   if(is.matrix(coordinates)) {
     coordinates <- as.data.frame(coordinates)
@@ -28,8 +28,14 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
   colnames(D) = all$ID
   rownames(D) = all$ID
   Dists = D['bird',2:ncol(D)]
-  #Speed of sound
-  Vc = 331.45*sqrt(1+tempC/273.15)
+
+  #Define speed of sound based on speed in air if not already defined.
+  if(is.null(soundSpeed)) {
+    Vc <- 331.45*sqrt(1+tempC/273.15)
+  } else {
+    Vc <- soundSpeed
+  }
+
   #Time delays.
   Delays = (Dists - min(Dists))/Vc
 
@@ -73,7 +79,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
   }
 
   #get box to draw on spectrogram.
-  xbox = c(0.1, Length-0.2)
+  xbox = c(0.1, Length-0.2-0.1)
   ybox = c(F_Low, F_High)
 
   for(k in 1:6) {
