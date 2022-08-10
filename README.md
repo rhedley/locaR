@@ -1,2 +1,2 @@
-# solo
+# locaR
 Sound Localization in R

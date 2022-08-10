@@ -2,7 +2,7 @@
 #'
 #' \code{createSettings} takes a series of arguments and creates a data
 #' frame (or csv) with standard structure that can be read by other functions in
-#' the solo package.
+#' the locaR package.
 #'
 #' @param projectName Character. A string specifying the name of a project.
 #' @param run Numeric. Within each survey, start with run = 1, then count

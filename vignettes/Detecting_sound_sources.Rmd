@@ -1,0 +1,97 @@
+---
+title: "Detecting sound sources"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Detecting sound sources}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(locaR)
+```
+
+```{r echo=FALSE}
+devtools::load_all()
+```
+
+This vignette will introduce users to the process for detecting sound sources of interest in their recordings. This step is peripheral to the rest of the `locaR` package, since the package is agnostic to the method used to detect sounds of interest. For instance, if full automation is desired, then automatic recognizers could be used as part of the workflow. This vignette will introduce a manual detection method which is somewhat labour intensive, but can be comprehensive, as it is possible to use this method to detect and localize every sound coming from within the array during a period of time. Automated methods, on the other hand, tend to miss some sounds of interest (so do manual methods, but it's hard to beat a trained expert).
+
+Regardless of the detection method, several pieces of information about each sound prior to localization. These are:
+
+1. The date/time of the recording session (which I will often refer to as a "survey").
+2. The start/end time of the sound, relative to the start of the recording session, in seconds.
+3. The low and high frequencies of the sound of interest.
+4. The set of recording units to use for localization.
+
+A few other pieces of information are needed for localization, but I treat these as either project-specific metadata or survey-specific metadata.
+
+Project-specific metadata only need to be specified once per project:
+
+5. Coordinates for each recording unit.
+
+Survey-specific metadata need to be specified once per survey:
+
+6. The channel of each recording unit to use for localization (note, I generally select the left channel by default, unless it is clear upon inspection that the left channel was faulty. I use the same channel to localize all detections in a survey to reduce hassle).
+7. Start-time adjustments for each file. This is only needed in the rare case that the recordings were not properly synchronized. The user can specify an offset for any/all recordings to bring them into synchrony.
+
+In this vignette, we will work with the example data provided in the package. See the "Intro to localize" vignette for a description of the data. Alongside the recordings, the coordinates are provided in a file called Vignette_Coordinates.csv. Recordings were single-channel, and all were properly synchronized ahead of time, so points 6 and 7 above don't apply.
+
+# Setting up a survey.
+
+The detection process starts by setting up a "survey", where one survey corresponds to one recording session across an array. Surveys can be set up with the `setupSurvey()` function. Using this function to set up a survey has the advantage that it sets up files in a particular file/folder structure, which can be recognized by the `localizeMultiple()` function to significantly streamline the localization process.
+
+Here's how to use the `setupSurvey()` function:
+```{r}
+survey <- setupSurvey(folder = '.', projectName = 'Ex', run = 1,
+                      coordinatesFile = system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'),
+                      siteWavsFolder = system.file('data', package = 'locaR'),
+                      date = '20200617', time = '090000', surveyLength = 7)
+```
+The above code creates a survey in the specified folder (in this case, the working directory '.'). Each survey within a project exists in a folder named with the convention date_time, where the date is YYYYMMDD and the time is HHMMSS. If a survey already has been created in that folder, the above code will cause an error. To recreate a survey, one can delete or rename the existing survey, then re-run the above code, and it should work.
+
+The example folder structure looks like this:
+
+* 20200617_090000
+    * Channels file.
+    * Run1 folder.
+        * Detections file.
+        * Settings file.
+        * Localizations folder.
+        * Spectrograms folder.
+        
+The Channels file is placed directly within the survey folder, since channels are specified once per survey. Then comes a "Run" folder, where I tend to have one "run" every time I run the `localizeMultiple()` function. If I need to run a subset of detections again, I create a new folder called Run2, and put them in there, to avoid over-writing the good localizations that were completed in Run 1.
+
+Within each run folder, the detections file contains the metadata for each detection. The Settings file contains information to be fed to the algorithm. The Localizations folder is where the jpeg images created during localization are put (see the Introduction to localize() vignette for an explanation of those). The Spectrograms folder is where we will create spectrograms for detecting sounds of interest.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
