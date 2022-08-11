@@ -8,11 +8,12 @@
 #'     using the \code{\link{createSettings}} function.
 #' @param getFilepaths Logical, indicating whether to add filepath information
 #'     using \code{\link{getFilepaths}}.
+#' @param types Character. If getFilepaths is TRUE, which types of files to look for ('wav' or 'mp3').
 #' @return A list with information needed for sound localization, including
 #'     microphone coordinates, the existing detections, channels to use
 #'     for each recording unit, and information specifying the size and
 #'     resolution of the grid within which to localize sound sources.
-processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths = FALSE) {
+processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths = FALSE, types = 'wav') {
 
   #Either use settings or read settingsFile.
   if(is.data.frame(settings)) {Settings <- settings} else {
@@ -105,7 +106,7 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
             surveyLength = surveyLength)
 
   if(getFilepaths) {
-    st$files = getFilepaths(settings = st)
+    st$files = getFilepaths(settings = st, types = types)
   }
 
   return(st)

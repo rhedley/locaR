@@ -47,7 +47,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
       Channel <- ListOfData$channel
       first <- ListOfData$first
       last <- ListOfData$last
-      imagep(ListOfData$time, ListOfData$freq, t(ListOfData$amp),
+      oce::imagep(ListOfData$time, ListOfData$freq, t(ListOfData$amp),
              drawPalette=F, ylim=c(0,10), mar=rep(0,4), axes=F,
              breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
       legend('topleft', legend=paste0(Mic, ifelse(Channel==2,'b','a')), bty='n', cex=2)
@@ -65,7 +65,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
 
   #make plot of the microphone layout.
   jpeg(paste0(specDir,'/MicLayout.jpeg'), height=7, width=7, units='in', res=200)
-  on.exit(dev.off(), add = TRUE)
+  on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
   par(mar=c(4,6,1,1))
   plot(st$files$Easting, st$files$Northing, pch=20, las=1,
        xlim=c(min(st$files$Easting)-30, max(st$files$Easting)+30),
@@ -97,11 +97,12 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
 
       #If there is a sound file, read it.
       if(!is.na(file)) {
-        #Get sample rate
-        Fs <- readWave(file, header=T)$sample.rate
+
+        #Get sample rate.
+        Fs <- tuneR::readWave(file, header=T)$sample.rate
 
         #Get bitrate
-        Br <- readWave(file, header=T)$bits
+        Br <- tuneR::readWave(file, header=T)$bits
 
         #Get time adjustment
         A <- st$files$Adjustment[st$files$Station==s]
@@ -111,9 +112,9 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
 
         #Read appropriate channel from file.
         if(Ch == 1 | is.na(Ch)){
-          sound1 <- readWave(file, from = first-A, to = last-A, units = 'seconds')@left
+          sound1 <- tuneR::readWave(file, from = first-A, to = last-A, units = 'seconds')@left
         } else {
-          sound1 <- readWave(file, from = first-A, to = last-A, units = 'seconds')@right
+          sound1 <- tuneR::readWave(file, from = first-A, to = last-A, units = 'seconds')@right
         }
 
         #If there is an adjustment, and this is the first interval, add white noise to beginning.
@@ -123,7 +124,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
                              Wave(sound1[1:(length(sound1)-Fs*A)], samp.rate=Fs, bit=Br, pcm=T))
         }
         #Spectrogram
-        sound1 <- spectro(sound1, f=Fs,  plot=F, ovlp=0, norm=F)
+        sound1 <- seewave::spectro(sound1, f=Fs,  plot=F, ovlp=0, norm=F)
 
         sound1$mic <- st$files$Station[st$files$Station==s]
         sound1$channel <- st$files$Channel[st$files$Station==s]
@@ -141,7 +142,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
 
     #Create jpeg.
     jpeg(paste0(specDir, '/',output$text[i], '.jpeg'), width=30, height=15, units='in', res=200)
-    on.exit(dev.off(), add = TRUE)
+    on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
     par(mfrow=c(nrow(lm),ncol(lm)))
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))

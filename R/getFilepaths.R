@@ -7,10 +7,11 @@
 #' @param settings Either a filepath to a settings file (csv) or a settings
 #'     list. If a filepath, the filepath will first be passed to
 #'     \code{\link{processSettings}}.
+#' @param types Character, specifying the file type to be searched for. Either 'wav' or 'mp3'.
 #' @return A data frame with station names, coordinates, filepaths, and any
 #'     recording start-time adjustments.
 #' @export
-getFilepaths <- function(settings) {
+getFilepaths <- function(settings, types = 'wav') {
 
   #Load settings to a list.
   if(is.character(settings)) {
@@ -29,10 +30,15 @@ getFilepaths <- function(settings) {
 
 
   #Load the files from that date and time.
-  Files <- c(list.files(st$siteFolder, recursive = T, full.names = T,
-                      pattern = paste0(st$date,'.*', minute, '.*wav')),
-             list.files(st$siteFolder, recursive = T, full.names = T,
-                        pattern = paste0(st$date,'.*', minute, '.*mp3')))
+  if(types == 'wav') {
+    Files <- list.files(st$siteFolder, recursive = T, full.names = T,
+                          pattern = paste0(st$date,'.*', minute, '.*wav'))
+  }
+  if(types == 'mp3') {
+    Files <- list.files(st$siteFolder, recursive = T, full.names = T,
+                        pattern = paste0(st$date,'.*', minute, '.*mp3'))
+  }
+
   Files <- data.frame(Path = Files, CorrFile = basename(Files),
                       Station = parseWAFileNames(filenames = basename(Files),
                                                  model = 'SM3')$prefix,

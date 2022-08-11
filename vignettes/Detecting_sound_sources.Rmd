@@ -44,9 +44,28 @@ Survey-specific metadata need to be specified once per survey:
 
 In this vignette, we will work with the example data provided in the package. See the "Intro to localize" vignette for a description of the data. Alongside the recordings, the coordinates are provided in a file called Vignette_Coordinates.csv. Recordings were single-channel, and all were properly synchronized ahead of time, so points 6 and 7 above don't apply.
 
-# Setting up a survey.
+I have puzzled over how best to detect sounds of interest within a localization array, and the best approach I have come up with is given by the `omniSpectro()` function. It involves creating a grid-view of synchronized spectrograms, one spectrogram per microphone. Users can thus view spectrograms from all microphones at once, which helps immensely with detecting individuals, keeping track of which individual is which, and deciding which microphones to use for localizing the sound. A trained observer can very comprehensively detect all sounds of interest while avoiding duplicates. 
 
-The detection process starts by setting up a "survey", where one survey corresponds to one recording session across an array. Surveys can be set up with the `setupSurvey()` function. Using this function to set up a survey has the advantage that it sets up files in a particular file/folder structure, which can be recognized by the `localizeMultiple()` function to significantly streamline the localization process.
+The obvious disadvantage to this approach is that it is strictly visual. To listen to the sounds, you'd have to open up the file and listen. I've found Praat useful for that, since it allows you to open many sounds at once, and "lock" them, so when you scroll through time in one file it automatically scrolls in another. That's ideal for localization work. In most cases, I don't need to listen to the sound.
+
+## Prelude: converting example data to .wav.
+
+Before we get started, we should convert the example data from .mp3 to .wav. Many of the functions in `locaR` work exclusively with wav files.
+
+```{r}
+x <- list.files(system.file('data', package = 'locaR'), full.names = T, pattern='mp3$')
+
+for(i in x) {
+  y <- tuneR::readMP3(i)
+  tuneR::writeWave(y, filename = paste0(substr(i, 1, nchar(i)-3), 'wav'))
+}
+
+```
+
+
+## Setting up a survey.
+
+The detection process starts by setting up a "survey", where one survey corresponds to one recording session across an array. Surveys can be set up with the `setupSurvey()` function. Using this function to set up a survey has the advantage that it sets up files in a particular file/folder structure, which can be recognized by the `localizeMultiple()` function to significantly streamline the localization process. I strongly urge users of `locaR` to set up their surveys with this structure, as it will make using the package much easier; the package contains many functions to help with the setup process.
 
 Here's how to use the `setupSurvey()` function:
 ```{r}
@@ -69,12 +88,95 @@ The example folder structure looks like this:
         
 The Channels file is placed directly within the survey folder, since channels are specified once per survey. Then comes a "Run" folder, where I tend to have one "run" every time I run the `localizeMultiple()` function. If I need to run a subset of detections again, I create a new folder called Run2, and put them in there, to avoid over-writing the good localizations that were completed in Run 1.
 
-Within each run folder, the detections file contains the metadata for each detection. The Settings file contains information to be fed to the algorithm. The Localizations folder is where the jpeg images created during localization are put (see the Introduction to localize() vignette for an explanation of those). The Spectrograms folder is where we will create spectrograms for detecting sounds of interest.
+Within the Run1 folder, the detections file contains the metadata for each detection. The Settings file contains information to be fed to the algorithm. The Localizations folder is where the jpeg images created during localization are put (see the Introduction to localize() vignette for an explanation of those). The Spectrograms folder is where we will create spectrograms for detecting sounds of interest.
 
+A secondary output of the `setupSurvey()` function is a dataframe containing various settings information needed for localization and for creating spectrograms. This dataframe is the same as what you would get if you read in the Settings file:
 
+```{r}
+all.equal(survey, read.csv("./20200617_090000/Run1/Ex_20200617_090000_Run1_Settings.csv", stringsAsFactors = F))
+```
 
+We can automatically process this into a list with the `processSettings()` function, which reads in the relevant data.
 
+```{r}
+st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
+```
 
+We can see that the st object contains a whole bunch of relevant information about the survey, including the microphone coordinates, the paths to all the recordings, etc.
+
+## Creating detection spectrograms.
+
+Spectrograms for detecting sounds of interest are created with the `omniSpectro()` function with two simple steps. 
+
+First, we specify the layout of microphones using the `layoutMatrix()` function. This tells R how many microphones we have, and how they are laid out in space. For example, in our example, we have nine microphones, but do we want the spectrograms to be laid out like this:
+
+```{r}
+matrix(1:9, byrow = T, nrow = 3)
+```
+or like this:
+
+```{r}
+matrix(1:9, byrow = F, nrow = 3)
+```
+
+or something else? Specifying a layout matrix gives us control over how we arrange the spectrograms, which naturally we want to imitate the spatial layout in the field (i.e. north up, east to the right).
+
+In our case, the stations were numbered 1 to 9 from top left to bottom right.
+
+We can pass the st list object we created above to the `layoutMatrix()` function, and it will do most of the work.
+
+```{r}
+lm <- layoutMatrix(st = st, start = 'topleft', byrow = T, nrow = 3, ncol = 3)
+lm
+```
+
+The layoutMatrix function is very similar to the matrix function in base R, but results in a character matrix containing station names.
+
+Next, we pass this to the `omniSpectro()` function and the spectrograms are created.
+
+```{r}
+omniSpectro(st, lm, intervalLength = 7)
+```
+
+The `omniSpectro()` function creates jpeg images containing a grid of synchronized spectrograms. In this case, a 7-second long spectrogram was made. Typically, I set intervalLength = 5. For a one-minute long recording, setting intervalLength = 5 means that the survey is broken up into 12 5-second chunks. Note, however, that consecutive chunks will include an extra one second, such that they are displayed with 1-second of overlap (so, they show 0-6 seconds, 5-11 seconds, 10-16 seconds, etc.).
+
+In our example, only one jpeg was created in the Spectrograms folder, called Sound0.jpeg:
+
+![](Sound0.jpeg)
+
+We can see nine spectrograms, and can also see that most of the sounds are visible (at the same time point) across multiple spectrograms. Adding some labels makes this clearer:
+
+![](Sound0_Edit.png)
+
+Five different individual birds sang during these seven seconds. Three of these can be safely ignored because they are singing from outside of the array and only perceptible at the edge. These are a House Wren in the top-right panel, a Clay-colored Sparrow in the bottom-right panel, and a Yellow Warbler in the bottom-right panel.
+
+The first bird we will localize is the Red-eyed Vireo near microphone 8 (bottom-middle panel), which is visible on all nine microphones. This example is a good illustration of the advantage of manual detection methods for localization. If using automated methods, the six Red-eyed Vireo songs may have been detected up to 6*9 = 54 times across the nine channels. Thus, you would need some way of not only detecting individuals, but also accounting for the fact that the same sounds are detectable on many microphones. For a trained observer, that is quite trivial. 
+
+The second bird we will localize is the Clay-colored Sparrow near the middle microphone. That Clay-colored Sparrow is a difficult case, because its song is quite faint. It can clearly be seen on microphone 5 (middle), but only faintly on (to my eye) microphones 2, 3, and 6. Clay-colored Sparrows sometimes sing quite faintly, and it can be surprising how their sound can be nearly inaudible just 40 meters away. We will try to localize it anyway.
+
+## Filling out the Detections file.
+
+Now that we have created the spectrogram (which would normally be many spectrograms for a longer recording session), we can fill out the detections file. To do so, simply open it in Excel, fill it in, and save it. Here's what the filled out detections file looks like:
+
+```{r}
+read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+```
+
+One row is entered per sound. Notice that for rows 6-8, I only entered a comment that I was ignoring a bird outside the array. That is a note for posteriority, so I know I have detected the bird, considered it, and decided to ignore it.
+
+The Red-eyed Vireo (REVI) sang six times. I selected microphones Ex-4, Ex-5, Ex-6, Ex-8, and Ex-9 to localize it. Note, however, that I put Ex-8 in the first column. This is my personal convention to keep track of which microphone I think the bird is nearest to. 
+
+When noting the From (start time) and To (end time), these are measured in seconds from the start of the file. It is not important to be exact - a bit of space on either side of the song is fine, and localizing only a part of the song is also fine. Same with frequency range (F_Low and F_High, in Hz); I don't find that getting these values exactly correct is very important. Hence, in this case, I just copied and pasted 2000 and 6500 to save time.
+
+For the Clay-colored Sparrow (CCSP), I selected microphones Ex-2, Ex-3, Ex-5 and Ex-6, since they were the only microphones where I could discern the CCSP song.
+
+Both species were labeled with Individual 1, since they were the first individual of that species detected. Subsequent individuals of the same species would be labeled 2, 3, etc. to keep track of who is who within a survey.
+
+# Conclusion.
+
+This vignette has introduced how to create spectrograms to detect sounds of interest within a localization array. Detecting sound sources within a microphone array is much, much trickier than doing so within single-microphone recordings. In particular, one must account for the fact that sounds, by design, reach multiple microphones. This vignette used the `omniSpectro()` function to create multi-paneled spectrograms, which has worked for me. Also introduced was the concept of "surveys", and how to set them up using the functions in `locaR`.
+
+Overall, I find the detection process to be quite cumbersome for localization, but my goal tends to be to work intensively (detecting and monitoring everything that is going on over short periods of time) rather than extensively (detecting and monitoring some fraction of what is happening over longer periods of time). To me, this intensive work is quite unique to localization and it can result in amazing data, so the end result makes the detection challenge worthwhile.
 
 
 
