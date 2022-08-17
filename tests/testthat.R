@@ -1,4 +1,4 @@
 library(testthat)
-library(solo)
+library(locaR)
 
-test_check("solo")
+test_check("locaR")

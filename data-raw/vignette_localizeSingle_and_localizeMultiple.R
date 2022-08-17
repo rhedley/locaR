@@ -14,13 +14,13 @@ folder <- 'D:/'
 projectName <- 'Ex'
 
 #path to detections file (csv).
-detectionsFile <- system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'solo')
+detectionsFile <- system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR')
 
 #path to coordinates file (csv).
-coordinatesFile <- system.file('data', 'Vignette_Coordinates.csv', package = 'solo')
+coordinatesFile <- system.file('data', 'Vignette_Coordinates.csv', package = 'locaR')
 
 #siteWavsFolder can just be the package folder, since searches occur recursively.
-siteWavsFolder <- system.file(package = 'solo')
+siteWavsFolder <- system.file(package = 'locaR')
 
 #Date.
 date <- 20200617
@@ -57,7 +57,7 @@ settings
 # to TRUE so that the path to each file is automatically found.
 st <- processSettings(settings = settings, getFilepaths = TRUE)
 
-#Now solo has set the output folder to the solo/data folder. Revert.
+#Now locaR has set the output folder to the locaR/data folder. Revert.
 st$outputFolder <- file.path(folder, paste0(date, '_',
                                             formatC(time, width = 6, flag = '0', format = 'd')),
                                             'Run1')

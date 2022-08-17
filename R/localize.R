@@ -113,7 +113,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     InitData = MSRP_Init(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                          SearchMap, Para, LevelFlag)
   } else {
-    print('Inherited InitData in 0 seconds.')
+    message('Inherited InitData in 0 seconds.')
   }
   #Need to add a step here to check if the provided InitData actually corresponds to the
   #area we want to search.

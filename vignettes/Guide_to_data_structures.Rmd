@@ -1,0 +1,108 @@
+---
+title: "Guide to locaR data structures"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Guide to locaR data structures}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(locaR)
+```
+
+```{r echo=FALSE}
+devtools::load_all()
+```
+
+This vignette is intended to give users a better idea regarding the particulars of data organization in `locaR`, especially when using the `localizeMultiple()` function.
+
+As described in the other vignettes, using the `localizeMultiple()` function requires that data be organized in a specific way - namely that recording sessions, or "surveys" must be set up with a given folder structure. The folder structure is as follows:
+
+* 20200617_090000
+    * Channels file.
+    * Run1 folder.
+        * Detections file.
+        * Settings file.
+        * Localizations folder.
+        * Spectrograms folder.
+        
+So, for a given project, one might have on their computer a folder pertaining to that project, and within that several different survey folders, each corresponding to a different date and time (if you have different surveys occurring at the same date and time, e.g. at different sites, put those in separate folders). As described in the "Detecting Sound Sources" vignette, there are several files that are read by `locaR` for localization. A few that warrant further description are:
+
+* The coordinates file.
+* The channels file.
+* The adjustments file.
+* The detections file.
+
+Each of these files is a .csv file. The use of csv files was aimed at making each file easily editable in other programs (e.g. Microsoft Excel). 
+
+# The coordinates file.
+
+The coordinates file is simply a spreadsheet of spatial coordinates for all microphones. Personally, I just have one big master spreadsheet containing the coordinates for all localization projects, with one row per microphone location. I have found that this works best, because I can always be confident that the master spreadsheet contains the most accurate versions of the coordinates (sometimes we have one set of coordinates taken with a handheld GPS, then another more accurate set taken by a survey-grade GPS). Having a master set of coordinates simplifies things, and also means that I only need one coordinates file for all localization projects.
+
+Here's what a coordinates file looks like:
+
+```{r}
+head(read.csv(system.file('data', "Vignette_Coordinates.csv", package = 'locaR')))
+```
+
+There are five columns. **Station** is the unique name for each microphone location. **Zone** is the UTM zone, which is not used by any aspect of `locaR`. **Easting**, **Northing**, and **Elevation** are the x-, y-, and z-coordinates, respectively, of each microphone location. There can be other columns (e.g. a "Comments" column, or "Latitude" and "Longitude" columns with decimal degrees), but these will be ignored.
+
+It is imperative that the Easting, Northing, and Elevation coordinates are measured in meters.
+
+# The channels file.
+
+The channels file is constructed once per survey, and specifies which microphone to select from each recording unit. 
+
+```{r}
+head(read.csv(system.file('data', "Vignette_Channels.csv", package = 'locaR')))
+```
+
+It is a very simple, two-column spreadsheet, in which the first column is named Station, and the second is named Channel. The Station column contains location names that **must match names in the coordinates file**. The Channel column contains 1's or 2's specifying the channel to use for localization. Channel 1 is the left channel, Channel 2 is the right channel. 
+
+If working with stereo data, and wanting to select the right channel for some units and the left for others, this can be specified in the channels file by editing the desired rows. If working with mono data, the Channels file is irrelevant. If so, simply don't fill it in with anything (a blank version is created by the `setupSurvey()` function). That is what was done in the example provided in the "Intro to localizeMultiple()" vignette. 
+
+# The adjustments file.
+
+Hopefully you will not need to create and use an adjustments file. It is only needed if it is discovered that the file names do not accurately reflect the start time in the file. I have had this happen with Wildlife Acoustics recordings on occasion. In such cases, the file name tends to suggest a certain start time, but the real start time was one second later. My inspections tends to reveal that the file was otherwise synchronized - it was just named wrong. Fortunately, the error tends to be an error of *exactly* one second; by correcting for that one second difference, the file becomes synchronized and can be used. It's a peculiar error that the Wildlife Acoustics employees told me is related to a poorly calibrated GPS. Since I ran into this error frequently enough, I added functionality to `locaR` to deal with it - this seemed preferable to identifying and re-naming files, since that could cause issues (for example if I have backups of those same files, the names will not match).
+
+Although adjustment files are not used in any of the vignettes, here is an example taken from one of my own projects:
+
+```{r}
+head(read.csv(system.file('data', "Vignette_Adjustments.csv", package = 'locaR')))
+```
+
+The first column **Filename** gives the original file name. The second column **Adjusted** indicates what the file name *should have been* if the time stamp were correct. The third column is the amount of adjustment that was needed, in seconds (Adjusted minus original, in this case 1 second). When an Adjustments file is provided to the `setupSurvey()` function and other subsequent functions, `locaR` will automatically add the appropriate amount of white noise to the beginning of the recording (in this case 1 second) to bring the files into alignment prior to localization.
+
+Again, it's a peculiar problem, and hopefully not one you ever need to deal with!
+
+# The detections file.
+
+The detections file is where information about each sound of interest is entered. 
+
+```{r}
+head(read.csv(system.file('data', "Vignette_Detections_20200617_090000.csv", package = 'locaR')))
+```
+
+Various pieces of information specific to each particular sound are entered. The first six columns (**Station1 to Station6**) include the Station (i.e. location) names. **These must match names provided in the coordinates file**. If a column contains NA (or a blank), it will be ignored. Currently, `locaR` is intended for using up to 6 microphones for localization; adding more is unlikely to boost accuracy, and comes at a computational cost.
+
+The **From** and **To** columns contain the start and end times of the sound of interest, in seconds relative to the beginning of the recording session. **F_Low** and **F_High** contain the low and high frequency of the sound of interest. 
+
+Those are the only columns that are actually used for localization. The **Species**, **Individual** and **Comments** columns are just for record-keeping sake. My preferred approach is to write down the species, the individual of that species starting at 1, and any comments about that sound (e.g. if it is overlapped, if it might be outside the array, etc.). 
+
+If a row has no information in any columns except the **Comments** column, that row will be ignored. This can be useful for record-keeping when a sound source is outside the array.
+
+
+
+
+
+
+
+

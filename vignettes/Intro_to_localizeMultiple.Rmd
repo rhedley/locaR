@@ -1,0 +1,125 @@
+---
+title: "Introduction to localizeMultiple"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to localizeMultiple}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#library(locaR)
+```
+
+```{r echo=FALSE}
+devtools::load_all()
+```
+
+This vignette will introduce users to the `localizeMultiple()` function, which is a function that can be used to streamline the localization of multiple detections. The `localizeMultiple()` function is related to, but different from, the `localize()` function. The following table summarizes the differences:
+
+localize() | localizeMultiple()
+---------- | ------------------
+Flexible | Rigid
+Manual data wrangling | Automated data wrangling
+User writes loops | Loops managed automatically
+
+Simply put, the `localize()` function does one thing: localizes a single sound source when provided with the relevant information. The advantage of the `localize()` function is that it is flexible and can be integrated into any project, with data organized however the user pleases. In contrast, the `localizeMultiple()` function requires that data be organized a particular way (there is still some flexibility, but it is limited). By organizing data in the right way, `localizeMultiple()` can localize multiple detections within a survey. It automatically manages some internal processes to speed up the code. **Important: the `localizeMultiple()` function currently only works with sound recordings named according to the Wildlife Acoustics naming convention, that is prefix_date_time.wav or prefix_date$time.wav.**
+
+As mentioned, the data organization requirements for the `localizeMultiple()` function are fairly stringent. Fortunately, `locaR` has some functions to ease/automate the organization of data. These include the `setupSurvey()` function, the `createSettings()` function, and the `processSettings()` function, among others. 
+
+When deciding whether to use the `localize()` or `localizeMultiple()` function, a useful consideration is whether you are doing intensive work or extensive work. By intensive, I mean - are you trying to localize every sound source, or nearly every sound source, within short recording sessions? If so, that's intensive work, and you can use the `localizeMultiple()` function. If, in contrast, you are localizing only one or a few sounds per recording session, then you'll have to use the `localize()` function and wrangle the data yourself. The reason is that it would be too cumbersome to set up an entire "survey", with all the data wrangling it entails, to localize just one or two sounds. If, in contrast, you are localizing dozens or hundreds of sounds from a single short recording session, it makes sense to set up a "survey" and use the `localizeMultiple()` function. Of course, the `localize()` function could also be used in the latter case, but it would likely be more work for the user. **Both functions use the same underlying algorithm**.
+
+# Setting up a survey.
+
+The first step to using `localizeMultiple()` is to set up a "survey", which just means organizing the data for a particular recording session in a standardized way. This was already done for the example data in the "Detecting Sound Sources" vignette. To briefly summarize what it entails, each recording session must be organized according to the following file/folder structure:
+
+* 20200617_090000
+    * Channels file.
+    * Run1 folder.
+        * Detections file.
+        * Settings file.
+        * Localizations folder.
+        * Spectrograms folder.
+        
+This can all be set up easily using the `setupSurvey()` function:
+
+```{r}
+survey <- setupSurvey(folder = getwd(), projectName = 'Ex', run = 1,
+                      coordinatesFile = system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'),
+                      siteWavsFolder = system.file('data', package = 'locaR'),
+                      date = '20200617', time = '090000', surveyLength = 7)
+```
+
+# Preparing to localize detected sounds.
+
+Two more steps are needed prior to the localization step.
+
+First, we must add the example detections to the mix. The above code has set up a survey in the specified location (here, the working directory, which should be the '/locaR/vignettes/' folder), but doing so, it created a detections file that is empty. Let's fill it with the example detection data provided with the package.
+
+```{r}
+#read example detections.
+dets <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+
+#over-write empty detections file.
+write.csv(dets, './20200617_090000/Run1/Ex_20200617_090000_Run1_Detections.csv', row.names = F)
+```
+
+The final step is to process the settings file. This step organizes relevant information into a list that can be passed to the `localizeMultiple()` function for localization.
+
+**Prior to this step, ensure that the mp3 files have been converted to wav**. See the "Detecting sound sources" vignette for code to do that.
+
+```{r}
+st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
+```
+
+# Localizing detected sounds.
+
+The primary advantage of using the `localizeMultiple()` function is that, once everything has been set up, the localization of many sounds within a recording session can be carried out with a single line of code:
+
+```{r}
+locs <- localizeMultiple(st = st, indices = 'all')
+```
+
+The above code feeds the list of settings information (the `st` object) into the localization algorithm. Typing `indices = 'all'` tells the function to localize all the detected sounds. Numbers could be used instead to localize only one or a few detections; I sometimes set `indices = 1` to test things out before running them all.
+
+If the above code ran correctly, then the locs object should look like this:
+
+```{r}
+locs
+```
+
+In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/'. Interpreting these was covered in the "Introduction to localize" vignette.
+
+# Conclusion.
+
+This vignette introduced the `localizeMultiple()` function, and described some of the advantages of this function compared with the `localize()` function. More than anything, the advantages can be seen in the brevity of this vignette, which required only five lines of code; the "Introduction to localize()" vignette, by contrast, contained dozens of lines of code, and much more technical knowledge. 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
