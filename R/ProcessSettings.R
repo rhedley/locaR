@@ -54,6 +54,10 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
 
   time <- formatC(as.numeric(time), width=6, flag="0", format = 'd')
 
+  tempC <- as.numeric(Settings$tempC)
+
+  soundSpeed <- Settings$soundSpeed
+
   surveyLength <- as.numeric(Settings$SurveyLength)
 
   coords <- read.csv(coordsFile, stringsAsFactors=F)
@@ -66,6 +70,10 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
   if(!is.na(adjustmentsFile) & adjustmentsFile != "" & !is.null(adjustmentsFile)) {
     adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
   } else {adjustments <- NA}
+
+  if(!is.na(soundSpeed) & soundSpeed != "" & !is.null(soundSpeed)) {
+    soundSpeed <- Settings$soundSpeed
+  } else {soundSpeed <- NA}
 
   channels <- read.csv(channelsFile, stringsAsFactors=F)
 
@@ -97,6 +105,8 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
             siteFolder = siteFolder,
             date=date,
             time=time,
+            tempC=tempC,
+            soundSpeed=soundSpeed,
             outputFolder = outputFolder,
             resolution = resolution,
             margin = margin,

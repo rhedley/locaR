@@ -4,7 +4,12 @@
 \alias{processSettings}
 \title{Process settings file to extract relevant information.}
 \usage{
-processSettings(settingsFile = NULL, settings = NULL, getFilepaths = FALSE)
+processSettings(
+  settingsFile = NULL,
+  settings = NULL,
+  getFilepaths = FALSE,
+  types = "wav"
+)
 }
 \arguments{
 \item{settingsFile}{Filepath to the settings file (csv).}
@@ -14,6 +19,8 @@ using the \code{\link{createSettings}} function.}
 
 \item{getFilepaths}{Logical, indicating whether to add filepath information
 using \code{\link{getFilepaths}}.}
+
+\item{types}{Character. If getFilepaths is TRUE, which types of files to look for ('wav' or 'mp3').}
 }
 \value{
 A list with information needed for sound localization, including

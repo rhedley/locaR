@@ -18,6 +18,12 @@
 #'     YYYYMMDD.
 #' @param time Numeric. Five or six digit number representing the start time
 #'     of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).
+#' @param tempC Numeric. Temperature in degrees C, which is used to calculate
+#'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
+#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
+#'     NULL, in which case the speed of sound is calculated based on the specified
+#'     temperature (assuming the transmission medium is air). If soundSpeed is
+#'     specified, the tempC value is over-ridden.
 #' @param surveyLength,margin,zMin,zMax,resolution,buffer Arguments describing the area to be searched
 #'     for sound sources. Passed to \code{\link{createSettings}}.
 #' @return data.frame containing the settings generated using \code{\link{createSettings}}.
@@ -33,6 +39,8 @@ setupSurvey <- function(folder,
                         channelsFile = NULL,
                         date,
                         time,
+                        tempC = 15,
+                        soundSpeed = NULL,
                         surveyLength,
                         margin = 10,
                         zMin = -1,
@@ -102,6 +110,8 @@ setupSurvey <- function(folder,
                                                    sp['channelsFile'], channelsFile),
                              date = date,
                              time = time,
+                             tempC = tempC,
+                             soundSpeed = soundSpeed,
                              surveyLength = surveyLength,
                              margin = margin,
                              zMin = zMin,

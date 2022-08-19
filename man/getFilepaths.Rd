@@ -4,12 +4,14 @@
 \alias{getFilepaths}
 \title{Get filepath information for a date and time.}
 \usage{
-getFilepaths(settings)
+getFilepaths(settings, types = "wav")
 }
 \arguments{
 \item{settings}{Either a filepath to a settings file (csv) or a settings
 list. If a filepath, the filepath will first be passed to
 \code{\link{processSettings}}.}
+
+\item{types}{Character, specifying the file type to be searched for. Either 'wav' or 'mp3'.}
 }
 \value{
 A data frame with station names, coordinates, filepaths, and any

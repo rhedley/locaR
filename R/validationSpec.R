@@ -1,8 +1,24 @@
-#validationSpec####
-
-#Function to stack spectrograms after correcting for delay, to check whether the estimated location
-#is reasonable.
-#Need to change the arguments to align with localize() rather than localizeSingle().
+#' Create validation spectrograms.
+#'
+#' This function is used inside the \code{localize} function to create the panels of
+#' synchronized spectrograms for manual review.
+#'
+#' @param wavList list of Wave objects. The name of the Wave objects MUST be
+#'     present in the coordinates data.frame.
+#' @param coordinates data.frame. Must contain four required columns:
+#'     column Station contains a character string with names of each recording
+#'     station, while Easting, Northing and Elevation contain the x, y, and z
+#'     coordinates of the station, in meters (E.g. UTM coordinates).
+#' @locationEstimate Dataframe with one row containing columns Easting, Northing and Elevation,
+#'     specifying the estimated location of the sound source.
+#' @param from,to Numeric. The portion of the wavs to plot.
+#' @param tempC Numeric. The ambient temperature in celsius, which is used to calculate the speed
+#'     of sound in air if none is specified.
+#' @param soundSpeed Numeric. The speed of sound. If not provided, tempC will be used to calculate
+#'     the speed of sound in air.
+#' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
+#'     to be localized.
+#' @export
 
 validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
                            to = NULL, tempC = 15, soundSpeed = NULL, F_Low, F_High) {

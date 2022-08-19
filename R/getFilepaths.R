@@ -40,8 +40,7 @@ getFilepaths <- function(settings, types = 'wav') {
   }
 
   Files <- data.frame(Path = Files, CorrFile = basename(Files),
-                      Station = parseWAFileNames(filenames = basename(Files),
-                                                 model = 'SM3')$prefix,
+                      Station = parseWAFileNames(filenames = basename(Files))$prefix,
                       stringsAsFactors = F)
 
   #remove extra mics

@@ -72,7 +72,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
   }
 
   #Define speed of sound based on speed in air if not already defined.
-  if(is.null(soundSpeed)) {
+  if(is.null(soundSpeed) | is.na(soundSpeed) | soundSpeed == '') {
     Vc <- 331.45*sqrt(1+tempC/273.15)
   } else {
     Vc <- soundSpeed
@@ -185,7 +185,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
 
 #' @rdname localize
-localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
+localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
                            keep.InitData = TRUE, keep.SearchMap = FALSE) {
 
   locFolder <- file.path(st$outputFolder, 'Localizations')
@@ -234,7 +234,7 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
                   margin = st$margin, zMin = st$zMin, zMax = st$zMax,
                   resolution = st$resolution, F_Low = row$F_Low,
                   F_High =  row$F_High, locFolder = locFolder,
-                  jpegName = jpegName, tempC = tempC, plot = plot,
+                  jpegName = jpegName, tempC = st$tempC, soundSpeed = st$soundSpeed, plot = plot,
                   InitData = InitData, keep.InitData = keep.InitData,
                   keep.SearchMap = keep.SearchMap)
 
@@ -243,7 +243,7 @@ localizeSingle <- function(st, index, tempC = 15, plot = TRUE, InitData = NULL,
 
 
 #' @rdname localize
-localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData=NULL) {
+localizeMultiple = function(st, indices = 'all', plot=TRUE, InitData=NULL) {
 
   detect <- st$detections
 
@@ -263,17 +263,14 @@ localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData
     if(indices == 'all') {indices <- 1:nrow(st$detections)}
   }
 
-  #New indices to correct for removed rows.
-  newIndices <- 1:nrow(st$detections)
-
-  for(i in 1:length(newIndices)) {
+  for(i in 1:nrow(st$detections)) {
 
     #First check whether InitData should be kept for index i
 
-    currentRow = st$detections[newIndices[i],]
+    currentRow = st$detections[i,]
 
-    if(i < length(newIndices)) {
-      nextRow = st$detections[newIndices[i+1],]
+    if(i < nrow(st$detections)) {
+      nextRow = st$detections[i+1,]
 
       currentStations = as.vector(as.matrix(currentRow[,paste0('Station', 1:6)]))
 
@@ -286,8 +283,8 @@ localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData
 
     #InitData will generally be NULL for the first detection, inherited (sometimes) thereafter.
 
-    loc = localizeSingle(st, index = newIndices[i], plot=plot,
-                         keep.InitData = keep.InitData, InitData = InitData)
+    loc = localizeSingle(st, index = i, plot=plot, InitData = InitData,
+                         keep.InitData = keep.InitData)
 
     currentRow$Easting = loc$location$Easting
     currentRow$Northing = loc$location$Northing
@@ -303,6 +300,7 @@ localizeMultiple = function(st, indices = 'all', tempC = 15, plot=TRUE, InitData
       OUT = currentRow
     } else {OUT = rbind(OUT, currentRow)}
   }
+
   return(OUT)
 
 }

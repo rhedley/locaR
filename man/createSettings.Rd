@@ -84,5 +84,5 @@ A data frame with columns Setting and Value specifying the value
 \description{
 \code{createSettings} takes a series of arguments and creates a data
 frame (or csv) with standard structure that can be read by other functions in
-the solo package.
+the locaR package.
 }

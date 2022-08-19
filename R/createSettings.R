@@ -23,6 +23,12 @@
 #'     YYYYMMDD.
 #' @param time Numeric. Five or six digit number representing the start time
 #'     of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).
+#' @param tempC Numeric. Temperature in degrees C, which is used to calculate
+#'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
+#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
+#'     NULL, in which case the speed of sound is calculated based on the specified
+#'     temperature (assuming the transmission medium is air). If soundSpeed is
+#'     specified, the tempC value is over-ridden.
 #' @param surveyLength Numeric. Length of the survey, in seconds.
 #' @param margin distance (in meters) to extend the search grid
 #'     beyond the x-y limits of the microphone locations. The same buffer is
@@ -52,6 +58,8 @@ createSettings <- function(projectName,
                           channelsFile,
                           date,
                           time,
+                          tempC = 15,
+                          soundSpeed = NULL,
                           surveyLength,
                           margin = 10,
                           zMin = -1,
@@ -67,6 +75,8 @@ createSettings <- function(projectName,
                                      'ChannelsFile',
                                      'Date',
                                      'Time',
+                                     'tempC',
+                                     'soundSpeed',
                                      'SurveyLength',
                                      'Margin',
                                      'Zmin',
@@ -80,6 +90,8 @@ createSettings <- function(projectName,
                                   channelsFile,
                                   date,
                                   formatC(time, width=6, flag='0', format='d'),
+                                  tempC,
+                                  ifelse(is.null(soundSpeed), '', soundSpeed),
                                   surveyLength,
                                   margin,
                                   zMin,
