@@ -39,8 +39,9 @@ getFilepaths <- function(settings, types = 'wav') {
                         pattern = paste0(st$date,'.*', minute, '.*mp3'))
   }
 
-  Files <- data.frame(Path = Files, CorrFile = basename(Files),
+  Files <- data.frame(Path = Files, Filename = basename(Files),
                       Station = parseWAFileNames(filenames = basename(Files))$prefix,
+                      Difference = 0,
                       stringsAsFactors = F)
 
   #remove extra mics
@@ -54,45 +55,31 @@ getFilepaths <- function(settings, types = 'wav') {
     #Add missing files if needed.
     missing <- st$channels$Station[!st$channels$Station %in% Files$Station]
     if(length(missing) > 0) {
-      mdf <- data.frame(Path=NA, CorrFile=NA, Station=missing)
+      mdf <- data.frame(Path=NA, Filename=NA, Station=missing, Difference = NA)
       Files <- rbind(Files, mdf)
       Files <- Files[order(Files$Station),]
       warning(paste0('No file found for ', paste(missing), '. Adding placeholders to file list.\n'))
     }
   }
 
+  #Get adjustment for each file. This is using the filename-based adjustment relative to the
+  #stated survey start time.
+  Files$Adjustment <- as.numeric(parseWAFileNames(Files$Filename)$time) - as.numeric(st$time)
 
-  #Correct file names where necessary. If no adjustments, then adjustments assumed to be 0.
+  #Then add any difference relative to the file name (i.e. if the file name is wrong). Here we are
+  #comparing the files listed to the adjustments files.
   if(!is.na(st$adjustments)) {
     for(i in 1:nrow(Files)) {
-      if(Files$CorrFile[i] %in% st$adjustments$Filename) {
-        Files$CorrFile[i] <- st$adjustments$Adjusted[st$adjustments$Filename == Files$CorrFile[i]]
+      if(Files$Filename[i] %in% st$adjustments$Filename) {
+        Files$Difference[i] <- st$adjustments$Difference[st$adjustments$Filename == Files$Filename[i]]
       }
     }
-
-    #Get adjustment for each file. Different approach for manual versus filename-based adjustment.
-    #Get value based on filename.
-    Files$Adjustment <- as.numeric(parseWAFileNames(Files$CorrFile)$time) - as.numeric(st$time)
-
-    #Then get files requiring manual
-    Odd <- st$adjustments[st$adjustments$DifferenceAdjMinusOrig != 1,]
-
-    #Adjust those manually.
-    for(i in 1:nrow(Files)) {
-      C <- Files$CorrFile[i]
-      if(C %in% Odd$Adjusted) {
-        A <- Odd$DifferenceAdjMinusOrig[Odd$Adjusted==C]
-        Files$Adjustment[i] <- A
-      }
-    }
-  } else {
-    Files$Adjustment <- 0
   }
 
   Files <- merge(Files, st$coords, by='Station')
 
   #Strip unnecessary columns.
-  Files <- Files[,colnames(Files) %in% c('Station', 'Path', 'CorrFile', 'Adjustment', 'Zone', 'Easting',
+  Files <- Files[,colnames(Files) %in% c('Station', 'Path', 'Filename', 'Adjustment', 'Zone', 'Easting',
                                          'Northing', 'Elevation')]
 
   #Merge with channels data. If Channels not specified, default to 1.

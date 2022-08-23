@@ -18,19 +18,19 @@
 
 checkSettings <- function(settings) {
 
-  pass = TRUE
+  pass <- TRUE
   #Check if settings is either data frame or valid file path.
   if(is.character(settings)) {
     if(!file.exists(settings)) {
       message('Settings must be either a data frame or a valid csv file path')
-      pass = FALSE
+      pass <- FALSE
     }
     settings <- read.csv(settings, stringsAsFactors = FALSE)
   }
 
   if(!is.data.frame(settings)) {
     message('Settings must be either a data frame or a valid csv file path')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #Split.
@@ -41,65 +41,85 @@ checkSettings <- function(settings) {
 
   if(!file.exists(st$AdjustmentsFile) & st$AdjustmentsFile != "") {
     message('Adjustments file should be either an file that exists, or ""')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #Check 3.
   if(!file.exists(st$ChannelsFile) & !is.null(st$ChannelsFile)) {
     message('Invalid channels file')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #Check 4.
   if(!file.exists(st$CoordinatesFile)) {
     message('Coordinates file must be specified')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #Check 5.
   if(!file.exists(st$DetectionsFile)) {
     message('Invalid detections file')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #Check 6.
   if(!dir.exists(st$SiteWavsFolder)) {
     message('Invalid site wavs folder')
-    pass = FALSE
+    pass <- FALSE
   }
 
   #check buffer, date, time, resolution, margin.
   if(is.na(tryCatch(as.numeric(st$Buffer), error = function(e) NA))) {
     message('Buffer must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$Margin), error = function(e) NA))) {
     message('Margin must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$Resolution), error = function(e) NA))) {
     message('Resolution must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$Date), error = function(e) NA))) {
     message('Date must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$Time), error = function(e) NA))) {
     message('Time must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
+  if(is.na(tryCatch(as.numeric(st$tempC), error = function(e) NA))) {
+    tempDefined <- FALSE #temp not numeric.
+    if(st$tempC != '') {
+      message('tempC must be blank or numeric')
+      pass <- FALSE
+    }
+  }
+  if(is.na(tryCatch(as.numeric(st$soundSpeed), error = function(e) NA))) {
+    speedDefined <- FALSE
+    if(st$soundSpeed != '') {
+      message('soundSpeed must be blank or numeric')
+      pass <- FALSE
+    }
+  }
+
+  if(!(speedDefined | tempDefined)) {
+    message('tempC or soundSpeed must be defined.')
+    pass <- FALSE
+  }
+
   if(is.na(tryCatch(as.numeric(st$Zmax), error = function(e) NA))) {
     message('Zmax must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$Zmin), error = function(e) NA))) {
     message('Zmin must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
   if(is.na(tryCatch(as.numeric(st$SurveyLength), error = function(e) NA))) {
     message('SurveyLength must be numeric')
-    pass = FALSE
+    pass <- FALSE
   }
 
   return(pass)
