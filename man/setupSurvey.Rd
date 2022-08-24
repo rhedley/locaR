@@ -14,6 +14,8 @@ setupSurvey(
   channelsFile = NULL,
   date,
   time,
+  tempC = 15,
+  soundSpeed = NULL,
   surveyLength,
   margin = 10,
   zMin = -1,
@@ -39,6 +41,14 @@ YYYYMMDD.}
 
 \item{time}{Numeric. Five or six digit number representing the start time
 of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).}
+
+\item{tempC}{Numeric. Temperature in degrees C, which is used to calculate
+the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).}
+
+\item{soundSpeed}{Numeric. The speed of sound in meters per second. Default is
+NULL, in which case the speed of sound is calculated based on the specified
+temperature (assuming the transmission medium is air). If soundSpeed is
+specified, the tempC value is over-ridden.}
 
 \item{surveyLength, margin, zMin, zMax, resolution, buffer}{Arguments describing the area to be searched
 for sound sources. Passed to \code{\link{createSettings}}.}

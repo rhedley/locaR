@@ -59,7 +59,7 @@
 
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
                      resolution = 1, F_Low = 2000, F_High = 8000, tempC = 15,
-                     soundSpeed = NULL, plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
+                     soundSpeed = NA, plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
                      InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
 
   #check that names of wavList correspond with names of coordinates.

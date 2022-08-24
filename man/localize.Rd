@@ -16,7 +16,7 @@ localize(
   F_Low = 2000,
   F_High = 8000,
   tempC = 15,
-  soundSpeed = NULL,
+  soundSpeed = NA,
   plot = TRUE,
   locFolder = NULL,
   jpegName = "000.jpeg",
@@ -28,14 +28,13 @@ localize(
 localizeSingle(
   st,
   index,
-  tempC = 15,
   plot = TRUE,
   InitData = NULL,
   keep.InitData = TRUE,
   keep.SearchMap = FALSE
 )
 
-localizeMultiple(st, indices = "all", tempC = 15, plot = TRUE, InitData = NULL)
+localizeMultiple(st, indices = "all", plot = TRUE, InitData = NULL)
 }
 \arguments{
 \item{wavList}{list of Wave objects. The name of the Wave objects MUST be

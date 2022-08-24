@@ -9,7 +9,7 @@
 #'     column Station contains a character string with names of each recording
 #'     station, while Easting, Northing and Elevation contain the x, y, and z
 #'     coordinates of the station, in meters (E.g. UTM coordinates).
-#' @locationEstimate Dataframe with one row containing columns Easting, Northing and Elevation,
+#' @param locationEstimate Dataframe with one row containing columns Easting, Northing and Elevation,
 #'     specifying the estimated location of the sound source.
 #' @param from,to Numeric. The portion of the wavs to plot.
 #' @param tempC Numeric. The ambient temperature in celsius, which is used to calculate the speed
