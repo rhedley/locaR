@@ -10,12 +10,12 @@ createSettings(
   detectionsFile,
   coordinatesFile,
   siteWavsFolder,
-  adjustmentsFile,
+  adjustmentsFile = "",
   channelsFile,
   date,
   time,
   tempC = 15,
-  soundSpeed = NULL,
+  soundSpeed,
   surveyLength,
   margin = 10,
   zMin = -1,
@@ -42,8 +42,8 @@ can improve results.}
 audio files. The folder path will be searched recursively if using
 \code{\link{localizeSingle}} or \code{\link{localizeMultiple}}.}
 
-\item{adjustmentsFile}{Character. File path to the adjustments file (csv).
-Set to NULL if no adjustments to file start times are needed.}
+\item{adjustmentsFile}{Character. File path to the adjustments file (csv). Not required to
+be specified.}
 
 \item{channelsFile}{Character. File path to the channels file (csv),
 specifying which channel (1 or 2) to use for each recording unit.}
@@ -57,8 +57,8 @@ of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).}
 \item{tempC}{Numeric. Temperature in degrees C, which is used to calculate
 the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).}
 
-\item{soundSpeed}{Numeric. The speed of sound in meters per second. Default is
-NULL, in which case the speed of sound is calculated based on the specified
+\item{soundSpeed}{Numeric. The speed of sound in meters per second. If missing,
+the speed of sound is calculated based on the specified
 temperature (assuming the transmission medium is air). If soundSpeed is
 specified, the tempC value is over-ridden.}
 

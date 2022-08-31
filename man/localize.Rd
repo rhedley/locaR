@@ -16,9 +16,9 @@ localize(
   F_Low = 2000,
   F_High = 8000,
   tempC = 15,
-  soundSpeed = NA,
+  soundSpeed,
   plot = TRUE,
-  locFolder = NULL,
+  locFolder,
   jpegName = "000.jpeg",
   InitData = NULL,
   keep.InitData = TRUE,
@@ -54,8 +54,8 @@ to be localized.}
 \item{tempC}{Numeric. Temperature in degrees C, which is used to calculate
 the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).}
 
-\item{soundSpeed}{Numeric. The speed of sound in meters per second. Default is
-NULL, in which case the speed of sound is calculated based on the specified
+\item{soundSpeed}{Numeric. The speed of sound in meters per second. If missing,
+the speed of sound is calculated based on the specified
 temperature (assuming the transmission medium is air). If soundSpeed is
 specified, the tempC value is over-ridden.}
 

@@ -11,8 +11,8 @@
 #' @param projectName,run,coordinatesFile,siteWavsFolder Arguments passed to
 #'     \code{\link{createSettings}}
 #' @param adjustmentsFile Character. File path to the adjustments file (csv).
-#'     Set to NULL if no adjustments to file start times are needed.
-#' @param channelsFile Character. File path to the adjustments file (csv). If NULL,
+#'     Optional argument.
+#' @param channelsFile Character. File path to the adjustments file (csv). If missing,
 #'     an empty channels file (csv) will be created.
 #' @param date Numeric. Eight digit number representing a date in the format
 #'     YYYYMMDD.
@@ -20,8 +20,8 @@
 #'     of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).
 #' @param tempC Numeric. Temperature in degrees C, which is used to calculate
 #'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
-#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
-#'     NULL, in which case the speed of sound is calculated based on the specified
+#' @param soundSpeed Numeric. The speed of sound in meters per second. If missing,
+#'     the speed of sound is calculated based on the specified
 #'     temperature (assuming the transmission medium is air). If soundSpeed is
 #'     specified, the tempC value is over-ridden.
 #' @param surveyLength,margin,zMin,zMax,resolution,buffer Arguments describing the area to be searched
@@ -35,12 +35,12 @@ setupSurvey <- function(folder,
                         run = 1,
                         coordinatesFile,
                         siteWavsFolder,
-                        adjustmentsFile = NULL,
-                        channelsFile = NULL,
+                        adjustmentsFile,
+                        channelsFile,
                         date,
                         time,
                         tempC = 15,
-                        soundSpeed = NULL,
+                        soundSpeed,
                         surveyLength,
                         margin = 10,
                         zMin = -1,
@@ -61,7 +61,7 @@ setupSurvey <- function(folder,
     #If survey folder already exists, check its structure and print a statement.
     check <- all(dir.exists(c(sp['runFolder'], sp['specFolder'], sp['locFolder'])),
                  file.exists(sp['detectionsFile']),
-                 ifelse(is.null(channelsFile),TRUE,file.exists(channelsFile)),
+                 ifelse(missing(channelsFile),TRUE,file.exists(channelsFile)),
                  file.exists(sp['settingsFile']))
 
     message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\nNew files not written. Folder structure appears to be ', ifelse(check,'correct','incorrect'))
@@ -94,19 +94,22 @@ setupSurvey <- function(folder,
   }
 
   #create and write empty channels file if channels is NULL.
-  if(is.null(channelsFile)) {
+  if(missing(channelsFile)) {
     channels <- read.csv(system.file('data', 'Empty_Channels.csv', package = 'locaR'))
     write.csv(channels, sp['channelsFile'], row.names = F)
   }
 
+  adjustmentsFile <- ifelse(missing(adjustmentsFile), substitute(), adjustmentsFile)
+
+  soundSpeed <- ifelse(missing(soundSpeed), substitute(), soundSpeed)
 
   settings <- createSettings(projectName = projectName,
                              run = run,
                              detectionsFile = sp['detectionsFile'],
                              coordinatesFile = coordinatesFile,
                              siteWavsFolder = siteWavsFolder,
-                             adjustmentsFile = ifelse(is.null(adjustmentsFile), '', adjustmentsFile),
-                             channelsFile = ifelse(is.null(channelsFile),
+                             adjustmentsFile = adjustmentsFile,
+                             channelsFile = ifelse(missing(channelsFile),
                                                    sp['channelsFile'], channelsFile),
                              date = date,
                              time = time,

@@ -24,5 +24,6 @@ Several checks are run:
 \item That the siteWavsFolder exists.
 \item That buffer, margin, resolution, date, time, zMin, zMax and surveyLength
     can all be recognized as numbers.
+\item That tempC or soundSpeed have been defined.
 }
 }

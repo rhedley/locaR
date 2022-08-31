@@ -11,17 +11,17 @@
 #'     coordinates of the station, in meters (E.g. UTM coordinates).
 #' @param locationEstimate Dataframe with one row containing columns Easting, Northing and Elevation,
 #'     specifying the estimated location of the sound source.
-#' @param from,to Numeric. The portion of the wavs to plot.
+#' @param from,to Numeric. The portion of the wavs to plot. If missing, the whole wav will be plotted.
 #' @param tempC Numeric. The ambient temperature in celsius, which is used to calculate the speed
 #'     of sound in air if none is specified.
-#' @param soundSpeed Numeric. The speed of sound. If not provided, tempC will be used to calculate
+#' @param soundSpeed Numeric. The speed of sound. If missing, tempC will be used to calculate
 #'     the speed of sound in air.
 #' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
 #'     to be localized.
 #' @export
 
-validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
-                           to = NULL, tempC = 15, soundSpeed = NULL, F_Low, F_High) {
+validationSpec <- function(wavList, coordinates, locationEstimate, from,
+                           to, tempC = 15, soundSpeed, F_Low, F_High) {
 
   if(is.matrix(coordinates)) {
     coordinates <- as.data.frame(coordinates)
@@ -31,40 +31,40 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
   if(!'Station' %in% colnames(coordinates)) {
     coordinates$Station <- row.names(coordinates)
   } else {
-    coordinates$Station = as.character(coordinates$Station)
+    coordinates$Station <- as.character(coordinates$Station)
   }
 
 
-  all = data.frame(ID=c('bird', coordinates$Station),
+  all <- data.frame(ID = c('bird', coordinates$Station),
                    Easting = c(locationEstimate$Easting, coordinates$Easting),
                    Northing = c(locationEstimate$Northing, coordinates$Northing),
                    Elevation = c(locationEstimate$Elevation, coordinates$Elevation))
 
-  D = as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
-  colnames(D) = all$ID
-  rownames(D) = all$ID
-  Dists = D['bird',2:ncol(D)]
+  D <- as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
+  colnames(D) <- rownames(D) <- all$ID
+  Dists <- D['bird',2:ncol(D)]
 
   #Define speed of sound based on speed in air if not already defined.
-  if(is.null(soundSpeed)) {
+  if(missing(soundSpeed)) {
     Vc <- 331.45*sqrt(1+tempC/273.15)
   } else {
     Vc <- soundSpeed
   }
 
   #Time delays.
-  Delays = (Dists - min(Dists))/Vc
+  Delays <- (Dists - min(Dists))/Vc
 
-  if(is.null(from) & is.null(to)) {
-    from = 0.2
-    Length = length(wavList[[1]]@left) / wavList[[1]]@samp.rate
-    to = Length - 0.2
+  if(missing(from) & missing(to)) {
+    from <- 0.2
+    Length <- length(wavList[[1]]@left) / wavList[[1]]@samp.rate
+    to <- Length - 0.2
   } else {
-    Length = to - from
+    Length <- to - from
   }
 
-  nmics = nrow(coordinates)
+  nmics <- nrow(coordinates)
 
+  #Create a list of spectrograms.
   for(i in 1:nmics) {
 
     #get sample rate
@@ -74,37 +74,55 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from = NULL,
 
     #Adjust start time. Simultaneously adjusting for recording start time offset, and
     #transmission delay. Start 0.1 seconds before detection to get visual of onset.
-    ADJ.first = from + Delays[coordinates$Station[i]] - 0.1
+    ADJ.first <- from + Delays[coordinates$Station[i]] - 0.1
     #Adjust end time in same way. For detection longer than
-    ADJ.last = to + Delays[coordinates$Station[i]]
+    ADJ.last <- to + Delays[coordinates$Station[i]]
 
-    sound1 = tuneR::extractWave(wavList[[i]], from=ADJ.first, to=ADJ.last, xunit='time')
+    sound1 <- tuneR::extractWave(wavList[[i]], from=ADJ.first, to=ADJ.last, xunit='time')
 
-    sound1 = seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
+    sound1 <- seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
 
-    sound1$mic=coordinates$Station[i]
-    sound1$channel=1
-    sound1$from=from
-    sound1$to=to
-    sound1$distance=Dists[coordinates$Station[i]]
+    sound1$mic <- coordinates$Station[i]
+    sound1$from <- from
+    sound1$to <- to
+    sound1$distance <- Dists[coordinates$Station[i]]
     if(i==1) {
-      SoundList=list(a=sound1)
+      SoundList <- list(a=sound1)
     } else {
-      SoundList=append(SoundList, list(a=sound1))
+      SoundList <- append(SoundList, list(a=sound1))
     }
   }
 
   #get box to draw on spectrogram.
-  xbox = c(0.1, Length-0.2-0.1)
-  ybox = c(F_Low, F_High)
+  xbox <- c(0.1, Length-0.2-0.1)
+  ybox <- c(F_Low, F_High)
 
+  #Draw spectrograms, Six spectrograms are drawn.
   for(k in 1:6) {
     if(k > length(SoundList)) {
       plot.new()
       next
     }
 
-    validSpectro(ListOfData = SoundList[[k]])
-    rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000, border='red', lty=2, lwd=2)
+    if(is.na(SoundList[[k]])[1]) {
+      plot(0, axes=F, xlab=NA, ylab=NA, col='white')
+    } else {
+      oce::imagep(SoundList[[k]]$time, SoundList[[k]]$freq, t(SoundList[[k]]$amp),
+                  drawPalette=F, ylim=c(0,10),xlim=c(0,1), mar=rep(0,4), axes=F,
+                  breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
+      legend('topleft',
+             legend = SoundList[[k]]$mic,
+             bty='n', cex=2)
+      legend('bottomright',
+             legend = paste0('Distance = ', round(SoundList[[k]]$distance, 1), ' m'),
+             bty='n', cex=2)
+      axis(side = 1, labels = NA, tck = 0.015, at = seq(0,5,0.05))
+      abline(v = seq(0.05,5,0.1), lty = 2)
+      abline(v = seq(0,5,0.1), lty = 3)
+      box()
+    }
+
+    rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000,
+         border='red', lty=2, lwd=2)
   }
 }

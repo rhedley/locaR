@@ -27,8 +27,8 @@
 #'     to be localized.
 #' @param tempC Numeric. Temperature in degrees C, which is used to calculate
 #'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
-#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
-#'     NULL, in which case the speed of sound is calculated based on the specified
+#' @param soundSpeed Numeric. The speed of sound in meters per second. If missing,
+#'     the speed of sound is calculated based on the specified
 #'     temperature (assuming the transmission medium is air). If soundSpeed is
 #'     specified, the tempC value is over-ridden.
 #' @param plot Logical. Whether to plot jpegs.
@@ -59,7 +59,7 @@
 
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
                      resolution = 1, F_Low = 2000, F_High = 8000, tempC = 15,
-                     soundSpeed = NA, plot = TRUE, locFolder = NULL, jpegName = '000.jpeg',
+                     soundSpeed, plot = TRUE, locFolder, jpegName = '000.jpeg',
                      InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
 
   #check that names of wavList correspond with names of coordinates.
@@ -71,8 +71,8 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     stop('Some names in wavList not found in coordinates!')
   }
 
-  #Define speed of sound based on speed in air if not already defined.
-  if(is.null(soundSpeed) | is.na(soundSpeed) | soundSpeed == '') {
+  #If soundSpeed is missing, calculate based on tempC in air.
+  if(missing(soundSpeed)) {
     Vc <- 331.45*sqrt(1+tempC/273.15)
   } else {
     Vc <- soundSpeed
@@ -146,7 +146,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
   if(plot) {
     #Check that locFolder was specified.
-    if(is.null(locFolder)) {stop('Error: Specify locFolder for outputs.')}
+    if(missing(locFolder)) {stop('Error: Specify locFolder for outputs.')}
     if(!dir.exists(locFolder)) {stop('locFolder does not exist.')}
 
     jpeg(file.path(locFolder, jpegName),
@@ -230,11 +230,23 @@ localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
   #make name for jpeg.
   jpegName <- paste0(formatC(index,width=4,flag='0'), '.jpeg')
 
+  #Deal with NA, NULL or '' soundSpeed values.
+  soundSpeed <- st$soundSpeed
+
+  if(is.null(soundSpeed)) {
+    soundSpeed <- substitute()
+  } else {
+    if(is.na(st$soundSpeed)) {soundSpeed <- substitute()} else {
+      if(st$soundSpeed == '') {soundSpeed <- substitute()}
+    }
+  }
+
+
   OUT <- localize(wavList = wavList, coordinates = coordinates,
                   margin = st$margin, zMin = st$zMin, zMax = st$zMax,
                   resolution = st$resolution, F_Low = row$F_Low,
                   F_High =  row$F_High, locFolder = locFolder,
-                  jpegName = jpegName, tempC = st$tempC, soundSpeed = st$soundSpeed, plot = plot,
+                  jpegName = jpegName, tempC = st$tempC, soundSpeed = soundSpeed, plot = plot,
                   InitData = InitData, keep.InitData = keep.InitData,
                   keep.SearchMap = keep.SearchMap)
 

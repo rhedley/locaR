@@ -5,7 +5,7 @@
 #'
 #' @param settingsFile Filepath to the settings file (csv).
 #' @param settings data.frame created either by reading a settings file (csv) or
-#'     using the \code{\link{createSettings}} function.
+#'     using the \code{\link{createSettings}} function. Not needed if settingsFile is specified.
 #' @param getFilepaths Logical, indicating whether to add filepath information
 #'     using \code{\link{getFilepaths}}.
 #' @param types Character. If getFilepaths is TRUE, which types of files to look for ('wav' or 'mp3').
@@ -13,13 +13,20 @@
 #'     microphone coordinates, the existing detections, channels to use
 #'     for each recording unit, and information specifying the size and
 #'     resolution of the grid within which to localize sound sources.
-processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths = FALSE, types = 'wav') {
+processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types = 'wav') {
 
   #Either use settings or read settingsFile.
-  if(is.data.frame(settings)) {Settings <- settings} else {
+  if(missing(settingsFile) & missing(settings)) {
+    stop('settingsFile or settings must be specified.')
+  }
+
+  #Read settings, or if it is not a dataframe
+  if(!missing(settings)) {
+    if(is.data.frame(settings)) {Settings <- settings}
+  } else {
     if(file.exists(settingsFile)) {
       Settings <- read.csv(settingsFile, stringsAsFactors=F)
-    } else {stop('settingsFile or settings must be specified.')}
+    } else {stop('If settings is not a data frame, settingsFile must point to an existing csv file.')}
   }
 
   Settings <- split(Settings$Value, f = Settings$Setting)
@@ -67,11 +74,11 @@ processSettings <- function(settingsFile = NULL, settings = NULL, getFilepaths =
     detections <- read.csv(detectionsFile, stringsAsFactors=F)
   } else {detections <- NA}
 
-  if(!is.na(adjustmentsFile) & adjustmentsFile != "" & !is.null(adjustmentsFile)) {
+  if(!is.na(adjustmentsFile) & adjustmentsFile != "") {
     adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
   } else {adjustments <- NA}
 
-  if(!is.na(soundSpeed) & soundSpeed != "" & !is.null(soundSpeed)) {
+  if(!is.na(soundSpeed) & soundSpeed != "") {
     soundSpeed <- Settings$soundSpeed
   } else {soundSpeed <- NA}
 

@@ -1,8 +1,15 @@
-
-
-
-
-MSRP_RIJ_HT = function(NodeInfo,SearchMap,Data,Para,LevelFlag,InitData) {
+#' Create InitData.
+#'
+#' Internal function which creates the InitData list.
+#'
+#' @param NodeInfo List with elements Num, Pos.
+#' @param SearchMap List with elements XDen, YDen, ZDen, XMap, YMap, ZMap
+#' @param Data Matrix containing the wave samples.
+#' @param Para List with Fs, Vc (speed of sound), and DataLen
+#' @param LevelFlag Integer. Only value currently supported is 2.
+#' @param InitData List. Created with the MSRP_Init function.
+#' @return List.
+MSRP_RIJ_HT = function(NodeInfo, SearchMap, Data, Para, LevelFlag, InitData) {
   ###########################################################
   # % MSRP function implemented by Tim Huang
   # % Ver 1.2
@@ -184,7 +191,7 @@ MSRP_RIJ_HT = function(NodeInfo,SearchMap,Data,Para,LevelFlag,InitData) {
 # SMap(k) = sum(tR);
 # end
 
-
+#' @rdname MSRP_RIJ_HT
 MSRP_HT_Level2 = function(NodeInfo,SearchMap,Data,Para,InitData) {
 
   N = NodeInfo$Num

@@ -10,6 +10,7 @@
 #' \item That the siteWavsFolder exists.
 #' \item That buffer, margin, resolution, date, time, zMin, zMax and surveyLength
 #'     can all be recognized as numbers.
+#' \item That tempC or soundSpeed have been defined.
 #' }
 #'
 #' @param settings Character or data.frame. Either the path to a settingsFile (csv)
@@ -40,7 +41,7 @@ checkSettings <- function(settings) {
   #Check 2: adjustments file.
 
   if(!file.exists(st$AdjustmentsFile) & st$AdjustmentsFile != "") {
-    message('Adjustments file should be either an file that exists, or ""')
+    message('Adjustments file should be either a file that exists, or ""')
     pass <- FALSE
   }
 
@@ -97,7 +98,7 @@ checkSettings <- function(settings) {
     }
   }
   if(is.na(tryCatch(as.numeric(st$soundSpeed), error = function(e) NA))) {
-    speedDefined <- FALSE
+    speedDefined <- FALSE #soundSpeed not numeric.
     if(st$soundSpeed != '') {
       message('soundSpeed must be blank or numeric')
       pass <- FALSE

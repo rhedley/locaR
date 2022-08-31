@@ -8,10 +8,10 @@ validationSpec(
   wavList,
   coordinates,
   locationEstimate,
-  from = NULL,
-  to = NULL,
+  from,
+  to,
   tempC = 15,
-  soundSpeed = NULL,
+  soundSpeed,
   F_Low,
   F_High
 )
@@ -28,12 +28,12 @@ coordinates of the station, in meters (E.g. UTM coordinates).}
 \item{locationEstimate}{Dataframe with one row containing columns Easting, Northing and Elevation,
 specifying the estimated location of the sound source.}
 
-\item{from, to}{Numeric. The portion of the wavs to plot.}
+\item{from, to}{Numeric. The portion of the wavs to plot. If missing, the whole wav will be plotted.}
 
 \item{tempC}{Numeric. The ambient temperature in celsius, which is used to calculate the speed
 of sound in air if none is specified.}
 
-\item{soundSpeed}{Numeric. The speed of sound. If not provided, tempC will be used to calculate
+\item{soundSpeed}{Numeric. The speed of sound. If missing, tempC will be used to calculate
 the speed of sound in air.}
 
 \item{F_Low, F_High}{Numeric. The low and high frequency, in Hz, of the sound

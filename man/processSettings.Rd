@@ -4,18 +4,13 @@
 \alias{processSettings}
 \title{Process settings file to extract relevant information.}
 \usage{
-processSettings(
-  settingsFile = NULL,
-  settings = NULL,
-  getFilepaths = FALSE,
-  types = "wav"
-)
+processSettings(settingsFile, settings, getFilepaths = FALSE, types = "wav")
 }
 \arguments{
 \item{settingsFile}{Filepath to the settings file (csv).}
 
 \item{settings}{data.frame created either by reading a settings file (csv) or
-using the \code{\link{createSettings}} function.}
+using the \code{\link{createSettings}} function. Not needed if settingsFile is specified.}
 
 \item{getFilepaths}{Logical, indicating whether to add filepath information
 using \code{\link{getFilepaths}}.}

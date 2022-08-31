@@ -1,9 +1,12 @@
-
-#NodeInfo: List with elements Num, Pos
-#Para: List with Fs, Vc (speed of sound), and DataLen
-#SearchMap: list with elements XDen, YDen, ZDen, XMap, YMap, ZMap
-#LevelFlag: integer, which I always set to 2.
-
+#' Create InitData.
+#'
+#' Internal function which creates the InitData list.
+#'
+#' @param NodeInfo List with elements Num, Pos.
+#' @param Para List with Fs, Vc (speed of sound), and DataLen
+#' @param SearchMap List with elements XDen, YDen, ZDen, XMap, YMap, ZMap
+#' @param LevelFlag Integer. Only value currently supported is 2.
+#' @return List.
 MSRP_Init = function(NodeInfo, SearchMap, Para, LevelFlag) {
 
   N = NodeInfo$Num #Numbered nodes

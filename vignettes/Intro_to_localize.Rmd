@@ -119,7 +119,7 @@ crd <- coordinates[stationSubset,]
 
 ## Step 3: Specify several pieces of ancillary information.
 
-Only a few other pieces of information need to be specified. First, an output directory where the `localize()` function can create a JPEG file for data visualization. Select/create a folder that suits you, or use the following:
+Only a few other pieces of information need to be specified. First, an output directory where the `localize()` function can create a JPEG file for data visualization. Here we will use the temporary directory, whose contents are deleted at the end of each R session. Feel free to choose another directory if you prefer, since the temporary directory can be hard to find.
 
 ```{r}
 locFolder <- system.file('data', package = 'locaR')

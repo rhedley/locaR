@@ -15,8 +15,8 @@
 #' @param siteWavsFolder Character. Folder path of the directory containing
 #'     audio files. The folder path will be searched recursively if using
 #'     \code{\link{localizeSingle}} or \code{\link{localizeMultiple}}.
-#' @param adjustmentsFile Character. File path to the adjustments file (csv).
-#'     Set to NULL if no adjustments to file start times are needed.
+#' @param adjustmentsFile Character. File path to the adjustments file (csv). Not required to
+#'     be specified.
 #' @param channelsFile Character. File path to the channels file (csv),
 #'     specifying which channel (1 or 2) to use for each recording unit.
 #' @param date Numeric. Eight digit number representing a date in the format
@@ -25,8 +25,8 @@
 #'     of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).
 #' @param tempC Numeric. Temperature in degrees C, which is used to calculate
 #'     the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).
-#' @param soundSpeed Numeric. The speed of sound in meters per second. Default is
-#'     NULL, in which case the speed of sound is calculated based on the specified
+#' @param soundSpeed Numeric. The speed of sound in meters per second. If missing,
+#'     the speed of sound is calculated based on the specified
 #'     temperature (assuming the transmission medium is air). If soundSpeed is
 #'     specified, the tempC value is over-ridden.
 #' @param surveyLength Numeric. Length of the survey, in seconds.
@@ -59,13 +59,17 @@ createSettings <- function(projectName,
                           date,
                           time,
                           tempC = 15,
-                          soundSpeed = NULL,
+                          soundSpeed,
                           surveyLength,
                           margin = 10,
                           zMin = -1,
                           zMax = 10,
                           resolution = 1,
                           buffer = 0.2, write.csv = FALSE) {
+
+  adjustmentsFile <- ifelse(missing(adjustmentsFile), '', adjustmentsFile)
+
+  soundSpeed <- ifelse(missing(soundSpeed), '', soundSpeed)
 
   #create settings data frame.
   settings <- data.frame(Setting = c('DetectionsFile',
@@ -86,12 +90,12 @@ createSettings <- function(projectName,
                         Value = c(detectionsFile,
                                   coordinatesFile,
                                   siteWavsFolder,
-                                  ifelse(is.null(adjustmentsFile), '', adjustmentsFile),
+                                  adjustmentsFile,
                                   channelsFile,
                                   date,
                                   formatC(time, width=6, flag='0', format='d'),
                                   tempC,
-                                  ifelse(is.null(soundSpeed), '', soundSpeed),
+                                  soundSpeed,
                                   surveyLength,
                                   margin,
                                   zMin,

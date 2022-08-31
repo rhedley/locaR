@@ -1,11 +1,32 @@
-#createWavList
+#' Create a list of Wave objects.
+#'
+#' This function reads in portions of a set of synchronized .wav files. It is intended to be used to load
+#' sounds of interest for localization.
+#'
+#' @param paths Character vector. File paths to the set of .wav files to be read.
+#' @param names Character vector. Station names for the files. Must have the same length and
+#'     the names must occur in the same order as the \code{paths} variable.
+#' @param from Numeric. Start time, in seconds, of the sound of interest, relative to
+#'     the start of the file.
+#' @param to Numeric. End time, in seconds, of the sound of interest, relative to
+#'     the start of the file.
+#' @param buffer Numeric. Amount of blank space around each sound of interest to be read.
+#' @param adjustments Numeric vector. Amount, in seconds, to adjust the start times of recordings,
+#'     if not already synchronized. Vector must be of the same length as the
+#'     \code{paths} variable. If not specified, default is no adjustment.
+#' @param channels Numeric vector. The channel to be read from each .wav file. Left = 1, Right = 2. If
+#'     missing, default is left channel (channel 1) for all recordings.
+#' @param index Numeric. If using this function within a loop, pass the index i to the function, which
+#'     can help with troubleshooting if an error occurs.
+#' @return Named list of Wave objects.
+#' @export
 
 createWavList <- function(paths, names, from, to, buffer,
-                          adjustments = NULL, channels = NULL, index = 'unknown') {
+                          adjustments, channels, index = 'unknown') {
 
   #Check if channels or adjustments are NULL, if so, define to default.
-  if(is.null(channels)) {channels = rep(1, length(paths))}
-  if(is.null(adjustments)) {adjustments = rep(0, length(paths))}
+  if(missing(channels)) {channels = rep(1, length(paths))}
+  if(missing(adjustments)) {adjustments = rep(0, length(paths))}
 
   #Check that paths, names, channels, adjustments are all the same length, and that
   #from, to and buffer are numeric and length 1.

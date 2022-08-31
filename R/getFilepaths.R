@@ -2,7 +2,8 @@
 #'
 #' \code{getFilepaths} reads information from a settings file (csv) or a
 #' settings list and returns the file paths and other information as a
-#' dataframe.
+#' dataframe. It undertakes a recursive search within the site folder for files
+#' matching the date and time.
 #'
 #' @param settings Either a filepath to a settings file (csv) or a settings
 #'     list. If a filepath, the filepath will first be passed to
@@ -75,6 +76,9 @@ getFilepaths <- function(settings, types = 'wav') {
       }
     }
   }
+
+  #Add Difference to existing Adjustment.
+  Files$Adjustment <- Files$Adjustment + Files$Difference
 
   Files <- merge(Files, st$coords, by='Station')
 

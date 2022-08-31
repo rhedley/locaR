@@ -1,8 +1,10 @@
-
-#data1: samples from wav file 1
-#data2: samples from wav file 2
-#Para: list with components GCCMethod, FL, FH, Fs
-
+#' Generalized cross-correlation.
+#'
+#' Internal function that calculates the generalized cross correlation.
+#'
+#' @param data1,data2 Wave samples.
+#' @param Para List with GCCMethod, FL, FH, Fs
+#' @return Numeric vector.
 
 Rij_GCC = function(data1, data2, Para) {
 

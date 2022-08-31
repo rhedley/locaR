@@ -10,12 +10,12 @@ setupSurvey(
   run = 1,
   coordinatesFile,
   siteWavsFolder,
-  adjustmentsFile = NULL,
-  channelsFile = NULL,
+  adjustmentsFile,
+  channelsFile,
   date,
   time,
   tempC = 15,
-  soundSpeed = NULL,
+  soundSpeed,
   surveyLength,
   margin = 10,
   zMin = -1,
@@ -31,9 +31,9 @@ setupSurvey(
 \code{\link{createSettings}}}
 
 \item{adjustmentsFile}{Character. File path to the adjustments file (csv).
-Set to NULL if no adjustments to file start times are needed.}
+Optional argument.}
 
-\item{channelsFile}{Character. File path to the adjustments file (csv). If NULL,
+\item{channelsFile}{Character. File path to the adjustments file (csv). If missing,
 an empty channels file (csv) will be created.}
 
 \item{date}{Numeric. Eight digit number representing a date in the format
@@ -45,8 +45,8 @@ of a recording session (90000 = 09:00:00, and 160000 = 16:00:00).}
 \item{tempC}{Numeric. Temperature in degrees C, which is used to calculate
 the speed of sound in air using the equation 331.45*sqrt(1+tempC/273.15).}
 
-\item{soundSpeed}{Numeric. The speed of sound in meters per second. Default is
-NULL, in which case the speed of sound is calculated based on the specified
+\item{soundSpeed}{Numeric. The speed of sound in meters per second. If missing,
+the speed of sound is calculated based on the specified
 temperature (assuming the transmission medium is air). If soundSpeed is
 specified, the tempC value is over-ridden.}
 

@@ -1,4 +1,19 @@
-#locHeatmap
+#' Create a heatmap to visualize localization output.
+#'
+#' This function can be used to create a heatmap from the localization grid search. In general,
+#' this function should only be used internally, but it could be useful for making customized figures.
+#'
+#' @param searchMap An array created by the localize() function containing x, y and z coordinates.
+#'     Created by setting keep.SearchMap = TRUE when running the localize() function.
+#' @param SMap An array created by the localize() function containing the power values.
+#'     Created by setting keep.SearchMap = TRUE when running the localize() function.
+#' @param NodeInfo A list with two elements. First element Num is numeric, specifying the number of
+#'     microphones used for localization. Second element Pos is a matrix of coordinates with column names
+#'     Easting, Northing and Elevation, and row names corresponding to the Station (i.e. location) names.
+#' @param location Data frame. The location estimate of the sound source. Four columns: Easting, Northing,
+#'     Elevation, Power. Data frame should only contain one row.
+#' @param mar Numeric vector with four elements. Passed to \code{oce::imagep()} for plotting.
+#' @export
 
 locHeatmap = function(SearchMap, SMap, NodeInfo, location, mar) {
 
