@@ -110,7 +110,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
   #Create InitData if needed.
   if(is.null(InitData)) {
-    InitData = MSRP_Init(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
+    InitData <- MSRP_Init(NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                          SearchMap, Para, LevelFlag)
   } else {
     message('Inherited InitData in 0 seconds.')
@@ -160,7 +160,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     #Plot 1
     validationSpec(wavList = wavList, coordinates = NodePos,
                    locationEstimate = location, soundSpeed = Vc, F_Low = F_Low,
-                   F_High = F_High, from = NULL, to = NULL)
+                   F_High = F_High)
 
     #Plot 2
     locHeatmap(SearchMap = SearchMap, SMap = SMap,

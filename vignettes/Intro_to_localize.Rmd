@@ -122,7 +122,7 @@ crd <- coordinates[stationSubset,]
 Only a few other pieces of information need to be specified. First, an output directory where the `localize()` function can create a JPEG file for data visualization. Here we will use the temporary directory, whose contents are deleted at the end of each R session. Feel free to choose another directory if you prefer, since the temporary directory can be hard to find.
 
 ```{r}
-locFolder <- system.file('data', package = 'locaR')
+locFolder <- tempdir()
 ```
 
 Next, create a name for the jpeg to be created. If working within a loop, I would create a name based on the loop index or some other identifier, to best keep track of which sound it pertains to. Here I'll just call it 0001.jpeg.

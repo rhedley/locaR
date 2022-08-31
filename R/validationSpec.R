@@ -62,10 +62,8 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
     Length <- to - from
   }
 
-  nmics <- nrow(coordinates)
-
   #Create a list of spectrograms.
-  for(i in 1:nmics) {
+  for(i in 1:nrow(coordinates)) {
 
     #get sample rate
     Fs <- wavList[[1]]@samp.rate
@@ -78,7 +76,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
     #Adjust end time in same way. For detection longer than
     ADJ.last <- to + Delays[coordinates$Station[i]]
 
-    sound1 <- tuneR::extractWave(wavList[[i]], from=ADJ.first, to=ADJ.last, xunit='time')
+    sound1 <- tuneR::extractWave(wavList[[coordinates$Station[i]]], from=ADJ.first, to=ADJ.last, xunit='time')
 
     sound1 <- seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
 
