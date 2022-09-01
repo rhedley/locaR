@@ -10,7 +10,7 @@ createSettings(
   detectionsFile,
   coordinatesFile,
   siteWavsFolder,
-  adjustmentsFile = "",
+  adjustmentsFile,
   channelsFile,
   date,
   time,

@@ -11,7 +11,7 @@
 #'
 #' @param st List. Localization settings object generated using
 #'     \code{\link{processSettings}}.
-#' @param layoutMatrix Matrix generated using the layoutMatrix function, or a
+#' @param lm layout matrix generated using the `layoutMatrix()` function, or a
 #'     user-generated matrix in the same format. This matrix controls how the spectrograms
 #'     from each station are mapped to rows and columns.
 #' @param intervalLength Integer The length of each view interval to be generated, in seconds.

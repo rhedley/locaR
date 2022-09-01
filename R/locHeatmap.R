@@ -3,7 +3,7 @@
 #' This function can be used to create a heatmap from the localization grid search. In general,
 #' this function should only be used internally, but it could be useful for making customized figures.
 #'
-#' @param searchMap An array created by the localize() function containing x, y and z coordinates.
+#' @param SearchMap An array created by the localize() function containing x, y and z coordinates.
 #'     Created by setting keep.SearchMap = TRUE when running the localize() function.
 #' @param SMap An array created by the localize() function containing the power values.
 #'     Created by setting keep.SearchMap = TRUE when running the localize() function.
