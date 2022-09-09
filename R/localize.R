@@ -255,6 +255,7 @@ localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
 
 
 #' @rdname localize
+#' @export
 localizeMultiple = function(st, indices = 'all', plot=TRUE, InitData=NULL) {
 
   detect <- st$detections

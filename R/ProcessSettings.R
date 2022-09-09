@@ -13,6 +13,7 @@
 #'     microphone coordinates, the existing detections, channels to use
 #'     for each recording unit, and information specifying the size and
 #'     resolution of the grid within which to localize sound sources.
+#' @export
 processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types = 'wav') {
 
   #Either use settings or read settingsFile.

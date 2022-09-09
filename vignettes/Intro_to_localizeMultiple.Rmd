@@ -36,6 +36,28 @@ As mentioned, the data organization requirements for the `localizeMultiple()` fu
 
 When deciding whether to use the `localize()` or `localizeMultiple()` function, a useful consideration is whether you are doing intensive work or extensive work. By intensive, I mean - are you trying to localize every sound source, or nearly every sound source, within short recording sessions? If so, that's intensive work, and you can use the `localizeMultiple()` function. If, in contrast, you are localizing only one or a few sounds per recording session, then you'll have to use the `localize()` function and wrangle the data yourself. The reason is that it would be too cumbersome to set up an entire "survey", with all the data wrangling it entails, to localize just one or two sounds. If, in contrast, you are localizing dozens or hundreds of sounds from a single short recording session, it makes sense to set up a "survey" and use the `localizeMultiple()` function. Of course, the `localize()` function could also be used in the latter case, but it would likely be more work for the user. **Both functions use the same underlying algorithm**.
 
+# Prelude: converting example data to .wav.
+
+Before we get started, we should convert the example data from .mp3 to .wav. Many of the functions in `locaR` work exclusively with wav files. Here we will store the wav files in the temporary directory whose contents are deleted at the end of each R session. Feel free to choose another directory if you prefer, since the temporary directory can be hard to find.
+
+```{r}
+
+#list mp3 files.
+f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+#create wav names.
+f.out <- file.path(tempdir(), basename(f.in))
+#change extension.
+substr(f.out, nchar(f.out)-2, nchar(f.out)) <- 'wav'
+
+for(i in 1:length(f.in)) {
+  y <- tuneR::readMP3(f.in[i])
+  tuneR::writeWave(y, filename = f.out[i])
+}
+
+```
+
+Now we can proceed.
+
 # Setting up a survey.
 
 The first step to using `localizeMultiple()` is to set up a "survey", which just means organizing the data for a particular recording session in a standardized way. This was already done for the example data in the "Detecting Sound Sources" vignette. To briefly summarize what it entails, each recording session must be organized according to the following file/folder structure:
@@ -53,7 +75,7 @@ This can all be set up easily using the `setupSurvey()` function. Here we will s
 ```{r}
 survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
                       coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
-                      siteWavsFolder = system.file('extdata', package = 'locaR'),
+                      siteWavsFolder = tempdir(),
                       date = '20200617', time = '090000', surveyLength = 7)
 ```
 
