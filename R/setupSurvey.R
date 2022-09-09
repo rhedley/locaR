@@ -89,13 +89,13 @@ setupSurvey <- function(folder,
     message('Detections file already exists. File not overwritten.')
   } else {
     #create and write empty detections file.
-    detections <- read.csv(system.file('data', 'Empty_Detections.csv', package = 'locaR'))
+    detections <- read.csv(system.file('extdata', 'Empty_Detections.csv', package = 'locaR'))
     write.csv(detections, sp['detectionsFile'], row.names = F)
   }
 
   #create and write empty channels file if channels is NULL.
   if(missing(channelsFile)) {
-    channels <- read.csv(system.file('data', 'Empty_Channels.csv', package = 'locaR'))
+    channels <- read.csv(system.file('extdata', 'Empty_Channels.csv', package = 'locaR'))
     write.csv(channels, sp['channelsFile'], row.names = F)
   }
 

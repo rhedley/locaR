@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^README\.Rmd$
 ^ToDo\.txt$
+^data-raw$
+^LICENSE\.md$

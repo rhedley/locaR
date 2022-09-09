@@ -120,7 +120,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
         #If there is an adjustment, and this is the first interval, add white noise to beginning.
         #This will bring files with different start times into alignment.
         if(A > 0 & first==0) {
-          sound1 <- tuneR::bind(noise(kind='white', duration=Fs*A, samp.rate=Fs, bit=Br, pcm=T),
+          sound1 <- tuneR::bind(tuneR::noise(kind='white', duration=Fs*A, samp.rate=Fs, bit=Br, pcm=T),
                              Wave(sound1[1:(length(sound1)-Fs*A)], samp.rate=Fs, bit=Br, pcm=T))
         }
         #Spectrogram

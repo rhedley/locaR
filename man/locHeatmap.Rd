@@ -7,6 +7,9 @@
 locHeatmap(SearchMap, SMap, NodeInfo, location, mar)
 }
 \arguments{
+\item{SearchMap}{An array created by the localize() function containing x, y and z coordinates.
+Created by setting keep.SearchMap = TRUE when running the localize() function.}
+
 \item{SMap}{An array created by the localize() function containing the power values.
 Created by setting keep.SearchMap = TRUE when running the localize() function.}
 
@@ -18,9 +21,6 @@ Easting, Northing and Elevation, and row names corresponding to the Station (i.e
 Elevation, Power. Data frame should only contain one row.}
 
 \item{mar}{Numeric vector with four elements. Passed to \code{oce::imagep()} for plotting.}
-
-\item{searchMap}{An array created by the localize() function containing x, y and z coordinates.
-Created by setting keep.SearchMap = TRUE when running the localize() function.}
 }
 \description{
 This function can be used to create a heatmap from the localization grid search. In general,

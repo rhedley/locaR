@@ -2,7 +2,7 @@ library(locaR)
 context("Create wavList")
 
 test_that("wavList creation.", {
-  folder <- system.file('data', package = 'locaR')
+  folder <- system.file('extdata', package = 'locaR')
   files <- list.files(folder, pattern = '.mp3')
   paths <- file.path(folder, files)
   names <- sapply(strsplit(files, '_'), '[[', 1)

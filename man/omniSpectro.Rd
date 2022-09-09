@@ -10,6 +10,10 @@ omniSpectro(st, lm, intervalLength = 5, intervals = "all")
 \item{st}{List. Localization settings object generated using
 \code{\link{processSettings}}.}
 
+\item{lm}{layout matrix generated using the `layoutMatrix()` function, or a
+user-generated matrix in the same format. This matrix controls how the spectrograms
+from each station are mapped to rows and columns.}
+
 \item{intervalLength}{Integer The length of each view interval to be generated, in seconds.
 Consecutive windows overlap, by default by 1 second. Setting intervalLength = 5 will therefore
 create 6-second spectrogram views, with one second overlap (e.g.
@@ -18,10 +22,6 @@ create 6-second spectrogram views, with one second overlap (e.g.
 \item{intervals}{Integer or 'all'. Which intervals to write to jpeg. For testing
 purposes, it is often desirable to set this to, e.g. intervals = 1:5, which
 will create only the first five view windows, to ensure the function is working.}
-
-\item{layoutMatrix}{Matrix generated using the layoutMatrix function, or a
-user-generated matrix in the same format. This matrix controls how the spectrograms
-from each station are mapped to rows and columns.}
 }
 \description{
 \code{omniSpectro} creates a grid of time-synchronized spectrograms, to

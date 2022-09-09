@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(locaR)
+library(locaR)
 ```
 
 ```{r echo=FALSE}
-devtools::load_all()
+#devtools::load_all()
 ```
 
 This vignette will introduce users to the `localizeMultiple()` function, which is a function that can be used to streamline the localization of multiple detections. The `localizeMultiple()` function is related to, but different from, the `localize()` function. The following table summarizes the differences:
@@ -52,8 +52,8 @@ This can all be set up easily using the `setupSurvey()` function. Here we will s
 
 ```{r}
 survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
-                      coordinatesFile = system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'),
-                      siteWavsFolder = system.file('data', package = 'locaR'),
+                      coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+                      siteWavsFolder = system.file('extdata', package = 'locaR'),
                       date = '20200617', time = '090000', surveyLength = 7)
 ```
 
@@ -65,7 +65,7 @@ First, we must add the example detections to the mix. The above code has set up 
 
 ```{r}
 #read example detections.
-dets <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+dets <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
 
 #over-write empty detections file.
 write.csv(dets, file.path(tempdir(), '20200617_090000', 'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = F)

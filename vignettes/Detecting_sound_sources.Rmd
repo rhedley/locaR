@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(locaR)
+library(locaR)
 ```
 
 ```{r echo=FALSE}
-devtools::load_all()
+#devtools::load_all()
 ```
 
 This vignette will introduce users to the process for detecting sound sources of interest in their recordings. This step is peripheral to the rest of the `locaR` package, since the package is agnostic to the method used to detect sounds of interest. For instance, if full automation is desired, then automatic recognizers could be used as part of the workflow. This vignette will introduce a manual detection method which is somewhat labour intensive, but can be comprehensive, as it is possible to use this method to detect and localize every sound coming from within the array during a period of time. Automated methods, on the other hand, tend to miss some sounds of interest (so do manual methods, but it's hard to beat a trained expert).
@@ -55,7 +55,7 @@ Before we get started, we should convert the example data from .mp3 to .wav. Man
 ```{r}
 
 #list mp3 files.
-f.in <- list.files(system.file('data', package = 'locaR'), full.names = T, pattern='mp3$')
+f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
 #create wav names.
 f.out <- file.path(tempdir(), basename(f.in))
 #change extension.
@@ -76,7 +76,7 @@ The detection process starts by setting up a "survey", where one survey correspo
 Here's how to use the `setupSurvey()` function:
 ```{r echo=FALSE}
 survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
-                      coordinatesFile = system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'),
+                      coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
                       siteWavsFolder = tempdir(),
                       date = '20200617', time = '090000', surveyLength = 7)
 ```
@@ -165,7 +165,7 @@ In addition to the Red-eyed Vireo, we will localize the Clay-colored Sparrow nea
 Now that we have created the spectrogram (which would normally be many spectrograms for a longer recording session), we can fill out the detections file. To do so, simply open it in Excel (or another program), fill it in, and save it. Here's what the filled out detections file looks like:
 
 ```{r}
-read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
 ```
 
 One row is entered per sound. Notice that for rows 6-8, I only entered a comment that I was ignoring a bird outside the array. That is merely to remind myself that I have detected the bird, considered it, and decided to ignore it.

@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(locaR)
+library(locaR)
 ```
 
 ```{r echo=FALSE}
-devtools::load_all()
+#devtools::load_all()
 ```
 
 
@@ -36,7 +36,7 @@ Example data included with the `locaR` package was collected from nine synchroni
 To access the location of the data, use the `system.file()` function, as follows:
 
 ```{r}
-f <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
+f <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
 basename(f)
 ```
 
@@ -52,7 +52,7 @@ First, let's create a vector of file paths:
 
 ```{r}
 #Get a list of file paths to the example data.
-filepaths <- list.files(system.file('data', package = 'locaR'), pattern = '.mp3', full.names = T)
+filepaths <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
 
 #Add location names as names to the vector, to create a named vector of filepaths. 
 #In this case, the location names appear as the first part of the file name before the first underscore.
@@ -66,7 +66,7 @@ Let's read in detection data, which contains the above information.
 
 ```{r}
 #Read detection data.
-detections <- read.csv(system.file('data', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors=F)
+detections <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors=F)
 ```
 
 We then need to use the detection information to extract the relevant portions of the relevant .wav files. This can be done using the `createWavList()` function. For illustrative purposes, let's read the first sound of interest now. Later, we will create a loop to run through all seven sounds of interest in the example data.
@@ -108,7 +108,7 @@ Now we need to organize the coordinates so that the `localize()` function knows 
 Read the coordinates with the read.csv function:
 
 ```{r}
-coordinates <- read.csv(system.file('data', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
+coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
 
 #Add location names (in the Station column) as row names. This will be useful later.
 row.names(coordinates) <- coordinates$Station

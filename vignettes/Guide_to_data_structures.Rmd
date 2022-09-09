@@ -15,11 +15,11 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#library(locaR)
+library(locaR)
 ```
 
 ```{r echo=FALSE}
-devtools::load_all()
+#devtools::load_all()
 ```
 
 This vignette is intended to give users a better idea regarding the particulars of data organization in `locaR`, especially when using the `localizeMultiple()` function.
@@ -50,7 +50,7 @@ The coordinates file is simply a spreadsheet of spatial coordinates for all micr
 Here's what a coordinates file looks like:
 
 ```{r}
-head(read.csv(system.file('data', "Vignette_Coordinates.csv", package = 'locaR')))
+head(read.csv(system.file('extdata', "Vignette_Coordinates.csv", package = 'locaR')))
 ```
 
 There are five columns. **Station** is the unique name for each microphone location. **Zone** is the UTM zone, which is not used by any aspect of `locaR`. **Easting**, **Northing**, and **Elevation** are the x-, y-, and z-coordinates, respectively, of each microphone location. There can be other columns (e.g. a "Comments" column, or "Latitude" and "Longitude" columns with decimal degrees), but these will be ignored.
@@ -62,7 +62,7 @@ It is imperative that the Easting, Northing, and Elevation coordinates are measu
 The channels file is constructed once per survey, and specifies which microphone to select from each recording unit. 
 
 ```{r}
-head(read.csv(system.file('data', "Vignette_Channels.csv", package = 'locaR')))
+head(read.csv(system.file('extdata', "Vignette_Channels.csv", package = 'locaR')))
 ```
 
 It is a very simple, two-column spreadsheet, in which the first column is named Station, and the second is named Channel. The Station column contains location names that **must match names in the coordinates file**. The Channel column contains 1's or 2's specifying the channel to use for localization. Channel 1 is the left channel, Channel 2 is the right channel. 
@@ -76,7 +76,7 @@ Hopefully you will not need to create and use an adjustments file. It is only ne
 Although adjustment files are not used in any of the vignettes, here is an example taken from one of my own projects:
 
 ```{r}
-head(read.csv(system.file('data', "Vignette_Adjustments.csv", package = 'locaR')))
+head(read.csv(system.file('extdata', "Vignette_Adjustments.csv", package = 'locaR')))
 ```
 
 The first column **Filename** gives the original file name. The second column **Difference** indicates the amount that the filename was incorrect, in seconds. Positive numbers indicate the actual start time occurred after the start time indicated by the file name, and negative numbers indicate the actual start time occurred before that indicated by the file name. In the example data, all file names were exactly 1 second off - all of these files actually started at 9:00:01, but their file names indicate they started at 9:00:00. When an Adjustments file is provided to the `setupSurvey()` function and other subsequent functions, `locaR` will automatically add the appropriate amount of white noise to the beginning of the recording (in this case 1 second) to bring the files into alignment prior to localization/visualization.
@@ -88,7 +88,7 @@ Again, it's a peculiar problem, and hopefully not one you ever need to deal with
 The detections file is where information about each sound of interest is entered. 
 
 ```{r}
-head(read.csv(system.file('data', "Vignette_Detections_20200617_090000.csv", package = 'locaR')))
+head(read.csv(system.file('extdata', "Vignette_Detections_20200617_090000.csv", package = 'locaR')))
 ```
 
 Various pieces of information specific to each particular sound are entered. The first six columns (**Station1 to Station6**) include the Station (i.e. location) names. **These must match names provided in the coordinates file**. If a column contains NA (or a blank), it will be ignored. Currently, `locaR` is intended for using up to 6 microphones for localization; adding more is unlikely to boost accuracy, and comes at a computational cost.
