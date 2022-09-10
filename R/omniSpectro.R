@@ -121,7 +121,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
         #This will bring files with different start times into alignment.
         if(A > 0 & first==0) {
           sound1 <- tuneR::bind(tuneR::noise(kind='white', duration=Fs*A, samp.rate=Fs, bit=Br, pcm=T),
-                             Wave(sound1[1:(length(sound1)-Fs*A)], samp.rate=Fs, bit=Br, pcm=T))
+                             tuneR::Wave(sound1[1:(length(sound1)-Fs*A)], samp.rate=Fs, bit=Br, pcm=T))
         }
         #Spectrogram
         sound1 <- seewave::spectro(sound1, f=Fs,  plot=F, ovlp=0, norm=F)

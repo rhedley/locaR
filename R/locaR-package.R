@@ -6,9 +6,14 @@
 #' the location in three dimensions where a sound was most likely to have
 #' originated.
 #'
-#' @section locaR functions:
-#' The locaR functions...
-#'
 #' @docType package
 #' @name locaR
+#' @importFrom stats fft dist
+#' @importFrom utils read.csv write.csv
+#' @importFrom graphics abline axis box layout legend par plot plot.new points rect text
+#' @importFrom grDevices dev.cur dev.off gray.colors jpeg
 NULL
+
+utils::globalVariables(c("MSRP_HT_Level0", "MSRP_HT_Level1", "MSRP_HT_Level2", "MSRP_HT_Level3"),
+                       package = 'locaR')
+

@@ -11,8 +11,3 @@ algorithm of Cobos et al. (2011) which carries out a grid-search to find
 the location in three dimensions where a sound was most likely to have
 originated.
 }
-\section{locaR functions}{
-
-The locaR functions...
-}
-
