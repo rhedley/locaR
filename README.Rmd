@@ -1,5 +1,4 @@
 ---
-title: "locaR"
 output: github_document
 html_preview: true
 ---
@@ -7,6 +6,8 @@ html_preview: true
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
+
+#locaR <img src="man/figures/locaRLogo_Edit.png" width="40%" align="right" />
 
 ## Overview
 
