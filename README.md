@@ -1,6 +1,5 @@
 
-\#locaR
-<img src="man/figures/locaRLogo_Edit.png" width="40%" align="right" />
+# locaR <img src="man/figures/locaRLogo_Edit.png" width="40%" align="right" />
 
 ## Overview
 
