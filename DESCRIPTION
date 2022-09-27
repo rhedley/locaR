@@ -1,7 +1,7 @@
 Package: locaR
 Type: Package
 Title: Sound Localization in R
-Version: 0.1.1
+Version: 0.1.1.9000
 Authors@R: c(
     person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "cre"),
     person("Richard", "Hedley", email = "rhedley@ualberta.ca", role = "aut"))
