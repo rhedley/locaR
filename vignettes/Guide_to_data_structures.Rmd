@@ -18,10 +18,6 @@ knitr::opts_chunk$set(
 library(locaR)
 ```
 
-```{r echo=FALSE}
-#devtools::load_all()
-```
-
 This vignette is intended to give users a better idea regarding the particulars of data organization in `locaR`, especially when using the `localizeMultiple()` function.
 
 As described in the other vignettes, using the `localizeMultiple()` function requires that data be organized in a specific way - namely that recording sessions, or "surveys" must be set up with a given folder structure. The folder structure is as follows:

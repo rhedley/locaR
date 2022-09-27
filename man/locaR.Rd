@@ -11,3 +11,6 @@ algorithm of Cobos et al. (2011) which carries out a grid-search to find
 the location in three dimensions where a sound was most likely to have
 originated.
 }
+\references{
+Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.
+}

@@ -1,7 +1,7 @@
 Package: locaR
 Type: Package
 Title: Sound Localization in R
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "cre"),
     person("Richard", "Hedley", email = "rhedley@ualberta.ca", role = "aut"))
@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/mabecker89/locaR
 BugReports: https://github.com/mabecker89/locaR/issues
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.1
 Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
 Suggests: 
     testthat (>= 2.0.0),

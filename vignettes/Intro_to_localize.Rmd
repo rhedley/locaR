@@ -18,11 +18,6 @@ knitr::opts_chunk$set(
 library(locaR)
 ```
 
-```{r echo=FALSE}
-#devtools::load_all()
-```
-
-
 The `locaR` package is designed to work with any synchronized recordings via the `localize()` function. However, many of the functions, most notably the `localizeSingle()` and `localizeMultiple()` functions, have been written specifically to work with Wildlife Acoustics (SM3 or SM4TS) recordings; those functions are intended to ease the user's data wrangling and data management burden. Even if those functions are used, the final localization is conducted via a call to the `localize()` function. Therefore, users should understand how the `localize()` function works. This vignette aims to provide that basic understanding by way of a worked example.
 
 # The localize() function.

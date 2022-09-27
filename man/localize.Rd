@@ -109,3 +109,6 @@ functions tradeoff flexibility for increased automation. All three functions use
 same underlying localization algorithm (\code{localizeSingle} and \code{localizeMultiple}
 pass their data to \code{localize} after the data has been wrangled).
 }
+\references{
+Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.
+}
