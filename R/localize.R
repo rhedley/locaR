@@ -1,6 +1,6 @@
 #' Localize detected sounds
 #'
-#' \code{localize} and the two related functions \code{localizeSingle} and \code{localizeMultiple}
+#' \code{localize} and the related function \code{localizeMultiple}
 #' are the basic functions for localizing sounds. They take audio data as inputs, alongside relevant
 #'  metadata (e.g. coordinates and a variety of settings), and estimate the location of the
 #'  dominant sound source. The \code{localize} function takes as arguments the minimal
@@ -8,12 +8,12 @@
 #' full duration of the Wave objects in wavList. Effectively this means the user
 #' must wrangle the data and clip the audio themselves, but this affords the greatest
 #' flexibility in terms of how the user chooses to organize their data.
-#' The \code{localizeSingle} and \code{localizeMultiple} functions, in contrast,
-#' automate much of the data wrangling process, but require data to be organized in a
-#' very specific way (e.g. folder structure, file structures). Thus, the latter two
-#' functions tradeoff flexibility for increased automation. All three functions use the
-#' same underlying localization algorithm (\code{localizeSingle} and \code{localizeMultiple}
-#' pass their data to \code{localize} after the data has been wrangled).
+#' The \code{localizeMultiple} function, in contrast,
+#' automates much of the data wrangling process, but requires data to be organized in a
+#' very specific way (e.g. folder structure, file structures). Thus, the latter
+#' function trades off flexibility for increased automation. Both functions use the
+#' same underlying localization algorithm - \code{localizeMultiple}
+#' passes its data to \code{localize} after the data has been wrangled.
 #'
 #' @param wavList list of Wave objects. The name of the Wave objects MUST be
 #'     present in the coordinates data.frame.
@@ -50,11 +50,13 @@
 #' @param st List. Localization settings object generated using
 #'     \code{\link{processSettings}}. Only needed for \code{localizeSingle} or
 #'     \code{localizeMultiple}.
-#' @param index,indices Numeric or 'all'. Indices to be localized within a detection file.
+#' @param indices Numeric or 'all'. Indices to be localized within a detection file.
 #'     Setting to 1 localizes the first row, c(7:10) localizes rows 7-10, and 'all'
 #'     localizes all rows (ignoring rows that have no entry in the Station1 column).
 #' @return List, containing the location of the sound source (global maximum),
 #'     and optionally the InitData and SearchMap lists.
+#' @references
+#' Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.
 #' @export
 
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
@@ -182,77 +184,6 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
   return(OUT)
 
 }
-
-
-#' @rdname localize
-localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
-                           keep.InitData = TRUE, keep.SearchMap = FALSE) {
-
-  locFolder <- file.path(st$outputFolder, 'Localizations')
-  dir.create(locFolder, showWarnings = FALSE)
-
-  #Get detections data frame
-  d <- st$detections
-
-  #Check if the row index has data.
-  if(is.na(d$Station1[index])) {
-    location <- data.frame(Easting = NA, Northing = NA, Elevation = NA, Power = NA)
-    return(list(location = location))
-  }
-
-  #Extract row with data.
-  row <- d[index,]
-
-  #Get station names
-  stations <- sort(as.vector(as.matrix(row[1, paste0('Station', 1:6)])))
-  stations <- stations[stations != "" & !is.na(stations)]
-
-  #Create coordinates to be passed to localize().
-  row.names(st$files) <- st$files$Station
-  coordinates <- st$files[stations,c('Station','Easting', 'Northing', 'Elevation')]
-
-  #create wavList to be passed to localize().
-  #Station names
-  names <- row.names(coordinates)
-
-  #File paths
-  paths <- st$files[names,'Path']
-
-  #Channel to read.
-  channels <- st$files[names,'Channel']
-
-  #Amount to adjust start time (taking into account file names as well as user-specified adjustments)
-  adjustments <- st$files[names,'Adjustment']
-
-  wavList <- createWavList(paths = paths, names = names, from = row$From, to = row$To, buffer = st$buffer,
-                channels = channels, adjustments = adjustments, index = index)
-
-  #make name for jpeg.
-  jpegName <- paste0(formatC(index,width=4,flag='0'), '.jpeg')
-
-  #Deal with NA, NULL or '' soundSpeed values.
-  soundSpeed <- st$soundSpeed
-
-  if(is.null(soundSpeed)) {
-    soundSpeed <- substitute()
-  } else {
-    if(is.na(st$soundSpeed)) {soundSpeed <- substitute()} else {
-      if(st$soundSpeed == '') {soundSpeed <- substitute()}
-    }
-  }
-
-
-  OUT <- localize(wavList = wavList, coordinates = coordinates,
-                  margin = st$margin, zMin = st$zMin, zMax = st$zMax,
-                  resolution = st$resolution, F_Low = row$F_Low,
-                  F_High =  row$F_High, locFolder = locFolder,
-                  jpegName = jpegName, tempC = st$tempC, soundSpeed = soundSpeed, plot = plot,
-                  InitData = InitData, keep.InitData = keep.InitData,
-                  keep.SearchMap = keep.SearchMap)
-
-  return(OUT)
-}
-
 
 #' @rdname localize
 #' @export

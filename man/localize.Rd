@@ -2,7 +2,6 @@
 % Please edit documentation in R/localize.R
 \name{localize}
 \alias{localize}
-\alias{localizeSingle}
 \alias{localizeMultiple}
 \title{Localize detected sounds}
 \usage{
@@ -20,15 +19,6 @@ localize(
   plot = TRUE,
   locFolder,
   jpegName = "000.jpeg",
-  InitData = NULL,
-  keep.InitData = TRUE,
-  keep.SearchMap = FALSE
-)
-
-localizeSingle(
-  st,
-  index,
-  plot = TRUE,
   InitData = NULL,
   keep.InitData = TRUE,
   keep.SearchMap = FALSE
@@ -85,7 +75,7 @@ conducting more involved analysis with overlapping sources, etc.).}
 \code{\link{processSettings}}. Only needed for \code{localizeSingle} or
 \code{localizeMultiple}.}
 
-\item{index, indices}{Numeric or 'all'. Indices to be localized within a detection file.
+\item{indices}{Numeric or 'all'. Indices to be localized within a detection file.
 Setting to 1 localizes the first row, c(7:10) localizes rows 7-10, and 'all'
 localizes all rows (ignoring rows that have no entry in the Station1 column).}
 }
@@ -94,7 +84,7 @@ List, containing the location of the sound source (global maximum),
     and optionally the InitData and SearchMap lists.
 }
 \description{
-\code{localize} and the two related functions \code{localizeSingle} and \code{localizeMultiple}
+\code{localize} and the related function \code{localizeMultiple}
 are the basic functions for localizing sounds. They take audio data as inputs, alongside relevant
  metadata (e.g. coordinates and a variety of settings), and estimate the location of the
  dominant sound source. The \code{localize} function takes as arguments the minimal
@@ -102,10 +92,13 @@ amount of information needed for localization. Localization is conducted on the
 full duration of the Wave objects in wavList. Effectively this means the user
 must wrangle the data and clip the audio themselves, but this affords the greatest
 flexibility in terms of how the user chooses to organize their data.
-The \code{localizeSingle} and \code{localizeMultiple} functions, in contrast,
-automate much of the data wrangling process, but require data to be organized in a
-very specific way (e.g. folder structure, file structures). Thus, the latter two
-functions tradeoff flexibility for increased automation. All three functions use the
-same underlying localization algorithm (\code{localizeSingle} and \code{localizeMultiple}
-pass their data to \code{localize} after the data has been wrangled).
+The \code{localizeMultiple} function, in contrast,
+automates much of the data wrangling process, but requires data to be organized in a
+very specific way (e.g. folder structure, file structures). Thus, the latter
+function trades off flexibility for increased automation. Both functions use the
+same underlying localization algorithm - \code{localizeMultiple}
+passes its data to \code{localize} after the data has been wrangled.
+}
+\references{
+Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.
 }
