@@ -46,3 +46,11 @@ Named list of Wave objects.
 This function reads in portions of a set of synchronized .wav files. It is intended to be used to load
 sounds of interest for localization.
 }
+\examples{
+    #list example mp3 files.
+    wavs <- list.files(system.file('extdata', package = 'locaR'), pattern = 'mp3$', full.names = TRUE)
+    #get names of mp3 locations.
+    nms <- substr(basename(wavs), 1, 4)
+    #create wave list.
+    wl <- createWavList(paths = wavs, names = nms, from = 1, to = 2, buffer = 0.1)
+}

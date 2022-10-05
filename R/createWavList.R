@@ -20,6 +20,13 @@
 #'     can help with troubleshooting if an error occurs.
 #' @return Named list of Wave objects.
 #' @export
+#' @examples
+#'     #list example mp3 files.
+#'     wavs <- list.files(system.file('extdata', package = 'locaR'), pattern = 'mp3$', full.names = TRUE)
+#'     #get names of mp3 locations.
+#'     nms <- substr(basename(wavs), 1, 4)
+#'     #create wave list.
+#'     wl <- createWavList(paths = wavs, names = nms, from = 1, to = 2, buffer = 0.1)
 
 createWavList <- function(paths, names, from, to, buffer,
                           adjustments, channels, index = 'unknown') {
