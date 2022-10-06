@@ -56,3 +56,12 @@ x, y and z coordinates of
 each grid cell, as well as the resolution and range of values in the x,
 y and z directions. This list is passed to other functions for localization.
 }
+\examples{
+    #read coordinates.
+    coords <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+       stringsAsFactors = F)
+    #make search map.
+    sm <- makeSearchMap(easting = coords$Easting,
+                       northing = coords$Northing,
+                       elevation = coords$Elevation)
+}

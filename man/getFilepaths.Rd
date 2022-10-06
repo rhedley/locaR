@@ -23,3 +23,18 @@ settings list and returns the file paths and other information as a
 dataframe. It undertakes a recursive search within the site folder for files
 matching the date and time.
 }
+\examples{
+    #Read example data
+    settings <- read.csv(system.file('extdata', 'Ex_20200617_090000_Settings.csv', package = 'locaR'), stringsAsFactors = F)
+
+    #Over-write default values for SiteWavsFolder, CoordinatesFile, and ChannelsFile
+    settings$Value[settings$Setting == 'SiteWavsFolder'] <- system.file('extdata', package = 'locaR')
+    settings$Value[settings$Setting == 'CoordinatesFile'] <- system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR')
+    settings$Value[settings$Setting == 'ChannelsFile'] <- system.file('extdata', 'Vignette_Channels.csv', package = 'locaR')
+
+    #Run processSettings() function
+    st <- processSettings(settings = settings, getFilepaths = FALSE)
+
+    #Get filepaths.
+    fp <- getFilepaths(settings = st, types = 'mp3')
+}

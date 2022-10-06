@@ -66,3 +66,9 @@ data wrangling automatically using the \code{localizeSingle} and \code{localizeM
 functions. The extra work required to set up surveys in a standard format can
 save time later on.
 }
+\examples{
+    survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
+        coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+        siteWavsFolder = tempdir(),
+        date = '20200617', time = '090000', surveyLength = 7)
+}

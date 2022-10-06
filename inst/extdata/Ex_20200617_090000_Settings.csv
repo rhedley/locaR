@@ -1,15 +1,16 @@
 Setting,Value
-OutputFolder,C:/Users/Richard Hedley/Documents/GitHub/locaR/data/
-DetectionsFile,Vignette_Detections_20200617_090000.csv
-CoordinatesFile,C:/Users/Richard Hedley/Documents/GitHub/locaR/data//Vignette_Coordinates.csv
-SiteWavsFolder,C:/Users/Richard Hedley/Documents/GitHub/locaR/data/
-AdjustmentsFile,NA
-ChannelsFile,C:/Users/Richard Hedley/Documents/GitHub/locaR/data//Vignette_Channels.csv
+DetectionsFile,Ex_20200617_090000_Run1_Detections.csv
+CoordinatesFile,Vignette_Coordinates.csv
+SiteWavsFolder,
+AdjustmentsFile,
+ChannelsFile,Ex_20200617_090000_Channels.csv
 Date,20200617
 Time,90000
-SurveyLengthInSeconds,7
+tempC,15
+soundSpeed,
+SurveyLength,7
 Margin,10
 Zmin,-1
-Zmax,10
+Zmax,20
 Resolution,1
 Buffer,0.2

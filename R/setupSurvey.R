@@ -29,6 +29,11 @@
 #' @return data.frame containing the settings generated using \code{\link{createSettings}}.
 #'     This data.frame is identical to that produced by reading the settingsFile csv, which
 #'     is also written to file.
+#' @examples
+#'     survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
+#'         coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+#'         siteWavsFolder = tempdir(),
+#'         date = '20200617', time = '090000', surveyLength = 7)
 #' @export
 setupSurvey <- function(folder,
                         projectName,

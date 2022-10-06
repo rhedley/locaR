@@ -11,6 +11,20 @@
 #' @param types Character, specifying the file type to be searched for. Either 'wav' or 'mp3'.
 #' @return A data frame with station names, coordinates, filepaths, and any
 #'     recording start-time adjustments.
+#' @examples
+#'     #Read example data
+#'     settings <- read.csv(system.file('extdata', 'Ex_20200617_090000_Settings.csv', package = 'locaR'), stringsAsFactors = F)
+#'
+#'     #Over-write default values for SiteWavsFolder, CoordinatesFile, and ChannelsFile
+#'     settings$Value[settings$Setting == 'SiteWavsFolder'] <- system.file('extdata', package = 'locaR')
+#'     settings$Value[settings$Setting == 'CoordinatesFile'] <- system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR')
+#'     settings$Value[settings$Setting == 'ChannelsFile'] <- system.file('extdata', 'Vignette_Channels.csv', package = 'locaR')
+#'
+#'     #Run processSettings() function
+#'     st <- processSettings(settings = settings, getFilepaths = FALSE)
+#'
+#'     #Get filepaths.
+#'     fp <- getFilepaths(settings = st, types = 'mp3')
 #' @export
 getFilepaths <- function(settings, types = 'wav') {
 

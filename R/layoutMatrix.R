@@ -24,6 +24,35 @@
 #' @return Matrix, containing the station names within the array. If done correctly,
 #'     the matrix rows and columns should align with the spatial layout of the stations
 #'     in the field.
+#' @examples
+#'
+#'     #Vector of station names, Ex-1 to Ex-9.
+#'     stationNames <- paste0('Ex-',1:9)
+#'
+#'     #All options shown below.
+#'     #layoutMatrix starting from top left (NW) to bottom right (SE) by row.
+#'     layoutMatrix(stationNames = stationNames, start = 'topleft', byrow = TRUE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from top left (NW) to bottom right (SE) by column.
+#'     layoutMatrix(stationNames = stationNames, start = 'topleft', byrow = FALSE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from top right (NE) to bottom left (SW) by row.
+#'     layoutMatrix(stationNames = stationNames, start = 'topright', byrow = TRUE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from top right (NE) to bottom left (SW) by column.
+#'     layoutMatrix(stationNames = stationNames, start = 'topright', byrow = FALSE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from bottom left (SW) to top right (NE) by row.
+#'     layoutMatrix(stationNames = stationNames, start = 'bottomleft', byrow = TRUE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from bottom left (SW) to top right (NE) by column.
+#'     layoutMatrix(stationNames = stationNames, start = 'bottomleft', byrow = FALSE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from bottom right (SE) to top left (NW) by row.
+#'     layoutMatrix(stationNames = stationNames, start = 'bottomright', byrow = TRUE, ncol = 3, nrow = 3)
+#'
+#'     #layoutMatrix starting from bottom right (SE) to top left (NW) by column.
+#'     layoutMatrix(stationNames = stationNames, start = 'bottomright', byrow = FALSE, ncol = 3, nrow = 3)
 #' @export
 
 layoutMatrix = function(st, stationNames = NULL,

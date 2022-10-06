@@ -30,6 +30,14 @@
 #'     that the grid search ends well above the highest microphone.
 #' @param resolution resolution of the search map, in meters.
 #' @return A list defining the search map.
+#' @examples
+#'     #read coordinates.
+#'     coords <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+#'        stringsAsFactors = F)
+#'     #make search map.
+#'     sm <- makeSearchMap(easting = coords$Easting,
+#'                        northing = coords$Northing,
+#'                        elevation = coords$Elevation)
 #' @export
 makeSearchMap  <- function(easting, northing, elevation, margin = 10, zMin = -1, zMax = 10, resolution = 1) {
 
