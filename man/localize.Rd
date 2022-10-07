@@ -99,6 +99,56 @@ function trades off flexibility for increased automation. Both functions use the
 same underlying localization algorithm - \code{localizeMultiple}
 passes its data to \code{localize} after the data has been wrangled.
 }
+\examples{
+    ## example for localize()
+    #Get filepaths for example data.
+    fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
+    #Add names.
+    names(fp) <- sapply(strsplit(basename(fp), '_'), '[[', 1)
+    #Load first row of detection data.
+    row <- read.csv(system.file('extdata',
+         'Vignette_Detections_20200617_090000.csv', package = 'locaR'),
+          stringsAsFactors=F)[1,]
+    #Get non-empty Station columns.
+    stationSubset <- unlist(row[1,paste0('Station',1:6)])
+    stationSubset <- stationSubset[!is.na(stationSubset) & stationSubset != '']
+    #Create wav list.
+    wl <- createWavList(paths = fp[stationSubset], names = stationSubset,
+           from = row$From, to = row$To, buffer = 0.2, index=1)
+    #Read coordinates.
+    coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
+    row.names(coordinates) <- coordinates$Station
+    #Subset coordinates.
+    crd <- coordinates[stationSubset,]
+    #Localize.
+    loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
+               F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = T)
+
+    ## Example for localizeMultiple().
+    #list mp3 files.
+    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+    #create wav names.
+    f.out <- file.path(tempdir(), basename(f.in))
+    #change extension.
+    substr(f.out, nchar(f.out)-2, nchar(f.out)) <- 'wav'
+    #Convert mp3 to wav, as required for this particular example.
+    for(i in 1:length(f.in)) {
+      y <- tuneR::readMP3(f.in[i])
+      tuneR::writeWave(y, filename = f.out[i])
+    }
+    #Set up survey.
+    survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
+               coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+               siteWavsFolder = tempdir(), date = '20200617', time = '090000', surveyLength = 7)
+    #read example detections.
+    dets <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+    #over-write empty detections file.
+    write.csv(dets, file.path(tempdir(), '20200617_090000', 'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = F)
+    #Process settings.
+    st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
+    #localize
+    locs <- localizeMultiple(st = st, indices = 1:2)
+}
 \references{
 Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.
 }

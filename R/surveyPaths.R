@@ -17,6 +17,8 @@
 #'     can improve results.
 #' @return Named vector of paths to surveyFolder, runFolder, specFolder,
 #' locFolder, detectionsFile, channelsFile, and settingsFile.
+#' @examples
+#'     surveyPaths(folder = tempdir(), projectName = 'Ex', date = '20200617', time = '090000', run = 1)
 #' @export
 surveyPaths <- function(folder, projectName, date, time, run) {
 

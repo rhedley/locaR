@@ -33,3 +33,27 @@ while effectively eliminating the likelihood of double-counting sound sources th
 may be clearly detectable on many microphones at the same time. At the present time,
 this function only works when a settings object, st, is provided.
 }
+\examples{
+    #First need to convert mp3 example data to wav.
+    #list mp3 files.
+    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+    #create wav names.
+    f.out <- file.path(tempdir(), basename(f.in))
+    #change extension.
+    substr(f.out, nchar(f.out)-2, nchar(f.out)) <- 'wav'
+    #Convert mp3 to wav, as required for this particular example.
+    for(i in 1:length(f.in)) {
+      y <- tuneR::readMP3(f.in[i])
+      tuneR::writeWave(y, filename = f.out[i])
+    }
+    #Set up survey.
+    survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
+               coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+               siteWavsFolder = tempdir(), date = '20200617', time = '090000', surveyLength = 7)
+    #Process settings.
+    st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
+    #Set up layout matrix.
+    lm <- layoutMatrix(st = st, start = 'topleft', byrow = T, nrow = 3, ncol = 3)
+    #create detection spectrograms.
+    omniSpectro(st, lm, intervalLength = 7)
+}

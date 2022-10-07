@@ -32,3 +32,6 @@ Function that takes arguments of a base folder and a project name, date, time,
 and run, and returns the appropriate filepaths for a standardized survey
 workflow.
 }
+\examples{
+    surveyPaths(folder = tempdir(), projectName = 'Ex', date = '20200617', time = '090000', run = 1)
+}
