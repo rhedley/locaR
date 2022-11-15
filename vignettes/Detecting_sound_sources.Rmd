@@ -70,7 +70,7 @@ for(i in 1:length(f.in)) {
 The detection process starts by setting up a "survey", where one survey corresponds to one recording session across an array. Surveys can be set up with the `setupSurvey()` function. Using this function to set up a survey has the advantage that it sets up files in a particular file/folder structure, which can be recognized by the `localizeMultiple()` function to significantly streamline the localization process. I strongly urge users of `locaR` to set up their surveys with this structure, as it will make using the package much easier; the package contains many functions to help with the setup process.
 
 Here's how to use the `setupSurvey()` function:
-```{r echo=FALSE}
+```{r}
 survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
                       coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
                       siteWavsFolder = tempdir(),
