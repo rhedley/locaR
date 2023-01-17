@@ -6,13 +6,12 @@ Authors@R: c(
     person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "cre"),
     person("Richard", "Hedley", email = "rhedley@ualberta.ca", role = "aut"))
 Maintainer: Richard Hedley <rhedley@ualberta.ca>
-Description: More about what it does (maybe more than one line)
-    Use four spaces when indenting paragraphs within the Description.
+Description: Sound localization in R.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-URL: https://github.com/mabecker89/locaR
-BugReports: https://github.com/mabecker89/locaR/issues
+URL: https://github.com/rhedley/locaR
+BugReports: https://github.com/rhedley/locaR/issues
 RoxygenNote: 7.2.1
 Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
 Suggests: 
