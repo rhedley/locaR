@@ -20,7 +20,7 @@ library(locaR)
 
 This vignette will introduce users to the process for detecting sound sources of interest in their recordings. This step is peripheral to the rest of the `locaR` package, since the package is agnostic to the method used to detect sounds of interest. For instance, if full automation is desired, then automatic recognizers could be used as part of the workflow. This vignette will introduce a manual detection method which is somewhat labour intensive, but can be comprehensive, as it is possible to use this method to detect and localize every sound coming from within the array during a period of time. Automated methods, on the other hand, tend to miss some sounds of interest (so do manual methods, but it's hard to beat a trained expert).
 
-Regardless of the detection method, several pieces of information about each sound prior to localization. These are:
+Regardless of the detection method, several pieces of information about each sound are required prior to localization. These are:
 
 1. The date/time of the recording session (which I will often refer to as a "survey").
 2. The start/end time of the sound, relative to the start of the recording session, in seconds.
@@ -90,21 +90,23 @@ The example folder structure looks like this:
         
 The Channels file is placed directly within the survey folder, since channels are specified once per survey. Then comes a "Run" folder, where I tend to have one "run" every time I run the `localizeMultiple()` function. If I need to run a subset of detections again, I create a new folder called Run2, and put them in there, to avoid over-writing the good localizations that were completed in Run 1.
 
-Within the Run1 folder, the detections file contains the metadata for each detection. The Settings file contains information to be fed to the algorithm. The Localizations folder is where the jpeg images created during localization are put (see the Introduction to localize() vignette for an explanation of those). The Spectrograms folder is where we will create spectrograms for detecting sounds of interest.
+Within the Run1 folder, the detections file contains the metadata for each detection. The Settings file contains information to be fed to the algorithm. The Localizations folder is where the jpeg images created during localization are put (see the Introduction to localize() vignette for an explanation of those). The Spectrograms folder is where we will create spectrograms for detecting sounds of interest. Both the detections file and the channels file are created as empty files that will need to be populated as we go.
 
-A secondary output of the `setupSurvey()` function is a dataframe containing various settings information needed for localization and for creating spectrograms. This dataframe is the same as what you would get if you read in the Settings file:
+The `setupSurvey()` returns a dataframe containing various settings information needed for localization and for creating spectrograms. This dataframe is identical to what you get by reading the Settings file:
 
 ```{r}
 all.equal(survey, read.csv(file.path(tempdir(), "20200617_090000/Run1/Ex_20200617_090000_Run1_Settings.csv"), stringsAsFactors = F))
 ```
 
-We can automatically process this into a list with the `processSettings()` function, which reads in the relevant data.
+We can automatically process this dataframe into a list with the `processSettings()` function, which reads in the relevant data.
 
 ```{r}
 st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
 ```
 
-We can see that the st object contains a whole bunch of relevant information about the survey, including the microphone coordinates, the paths to all the recordings, etc.
+We can see that the st object contains a whole bunch of relevant information about the survey, including the microphone coordinates, the paths to all the recordings, etc. The st object will be what is passed to other functions for detection and localization.
+
+So to briefly summarize, the `setupSurvey()` function creates files and folders in a particular structure; the Settings file points towards relevant information and file locations within this file structure; and the `processSettings()` function automatically interprets the Settings file and reads all the relevant information into a format that can be passed to other functions later for detection/localization.
 
 ## Creating detection spectrograms.
 
@@ -144,11 +146,11 @@ The `omniSpectro()` function creates jpeg images containing a grid of synchroniz
 
 In our example, only one jpeg was created in the Spectrograms folder, called Sound0.jpeg:
 
-![](Sound0.jpeg)
+![](Sound0.jpeg){width=100%}
 
 We can see nine spectrograms, and by comparing them we can also see that most of the sounds are visible across multiple spectrograms. Adding some labels makes the situation clearer:
 
-![](Sound0_Edit.png)
+![](Sound0_Edit.png){width=100%}
 
 Five different individual birds sang during these seven seconds within earshot of the nine-microphone array. Three of these can be safely ignored because they are singing from outside of the array and are only perceptible at the edge. These are a House Wren in the top-right panel, a Clay-colored Sparrow in the bottom-right panel, and a Yellow Warbler in the bottom-right panel.
 
@@ -174,28 +176,11 @@ For the Clay-colored Sparrow (CCSP), I selected microphones Ex-2, Ex-3, Ex-5 and
 
 Both species were labeled with Individual 1, since they were the first individual of that species detected. Subsequent individuals of the same species would be labeled 2, 3, etc. to keep track of who is who within a survey. A Comments column is also included, and additional columns could be added if desired, but they would be ignored by `locaR` during analysis.
 
-# Conclusion.
+## Conclusion.
 
 This vignette has introduced how to create spectrograms to detect sounds of interest within a localization array. Detecting sound sources within a microphone array is much, much trickier than doing so within single-microphone recordings. In particular, one must account for the fact that sounds, by design, reach multiple microphones. This vignette used the `omniSpectro()` function to create multi-paneled spectrograms, which has worked for me. Also introduced was the concept of "surveys", and how to set them up using the functions in `locaR`.
 
-Overall, I find the detection process to be quite cumbersome for localization. My goal tends to be to work intensively (detecting and monitoring everything that is going on over short periods of time) rather than extensively (detecting and monitoring some fraction of what is happening over longer periods of time). To me, this intensive work is quite unique to localization and it can result in amazing data, so the end result makes the effort spent on detection worthwhile. The detection workflow described here works well when working intensively, and has been arrived at via trial and error over time. Still, it is likely too time-consuming to produce large sample sizes when working extensively; if that is your goal, you will need to come up with your own solution, but can still use `locaR` to conduct the localization step via the `localize()` function.
+Overall, I find the detection process to be quite cumbersome for localization. My goal tends to be to work intensively (detecting and monitoring everything that is going on over short periods of time) rather than extensively (detecting and monitoring some fraction of what is happening over longer periods of time). An example of intensive work would be studying vocal interactions between birds, where the goal may be to identify every song used by each individual while tracking their relative positions. In contrast, extensive work might include examining seasonal patterns in vocal behaviour across days, weeks or months. In the latter case, it may be acceptable (or unavoidable) to  miss some proportion of vocalizations, arriving at a relative measure of vocal output.
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+The detection workflow described here works well when working intensively, and has been arrived at via trial and error over time. Still, it is likely too time-consuming to produce large sample sizes when working extensively; if that is your goal, you will need to come up with your own solution, but `locaR` can still be used to conduct localization step via the `localize()` function.
 
