@@ -30,12 +30,13 @@ As described in the other vignettes, using the `localizeMultiple()` function req
         * Localizations folder.
         * Spectrograms folder.
         
-So, for a given project, one might have on their computer a folder pertaining to that project, and within that several different survey folders, each corresponding to a different date and time (if you have different surveys occurring at the same date and time, e.g. at different sites, put those in separate folders). As described in the "Detecting Sound Sources" vignette, there are several files that are read by `locaR` for localization. A few that warrant further description are:
+So, for a given project one might have on their computer a folder pertaining to that project, and within that several different survey folders, each corresponding to a different date and time (if you have different surveys occurring at the same date and time, e.g. at different sites, put those in separate folders). As described in the "Detecting sound sources" vignette, there are several files that are read by `locaR` for localization. A few that warrant further description are:
 
 * The coordinates file.
 * The channels file.
 * The adjustments file.
 * The detections file.
+* The settings file.
 
 Each of these files is a .csv file. The use of csv files was aimed at making each file easily editable in other programs (e.g. Microsoft Excel). 
 
@@ -95,6 +96,17 @@ Those are the only columns that are actually used for localization. The **Specie
 
 If a row has no information in any columns except the **Comments** column, that row will be ignored. This can be useful for record-keeping when a sound source is outside the array.
 
+# The settings file.
+
+The settings file is the file that brings everything together in one place. It contains file paths to point towards the relevant data structures described above, as well as other relevant survey-specific information such as the temperature, assumed speed of sound, etc. An example:
+
+```{r}
+read.csv(system.file('extdata', "Ex_20200617_090000_Settings.csv", package = 'locaR'), stringsAsFactors = F)
+```
+
+The first column contains the name of the setting, and the second column contains the value for that setting. The second column can be manually edited as desired, and this will affect the subsequent localization results.
+
+The first six rows point towards the other files and folders. Date is an integer with 8 digits in the format YYYYMMDD. Time is a time with either 5 or 6 digits, either HHMMSS or HMMSS. tempC is the temperature in degrees celsius. soundSpeed is the speed of sound in meters per second. If soundSpeed is not defined, tempC will be used to define the speed of sound in air. If soundSpeed is defined, tempC is ignored. SurveyLength is the length of the survey in seconds (recordings can be longer than the desired period of time to be surveyed, e.g. if you want to survey the first minute of a recording session). Margin is the amount of space around the outside of the array to search for sound sources, in meters. Zmin and Zmax are the amount, in meters, to search below the lowest microphone and above the highest microphone, respectively. Resolution is the size of each grid cell, in meters along each side, in the search grid. Buffer is the amount of time, in seconds, to extract around each detection. This could be important when localizing very short sounds, because transmission delays could be longer than the duration of the sound, leading the sound to be missed on some microphones if the sound is not buffered.
 
 
 

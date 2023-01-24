@@ -79,7 +79,7 @@ survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
 
 Two more steps are needed prior to the localization step.
 
-First, we must add the example detections to the mix. The above code has set up a survey in the specified location (here, the working directory, which should be the '/locaR/vignettes/' folder), but doing so, it created a detections file that is empty. Let's fill it with the example detection data provided with the package.
+First, we must add the example detections to the mix. The above code has set up a survey in the specified location (here, the folder provided by `tempdir()`), but doing so, it created a detections file that is empty. Let's fill it with the example detection data provided with the package. For details on how to fill out a detections file from scratch, see vignette 2: "Detecting sound sources".
 
 ```{r}
 #read example detections.
