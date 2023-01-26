@@ -48,7 +48,8 @@ this function only works when a settings object, st, is provided.
     }
     #Set up survey.
     survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
-               coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+               coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv',
+                                             package = 'locaR'),
                siteWavsFolder = tempdir(), date = '20200617', time = '090000', surveyLength = 7)
     #Process settings.
     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')

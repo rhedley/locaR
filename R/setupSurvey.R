@@ -72,7 +72,7 @@ setupSurvey <- function(folder,
     message('Run == 1 and survey folder (i.e. /folder/date_time) exists.\nNew files not written. Folder structure appears to be ', ifelse(check,'correct','incorrect'))
 
     if(file.exists(sp['settingsFile'])) {
-      settings <- read.csv(sp['settingsFile'], stringsAsFactors = F)
+      settings <- read.csv(sp['settingsFile'], stringsAsFactors = FALSE)
       return(settings)
     } else {return(NA)}
   }
@@ -95,13 +95,13 @@ setupSurvey <- function(folder,
   } else {
     #create and write empty detections file.
     detections <- read.csv(system.file('extdata', 'Empty_Detections.csv', package = 'locaR'))
-    write.csv(detections, sp['detectionsFile'], row.names = F)
+    write.csv(detections, sp['detectionsFile'], row.names = FALSE)
   }
 
   #create and write empty channels file if channels is NULL.
   if(missing(channelsFile)) {
     channels <- read.csv(system.file('extdata', 'Empty_Channels.csv', package = 'locaR'))
-    write.csv(channels, sp['channelsFile'], row.names = F)
+    write.csv(channels, sp['channelsFile'], row.names = FALSE)
   }
 
   adjustmentsFile <- ifelse(missing(adjustmentsFile), substitute(), adjustmentsFile)
@@ -131,7 +131,7 @@ setupSurvey <- function(folder,
   if(file.exists(sp['settingsFile'])) {
     message('Settings file already exists. File not overwritten.')
   } else {
-    write.csv(settings, file = sp['settingsFile'], row.names = F)
+    write.csv(settings, file = sp['settingsFile'], row.names = FALSE)
   }
 
   message('Survey successfully created at ', sp['surveyFolder'])

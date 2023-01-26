@@ -33,7 +33,7 @@
 #' @examples
 #'     #read coordinates.
 #'     coords <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
-#'        stringsAsFactors = F)
+#'        stringsAsFactors = FALSE)
 #'     #make search map.
 #'     sm <- makeSearchMap(easting = coords$Easting,
 #'                        northing = coords$Northing,

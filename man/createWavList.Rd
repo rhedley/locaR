@@ -48,7 +48,8 @@ sounds of interest for localization.
 }
 \examples{
     #list example mp3 files.
-    wavs <- list.files(system.file('extdata', package = 'locaR'), pattern = 'mp3$', full.names = TRUE)
+    wavs <- list.files(system.file('extdata', package = 'locaR'),
+                       pattern = 'mp3$', full.names = TRUE)
     #get names of mp3 locations.
     nms <- substr(basename(wavs), 1, 4)
     #create wave list.

@@ -38,7 +38,7 @@ for(i in 1:length(files)) {
 }
 
 #list files.
-wavs <- list.files('./data/', full.names=T, pattern='*.wav')
+wavs <- list.files('./data/', full.names= TRUE, pattern='*.wav')
 
 #Run mp3 to wav conversion using ffmpeg.
 i=1

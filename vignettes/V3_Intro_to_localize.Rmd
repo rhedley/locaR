@@ -61,7 +61,7 @@ Let's read in detection data, which contains the above information.
 
 ```{r}
 #Read detection data.
-detections <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors=F)
+detections <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'), stringsAsFactors = FALSE)
 ```
 
 We then need to use the detection information to extract the relevant portions of the relevant .wav files. This can be done using the `createWavList()` function. For illustrative purposes, let's read the first sound of interest now. Later, we will create a loop to run through all seven sounds of interest in the example data.

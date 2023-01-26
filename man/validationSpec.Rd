@@ -59,7 +59,8 @@ synchronized spectrograms for manual review.
     wl <- createWavList(paths = fp[stationSubset], names = stationSubset,
            from = row$From, to = row$To, buffer = 0.2, index=1)
     #Read coordinates.
-    coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
+    coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv',
+                            package = 'locaR'), stringsAsFactors = F)
     row.names(coordinates) <- coordinates$Station
     #Subset coordinates.
     crd <- coordinates[stationSubset,]

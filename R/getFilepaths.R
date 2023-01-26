@@ -53,18 +53,18 @@ getFilepaths <- function(settings, types = 'wav') {
 
   #Load the files from that date and time.
   if(types == 'wav') {
-    Files <- list.files(st$siteFolder, recursive = T, full.names = T,
+    Files <- list.files(st$siteFolder, recursive = TRUE, full.names = TRUE,
                           pattern = paste0(st$date,'.*', minute, '.*wav'))
   }
   if(types == 'mp3') {
-    Files <- list.files(st$siteFolder, recursive = T, full.names = T,
+    Files <- list.files(st$siteFolder, recursive = TRUE, full.names = TRUE,
                         pattern = paste0(st$date,'.*', minute, '.*mp3'))
   }
 
   Files <- data.frame(Path = Files, Filename = basename(Files),
                       Station = parseWAFileNames(filenames = basename(Files))$prefix,
                       Difference = 0,
-                      stringsAsFactors = F)
+                      stringsAsFactors = FALSE)
 
   #remove extra mics
   if(nrow(st$channels) > 0) {

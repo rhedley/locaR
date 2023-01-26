@@ -19,6 +19,8 @@ localizeSingle(
 
 \item{index}{Numeric. Index to be localized within a detection file.}
 
+\item{plot}{Logical. Whether to plot jpegs.}
+
 \item{InitData}{List. An InitData list created by running localization with
 keep.InitData = TRUE. Providing an InitData list saves computation time,
 but is only possible if the SearchGrid and stations used for localization

@@ -20,13 +20,14 @@
 #'     to be localized.
 #' @examples
 #'     #Get filepaths for example data.
-#'     fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
+#'     fp <- list.files(system.file('extdata', package = 'locaR'),
+#'                       pattern = '.mp3', full.names = TRUE)
 #'     #Add names.
 #'     names(fp) <- sapply(strsplit(basename(fp), '_'), '[[', 1)
 #'     #Load first row of detection data.
 #'     row <- read.csv(system.file('extdata',
 #'          'Vignette_Detections_20200617_090000.csv', package = 'locaR'),
-#'           stringsAsFactors=F)[1,]
+#'           stringsAsFactors = FALSE)[1,]
 #'     #Get non-empty Station columns.
 #'     stationSubset <- unlist(row[1,paste0('Station',1:6)])
 #'     stationSubset <- stationSubset[!is.na(stationSubset) & stationSubset != '']
@@ -35,13 +36,14 @@
 #'            from = row$From, to = row$To, buffer = 0.2, index=1)
 #'     #Read coordinates.
 #'     coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv',
-#'                             package = 'locaR'), stringsAsFactors = F)
+#'                             package = 'locaR'), stringsAsFactors = FALSE)
 #'     row.names(coordinates) <- coordinates$Station
 #'     #Subset coordinates.
 #'     crd <- coordinates[stationSubset,]
 #'     #Localize.
 #'     loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
-#'                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = T)
+#'                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg',
+#'                keep.SearchMap = TRUE)
 #'     #Create validation spectrogram.
 #'     par(mfrow = c(6,1))
 #'     validationSpec(wavList = wl, coordinates = crd, locationEstimate = loc$location,
@@ -68,7 +70,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
                    Northing = c(locationEstimate$Northing, coordinates$Northing),
                    Elevation = c(locationEstimate$Elevation, coordinates$Elevation))
 
-  D <- as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper=T, diag=T))
+  D <- as.matrix(dist(all[,c('Easting', 'Northing', 'Elevation')], upper = TRUE, diag = TRUE))
   colnames(D) <- rownames(D) <- all$ID
   Dists <- D['bird',2:ncol(D)]
 
@@ -106,7 +108,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
 
     sound1 <- tuneR::extractWave(wavList[[coordinates$Station[i]]], from=ADJ.first, to=ADJ.last, xunit='time')
 
-    sound1 <- seewave::spectro(sound1, f=Fs,  wl = 256, plot=F, ovlp=50, norm=F)
+    sound1 <- seewave::spectro(sound1, f=Fs,  wl = 256, plot = FALSE, ovlp=50, norm = FALSE)
 
     sound1$mic <- coordinates$Station[i]
     sound1$from <- from
@@ -131,10 +133,10 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
     }
 
     if(is.na(SoundList[[k]])[1]) {
-      plot(0, axes=F, xlab=NA, ylab=NA, col='white')
+      plot(0, axes = FALSE, xlab=NA, ylab=NA, col='white')
     } else {
       oce::imagep(SoundList[[k]]$time, SoundList[[k]]$freq, t(SoundList[[k]]$amp),
-                  drawPalette=F, ylim=c(0,10),xlim=c(0,1), mar=rep(0,4), axes=F,
+                  drawPalette = FALSE, ylim=c(0,10),xlim=c(0,1), mar=rep(0,4), axes = FALSE,
                   breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
       legend('topleft',
              legend = SoundList[[k]]$mic,

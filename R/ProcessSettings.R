@@ -16,7 +16,7 @@
 #' @examples
 #'     #Read example data
 #'     settings <- read.csv(system.file('extdata', 'Ex_20200617_090000_Settings.csv',
-#'                                      package = 'locaR'), stringsAsFactors = F)
+#'                                      package = 'locaR'), stringsAsFactors = FALSE)
 #'
 #'     #Over-write default values for SiteWavsFolder, CoordinatesFile, and ChannelsFile
 #'     settings$Value[settings$Setting == 'SiteWavsFolder'] <-
@@ -41,7 +41,7 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
     if(is.data.frame(settings)) {Settings <- settings}
   } else {
     if(file.exists(settingsFile)) {
-      Settings <- read.csv(settingsFile, stringsAsFactors=F)
+      Settings <- read.csv(settingsFile, stringsAsFactors = FALSE)
     } else {stop('If settings is not a data frame, settingsFile must point to an existing csv file.')}
   }
 
@@ -83,22 +83,22 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
 
   surveyLength <- as.numeric(Settings$SurveyLength)
 
-  coords <- read.csv(coordsFile, stringsAsFactors=F)
+  coords <- read.csv(coordsFile, stringsAsFactors = FALSE)
   coords <- coords[,c('Station', 'Zone', 'Easting', 'Northing', 'Elevation')]
 
   if(file.exists(detectionsFile)) {
-    detections <- read.csv(detectionsFile, stringsAsFactors=F)
+    detections <- read.csv(detectionsFile, stringsAsFactors = FALSE)
   } else {detections <- NA}
 
   if(!is.na(adjustmentsFile) & adjustmentsFile != "") {
-    adjustments <- read.csv(adjustmentsFile, stringsAsFactors=F)
+    adjustments <- read.csv(adjustmentsFile, stringsAsFactors = FALSE)
   } else {adjustments <- NA}
 
   if(!is.na(soundSpeed) & soundSpeed != "") {
     soundSpeed <- Settings$soundSpeed
   } else {soundSpeed <- NA}
 
-  channels <- read.csv(channelsFile, stringsAsFactors=F)
+  channels <- read.csv(channelsFile, stringsAsFactors = FALSE)
 
   if(nrow(channels) > 0) {
     coords <- coords[coords$Station %in% channels$Station,]

@@ -24,7 +24,7 @@
 #' @examples
 #'     #First need to convert mp3 example data to wav.
 #'     #list mp3 files.
-#'     f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+#'     f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = TRUE, pattern='mp3$')
 #'     #create wav names.
 #'     f.out <- file.path(tempdir(), basename(f.in))
 #'     #change extension.
@@ -42,7 +42,7 @@
 #'     #Process settings.
 #'     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
 #'     #Set up layout matrix.
-#'     lm <- layoutMatrix(st = st, start = 'topleft', byrow = T, nrow = 3, ncol = 3)
+#'     lm <- layoutMatrix(st = st, start = 'topleft', byrow = TRUE, nrow = 3, ncol = 3)
 #'     #create detection spectrograms.
 #'     omniSpectro(st, lm, intervalLength = 7)
 #' @export
@@ -66,13 +66,13 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
   #mySpec function.  Note this is not the same as the other mySpectro function! Need to make two
   #different functions! Function takes list of data and a label
   mySpec <- function(ListOfData, Sound) {
-    if(is.na(ListOfData)[1]) {plot(0, axes=F, xlab=NA, ylab=NA, col='white')} else{
+    if(is.na(ListOfData)[1]) {plot(0, axes = FALSE, xlab=NA, ylab=NA, col='white')} else{
       Mic <- ListOfData$mic
       Channel <- ListOfData$channel
       first <- ListOfData$first
       last <- ListOfData$last
       oce::imagep(ListOfData$time, ListOfData$freq, t(ListOfData$amp),
-             drawPalette=F, ylim=c(0,10), mar=rep(0,4), axes=F,
+             drawPalette = FALSE, ylim=c(0,10), mar=rep(0,4), axes = FALSE,
              breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
       legend('topleft', legend=paste0(Mic, ifelse(Channel==2,'b','a')), bty='n', cex=2)
       labs <- (first+1):(last-1)
@@ -85,7 +85,7 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
     }
   }
 
-  dir.create(specDir, showWarnings=F)
+  dir.create(specDir, showWarnings = FALSE)
 
   #make plot of the microphone layout.
   jpeg(paste0(specDir,'/MicLayout.jpeg'), height=7, width=7, units='in', res=200)
@@ -123,10 +123,10 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
       if(!is.na(file)) {
 
         #Get sample rate.
-        Fs <- tuneR::readWave(file, header=T)$sample.rate
+        Fs <- tuneR::readWave(file, header = TRUE)$sample.rate
 
         #Get bitrate
-        Br <- tuneR::readWave(file, header=T)$bits
+        Br <- tuneR::readWave(file, header = TRUE)$bits
 
         #Get time adjustment
         A <- st$files$Adjustment[st$files$Station==s]
@@ -144,11 +144,13 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
         #If there is an adjustment, and this is the first interval, add white noise to beginning.
         #This will bring files with different start times into alignment.
         if(A > 0 & first==0) {
-          sound1 <- tuneR::bind(tuneR::noise(kind='white', duration=Fs*A, samp.rate=Fs, bit=Br, pcm=T),
-                             tuneR::Wave(sound1[1:(length(sound1)-Fs*A)], samp.rate=Fs, bit=Br, pcm=T))
+          sound1 <- tuneR::bind(tuneR::noise(kind='white', duration=Fs*A,
+                                             samp.rate=Fs, bit=Br, pcm = TRUE),
+                             tuneR::Wave(sound1[1:(length(sound1)-Fs*A)],
+                                         samp.rate=Fs, bit=Br, pcm = TRUE))
         }
         #Spectrogram
-        sound1 <- seewave::spectro(sound1, f=Fs,  plot=F, ovlp=0, norm=F)
+        sound1 <- seewave::spectro(sound1, f=Fs,  plot = FALSE, ovlp=0, norm = FALSE)
 
         sound1$mic <- st$files$Station[st$files$Station==s]
         sound1$channel <- st$files$Channel[st$files$Station==s]

@@ -79,7 +79,7 @@ layoutMatrix = function(st, stationNames = NULL,
 
   stVec <- as.character(stVec)
 
-  stations <- data.frame(station=sort(stVec), row=NA, col=NA, stringsAsFactors=F)
+  stations <- data.frame(station=sort(stVec), row=NA, col=NA, stringsAsFactors = FALSE)
 
   #eight combinations of start (4) and byrow (2)
   stations$row <- rep(1:nrow, each = ncol) #Top to bottom

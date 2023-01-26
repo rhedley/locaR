@@ -13,7 +13,7 @@ parseWAFileNames = function(filenames) {
 
   df = data.frame(filename = basename(filenames),
                   prefix=NA, channels=NA, date=NA, time=NA,
-                  ext=NA, stringsAsFactors=F)
+                  ext=NA, stringsAsFactors = FALSE)
 
   for(i in 1:nrow(df)) {
 
