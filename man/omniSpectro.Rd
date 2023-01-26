@@ -36,7 +36,7 @@ this function only works when a settings object, st, is provided.
 \examples{
     #First need to convert mp3 example data to wav.
     #list mp3 files.
-    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = TRUE, pattern='mp3$')
     #create wav names.
     f.out <- file.path(tempdir(), basename(f.in))
     #change extension.
@@ -54,7 +54,7 @@ this function only works when a settings object, st, is provided.
     #Process settings.
     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
     #Set up layout matrix.
-    lm <- layoutMatrix(st = st, start = 'topleft', byrow = T, nrow = 3, ncol = 3)
+    lm <- layoutMatrix(st = st, start = 'topleft', byrow = TRUE, nrow = 3, ncol = 3)
     #create detection spectrograms.
     omniSpectro(st, lm, intervalLength = 7)
 }

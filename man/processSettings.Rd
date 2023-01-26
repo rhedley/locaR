@@ -30,7 +30,7 @@ combines them into a list for subsequent localization.
 \examples{
     #Read example data
     settings <- read.csv(system.file('extdata', 'Ex_20200617_090000_Settings.csv',
-                                     package = 'locaR'), stringsAsFactors = F)
+                                     package = 'locaR'), stringsAsFactors = FALSE)
 
     #Over-write default values for SiteWavsFolder, CoordinatesFile, and ChannelsFile
     settings$Value[settings$Setting == 'SiteWavsFolder'] <-

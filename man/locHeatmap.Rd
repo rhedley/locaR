@@ -28,13 +28,13 @@ this function should only be used internally, but it could be useful for making 
 }
 \examples{
     #Get filepaths for example data.
-    fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
+    fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = TRUE)
     #Add names.
     names(fp) <- sapply(strsplit(basename(fp), '_'), '[[', 1)
     #Load first row of detection data.
     row <- read.csv(system.file('extdata',
          'Vignette_Detections_20200617_090000.csv', package = 'locaR'),
-          stringsAsFactors=F)[1,]
+          stringsAsFactors = FALSE)[1,]
     #Get non-empty Station columns.
     stationSubset <- unlist(row[1,paste0('Station',1:6)])
     stationSubset <- stationSubset[!is.na(stationSubset) & stationSubset != '']
@@ -44,13 +44,14 @@ this function should only be used internally, but it could be useful for making 
     #Read coordinates.
     coordinates <- read.csv(system.file('extdata',
                             'Vignette_Coordinates.csv', package = 'locaR'),
-                             stringsAsFactors = F)
+                             stringsAsFactors = FALSE)
     row.names(coordinates) <- coordinates$Station
     #Subset coordinates.
     crd <- coordinates[stationSubset,]
     #Localize.
     loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
-               F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = T)
+               F_Low = row$F_Low, F_High = row$F_High,
+               jpegName = '0001.jpeg', keep.SearchMap = TRUE)
     #Convert crd (coordinates) to matrix called NodePos.
     NodePos <- as.matrix(crd[,c('Easting', 'Northing', 'Elevation')])
     colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')

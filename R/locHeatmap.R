@@ -37,7 +37,8 @@
 #'     crd <- coordinates[stationSubset,]
 #'     #Localize.
 #'     loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
-#'                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = TRUE)
+#'                F_Low = row$F_Low, F_High = row$F_High,
+#'                jpegName = '0001.jpeg', keep.SearchMap = TRUE)
 #'     #Convert crd (coordinates) to matrix called NodePos.
 #'     NodePos <- as.matrix(crd[,c('Easting', 'Northing', 'Elevation')])
 #'     colnames(NodePos) <- c('Easting', 'Northing', 'Elevation')

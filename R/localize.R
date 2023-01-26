@@ -66,7 +66,7 @@
 #'     #Load first row of detection data.
 #'     row <- read.csv(system.file('extdata',
 #'          'Vignette_Detections_20200617_090000.csv', package = 'locaR'),
-#'           stringsAsFactors=F)[1,]
+#'           stringsAsFactors = FALSE)[1,]
 #'     #Get non-empty Station columns.
 #'     stationSubset <- unlist(row[1,paste0('Station',1:6)])
 #'     stationSubset <- stationSubset[!is.na(stationSubset) & stationSubset != '']
@@ -81,7 +81,8 @@
 #'     crd <- coordinates[stationSubset,]
 #'     #Localize.
 #'     loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
-#'                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = TRUE)
+#'                F_Low = row$F_Low, F_High = row$F_High,
+#'                jpegName = '0001.jpeg', keep.SearchMap = TRUE)
 #'
 #'     ## Example for localizeMultiple().
 #'     #list mp3 files.

@@ -102,13 +102,13 @@ passes its data to \code{localize} after the data has been wrangled.
 \examples{
     ## example for localize()
     #Get filepaths for example data.
-    fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = T)
+    fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = TRUE)
     #Add names.
     names(fp) <- sapply(strsplit(basename(fp), '_'), '[[', 1)
     #Load first row of detection data.
     row <- read.csv(system.file('extdata',
          'Vignette_Detections_20200617_090000.csv', package = 'locaR'),
-          stringsAsFactors=F)[1,]
+          stringsAsFactors = FALSE)[1,]
     #Get non-empty Station columns.
     stationSubset <- unlist(row[1,paste0('Station',1:6)])
     stationSubset <- stationSubset[!is.na(stationSubset) & stationSubset != '']
@@ -117,17 +117,18 @@ passes its data to \code{localize} after the data has been wrangled.
            from = row$From, to = row$To, buffer = 0.2, index=1)
     #Read coordinates.
     coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv',
-                                        package = 'locaR'), stringsAsFactors = F)
+                                        package = 'locaR'), stringsAsFactors = FALSE)
     row.names(coordinates) <- coordinates$Station
     #Subset coordinates.
     crd <- coordinates[stationSubset,]
     #Localize.
     loc <- localize(wavList = wl, coordinates = crd, locFolder = tempdir(),
-               F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg', keep.SearchMap = T)
+               F_Low = row$F_Low, F_High = row$F_High,
+               jpegName = '0001.jpeg', keep.SearchMap = TRUE)
 
     ## Example for localizeMultiple().
     #list mp3 files.
-    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = T, pattern='mp3$')
+    f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = TRUE, pattern='mp3$')
     #create wav names.
     f.out <- file.path(tempdir(), basename(f.in))
     #change extension.
@@ -147,7 +148,7 @@ passes its data to \code{localize} after the data has been wrangled.
                                  package = 'locaR'))
     #over-write empty detections file.
     write.csv(dets, file.path(tempdir(), '20200617_090000',
-              'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = F)
+              'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = FALSE)
     #Process settings.
     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
     #localize
