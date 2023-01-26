@@ -6,8 +6,10 @@
 #' @param filenames Character vector of file names.
 #' @return A data frame with prefix, channels, date, time and extension information.
 #' @examples
-#' parseWAFileNames("Ex-4_0+1_20200617$090000.wav") #One file.
-#' parseWAFileNames(c("Ex-4_0+1_20200617$090000.wav", "Ex-4_0+1_20200618$053000.wav")) #Multiple files.
+#'     parseWAFileNames("Ex-4_0+1_20200617$090000.wav") #One file.
+#'     parseWAFileNames(c("Ex-4_0+1_20200617$090000.wav",
+#'                      "Ex-4_0+1_20200618$053000.wav")) #Multiple files.
+#' @export
 
 parseWAFileNames = function(filenames) {
 
