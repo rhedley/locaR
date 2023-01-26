@@ -4,6 +4,8 @@
 #'
 #' @param st List. Localization settings object generated using
 #'     \code{\link{processSettings}}.
+#' @param index Numeric. Index to be localized within a detection file.
+#' @param plot Logical. Whether to plot jpegs.
 #' @param InitData List. An InitData list created by running localization with
 #'     keep.InitData = TRUE. Providing an InitData list saves computation time,
 #'     but is only possible if the SearchGrid and stations used for localization
@@ -15,7 +17,6 @@
 #'     Should only be set to TRUE if the SearchMap is needed
 #'     for some other reason (e.g. making a publication-ready figure or
 #'     conducting more involved analysis with overlapping sources, etc.).
-#' @param index Numeric. Index to be localized within a detection file.
 #' @return List, containing the location of the sound source (global maximum),
 #'     and optionally the InitData and SearchMap lists.
 

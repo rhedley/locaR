@@ -74,7 +74,8 @@
 #'     wl <- createWavList(paths = fp[stationSubset], names = stationSubset,
 #'            from = row$From, to = row$To, buffer = 0.2, index=1)
 #'     #Read coordinates.
-#'     coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'), stringsAsFactors = F)
+#'     coordinates <- read.csv(system.file('extdata', 'Vignette_Coordinates.csv',
+#'                                         package = 'locaR'), stringsAsFactors = F)
 #'     row.names(coordinates) <- coordinates$Station
 #'     #Subset coordinates.
 #'     crd <- coordinates[stationSubset,]
@@ -96,12 +97,15 @@
 #'     }
 #'     #Set up survey.
 #'     survey <- setupSurvey(folder = tempdir(), projectName = 'Ex', run = 1,
-#'                coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv', package = 'locaR'),
+#'                coordinatesFile = system.file('extdata', 'Vignette_Coordinates.csv',
+#'                                              package = 'locaR'),
 #'                siteWavsFolder = tempdir(), date = '20200617', time = '090000', surveyLength = 7)
 #'     #read example detections.
-#'     dets <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv', package = 'locaR'))
+#'     dets <- read.csv(system.file('extdata', 'Vignette_Detections_20200617_090000.csv',
+#'                                  package = 'locaR'))
 #'     #over-write empty detections file.
-#'     write.csv(dets, file.path(tempdir(), '20200617_090000', 'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = F)
+#'     write.csv(dets, file.path(tempdir(), '20200617_090000',
+#'               'Run1', 'Ex_20200617_090000_Run1_Detections.csv'), row.names = F)
 #'     #Process settings.
 #'     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
 #'     #localize
