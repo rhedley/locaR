@@ -90,6 +90,8 @@ checkSettings <- function(settings) {
     message('Time must be numeric')
     pass <- FALSE
   }
+
+  tempDefined <- TRUE
   if(is.na(tryCatch(as.numeric(st$tempC), error = function(e) NA))) {
     tempDefined <- FALSE #temp not numeric.
     if(st$tempC != '') {
@@ -97,6 +99,8 @@ checkSettings <- function(settings) {
       pass <- FALSE
     }
   }
+
+  speedDefined <- TRUE
   if(is.na(tryCatch(as.numeric(st$soundSpeed), error = function(e) NA))) {
     speedDefined <- FALSE #soundSpeed not numeric.
     if(st$soundSpeed != '') {
