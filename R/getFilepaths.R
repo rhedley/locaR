@@ -90,7 +90,7 @@ getFilepaths <- function(settings, types = 'wav') {
 
   #Then add any difference relative to the file name (i.e. if the file name is wrong). Here we are
   #comparing the files listed to the adjustments files.
-  if(!is.na(st$adjustments)) {
+  if(!all(is.na(st$adjustments))) {
     for(i in 1:nrow(Files)) {
       if(Files$Filename[i] %in% st$adjustments$Filename) {
         Files$Difference[i] <- st$adjustments$Difference[st$adjustments$Filename == Files$Filename[i]]

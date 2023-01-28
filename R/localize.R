@@ -243,6 +243,9 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 #' @export
 localizeMultiple = function(st, indices = 'all', plot = TRUE, InitData=NULL) {
 
+  if(!'files' %in% names(st)) {stop('file paths not included in st object. Use getFilepaths=TRUE in the
+                                    processSettings() function')}
+
   detect <- st$detections
 
   #If indices is numeric, extract those first.
@@ -275,8 +278,9 @@ localizeMultiple = function(st, indices = 'all', plot = TRUE, InitData=NULL) {
       nextStations = as.vector(as.matrix(nextRow[,paste0('Station', 1:6)]))
 
       #Compare current stations and next stations. If they are identical, keep.InitData = TRUE
-      keep.InitData = (sum(currentStations %in% nextStations) == length(currentStations) &
-                         sum(nextStations %in% currentStations) == length(nextStations))
+      keep.InitData = (all(currentStations %in% nextStations) &
+                         all(nextStations %in% currentStations) &
+                         ((nextRow$To - nextRow$From) == (currentRow$To - currentRow$From)))
     } else {keep.InitData = TRUE}
 
     #InitData will generally be NULL for the first detection, inherited (sometimes) thereafter.
