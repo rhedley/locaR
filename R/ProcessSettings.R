@@ -69,7 +69,7 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
 
   resolution <- as.numeric(Settings$Resolution)
 
-  buffer <- as.numeric(Settings$Buffer) #Can this be deprecated?
+  buffer <- as.numeric(Settings$Buffer)
 
   date <- Settings$Date
 
@@ -88,6 +88,11 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
 
   if(file.exists(detectionsFile)) {
     detections <- read.csv(detectionsFile, stringsAsFactors = FALSE)
+    #Replace invalid characters.
+    if(nrow(detections) > 0){
+      detections[,paste0('Station', 1:6)][detections[,paste0('Station', 1:6)] == '' |
+                                            detections[,paste0('Station', 1:6)] == 'NaN'] <- NA
+    }
   } else {detections <- NA}
 
   if(!is.na(adjustmentsFile) & adjustmentsFile != "") {
@@ -115,7 +120,7 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
 
     #Check that all stations listed in detections file have coordinates.
     statVec <- unique(unlist(c(detections[paste0('Station', 1:6)])))
-    statVec <- statVec[!is.na(statVec) & statVec != '']
+    statVec <- statVec[!is.na(statVec)]
     if(sum(statVec %in% coords$Station) != length(statVec)) {
       stop('Some stations listed in detectionsFile were missing coordinates')
     }

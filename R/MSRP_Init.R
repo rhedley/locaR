@@ -58,7 +58,8 @@ MSRP_Init = function(NodeInfo, SearchMap, Para, LevelFlag) {
 
       #Make sure this line does matrix multiplication.
       #dV: Vector of distance in m from location kk to each of N nodes.
-      dV = sqrt(colSums((c(SearchMap$XMap[k],SearchMap$YMap[k],SearchMap$ZMap[k]) - t(NPos))^2))
+      #2023-01-30: added 0.0001 to avoid zero distances which led to divide by zero error.
+      dV = sqrt(colSums((c(SearchMap$XMap[k],SearchMap$YMap[k],SearchMap$ZMap[k]) - t(NPos))^2)) + 0.0001
 
       #dPx: distance in the x direction from location kk to IJList nodes, normalized by total distance
       #to the node, divided by Vc. I don't understand the point of this, but so be it.
