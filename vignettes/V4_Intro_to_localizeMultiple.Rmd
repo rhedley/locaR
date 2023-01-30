@@ -112,8 +112,13 @@ If the above code ran correctly, then the locs object should look like this:
 ```{r}
 locs
 ```
+Estimated locations (x, y and z coordinates) can be found in the columns labeled Easting, Northing, and Elevation.
 
-In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/'. Interpreting these was covered in the "Introduction to localize" vignette.
+```{r}
+locs[,c('Easting', 'Northing', 'Elevation')]
+```
+
+In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/', in this case in the R Session's temporary directory. Interpreting these was covered in the "Introduction to localize" vignette.
 
 # Conclusion.
 

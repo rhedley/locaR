@@ -103,8 +103,8 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
     #Adjust start time. Simultaneously adjusting for recording start time offset, and
     #transmission delay. Start 0.1 seconds before detection to get visual of onset.
     ADJ.first <- from + Delays[coordinates$Station[i]] - 0.1
-    #Adjust end time in same way. For detection longer than
-    ADJ.last <- to + Delays[coordinates$Station[i]]
+    #Adjust end time in same way. End 0.1 seconds after for better end visualization.
+    ADJ.last <- to + Delays[coordinates$Station[i]] + 0.1
 
     sound1 <- tuneR::extractWave(wavList[[coordinates$Station[i]]], from=ADJ.first, to=ADJ.last, xunit='time')
 
@@ -122,7 +122,7 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
   }
 
   #get box to draw on spectrogram.
-  xbox <- c(0.1, Length-0.2-0.1)
+  xbox <- c(0.1, 0.1 + Length - 0.2 - 0.2)
   ybox <- c(F_Low, F_High)
 
   #Draw spectrograms, Six spectrograms are drawn.
