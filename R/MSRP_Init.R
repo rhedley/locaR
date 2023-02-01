@@ -86,9 +86,9 @@ MSRP_Init = function(NodeInfo, SearchMap, Para, LevelFlag) {
       dT2 = matrix(round(((dV[IJ2]-dV[IJ1])/Vc+dP*d)*Fs)+MaxDataLen, nrow=1)
 
 
-      dT1 = matrixStats::colMaxs(rbind(ones,dT1)) #Use pmin and pmax? Or just write over values<1
-      dT1 = matrixStats::colMins(rbind(onesML,dT1)) #Is this not just recursively writing over values?
-      dT2 = matrixStats::colMaxs(rbind(ones,dT2)) #Use pmin and pmax? Or just write over values<1
+      dT1 = matrixStats::colMaxs(rbind(ones,dT1))
+      dT1 = matrixStats::colMins(rbind(onesML,dT1))
+      dT2 = matrixStats::colMaxs(rbind(ones,dT2))
       dT2 = matrixStats::colMins(rbind(onesML,dT2))
 
       InitData$TIndk[[k]]$T1 = dT1
