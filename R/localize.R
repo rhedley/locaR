@@ -248,11 +248,6 @@ localizeMultiple = function(st, indices = 'all', plot = TRUE, InitData=NULL) {
 
   detect <- st$detections
 
-  #If no rows of detection data, return detection data.
-  if(nrow(detect) == 0) {
-    message('No detections in detectionsFile.')
-    return(detect)
-  }
 
   #Replace "all" with numbers.
   if(is.character(indices)) {
@@ -266,6 +261,13 @@ localizeMultiple = function(st, indices = 'all', plot = TRUE, InitData=NULL) {
 
   #Remove NULL detections.
   detect <- detect[detect$Station1 != "" & !is.na(detect$Station1) & detect$Station1 != 'NaN',]
+
+  #If no rows of detection data, return detection data.
+  if(nrow(detect) == 0) {
+    message('No detections in detectionsFile.')
+    return(detect)
+  }
+
 
   #replace original.
   st$detections <- detect
