@@ -51,7 +51,7 @@
 
 locHeatmap = function(SearchMap, SMap, NodeInfo, location, mar) {
 
-  xyMap = apply(SMap, c(1,2), FUN = mean)
+  xyMap = apply(SMap, c(1,2), FUN = max)
 
   oce::imagep(x = SearchMap$XMap[1,,1], y = SearchMap$YMap[,1,1], t(xyMap), las=1,
          drawPalette = FALSE, xlab = 'Easting', ylab = 'Northing', mar = mar)
