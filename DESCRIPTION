@@ -3,8 +3,8 @@ Type: Package
 Title: Sound Localization in R
 Version: 0.1.1.9000
 Authors@R: c(
-    person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "cre"),
-    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = "aut"),
+    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = "cre"),
+    person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "aut"),
     person("Tim", "Huang", role = "aut"))
 Maintainer: Richard Hedley <rwhedley@gmail.com>
 Description: Sound localization in R.
