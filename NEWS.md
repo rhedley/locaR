@@ -1,6 +1,6 @@
 # locaR 0.1.2
 
-- Update for initial release to github.
+- Update for initial release to CRAN.
 
 # locaR 0.1.1
 
