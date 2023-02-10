@@ -1,6 +1,6 @@
 # locaR 0.1.2
 
-- Prepping for initial release to github.
+- Update for initial release to github.
 
 # locaR 0.1.1
 
