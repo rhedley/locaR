@@ -21,3 +21,6 @@ List.
 \description{
 Internal function which creates the InitData list.
 }
+\author{
+Tim Huang.
+}

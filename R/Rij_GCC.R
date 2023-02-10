@@ -4,6 +4,7 @@
 #'
 #' @param data1,data2 Wave samples.
 #' @param Para List with GCCMethod, FL, FH, Fs
+#' @author Tim Huang
 #' @return Numeric vector.
 
 Rij_GCC = function(data1, data2, Para) {

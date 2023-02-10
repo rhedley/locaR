@@ -3,7 +3,7 @@
 \name{MSRP_RIJ_HT}
 \alias{MSRP_RIJ_HT}
 \alias{MSRP_HT_Level2}
-\title{Create InitData.}
+\title{Internal function for localization.}
 \usage{
 MSRP_RIJ_HT(NodeInfo, SearchMap, Data, Para, LevelFlag, InitData)
 
@@ -26,5 +26,11 @@ MSRP_HT_Level2(NodeInfo, SearchMap, Data, Para, InitData)
 List.
 }
 \description{
-Internal function which creates the InitData list.
+This function uses the InitData and other info to calculate the likelihood of sound
+sources coming from each location. Note: the LevelFlag argument is currently redundant because
+there is only one option. Similarly, the MSRP_HT_Level2 function could be rolled into
+the MSRP_RIJ_HT function in the future, but for now is kept separate.
+}
+\author{
+Tim Huang.
 }

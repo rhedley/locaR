@@ -17,3 +17,6 @@ Numeric vector.
 \description{
 Internal function that calculates the generalized cross correlation.
 }
+\author{
+Tim Huang
+}

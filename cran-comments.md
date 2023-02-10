@@ -1,5 +1,6 @@
 ## Test environments
 * local Windows 10 install, R 3.6.1
+* local Mac OS 11 (Big Sur), R 4.2.2
 
 ## R CMD check results
 There were no ERRORs or WARNINGs.  

@@ -6,6 +6,7 @@
 #' @param Para List with Fs, Vc (speed of sound), and DataLen
 #' @param SearchMap List with elements XDen, YDen, ZDen, XMap, YMap, ZMap
 #' @param LevelFlag Integer. Only value currently supported is 2.
+#' @author Tim Huang.
 #' @return List.
 MSRP_Init = function(NodeInfo, SearchMap, Para, LevelFlag) {
 
