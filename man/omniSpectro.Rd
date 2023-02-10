@@ -34,6 +34,7 @@ may be clearly detectable on many microphones at the same time. At the present t
 this function only works when a settings object, st, is provided.
 }
 \examples{
+    \donttest{
     #First need to convert mp3 example data to wav.
     #list mp3 files.
     f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = TRUE, pattern='mp3$')
@@ -57,4 +58,5 @@ this function only works when a settings object, st, is provided.
     lm <- layoutMatrix(st = st, start = 'topleft', byrow = TRUE, nrow = 3, ncol = 3)
     #create detection spectrograms.
     omniSpectro(st, lm, intervalLength = 7)
+    }
 }

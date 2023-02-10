@@ -100,6 +100,7 @@ same underlying localization algorithm - \code{localizeMultiple}
 passes its data to \code{localize} after the data has been wrangled.
 }
 \examples{
+    \donttest{
     ## example for localize()
     #Get filepaths for example data.
     fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = TRUE)
@@ -153,6 +154,7 @@ passes its data to \code{localize} after the data has been wrangled.
     st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
     #localize
     locs <- localizeMultiple(st = st, indices = 1:2)
+    }
 }
 \references{
 Cobos, M., Martí, A., & J.J. López. 2011. A modified SRP-PHAT functional for robust real-time sound source localization with scalable spatial sampling. IEEE Signal Processing Letters. 18:71-74. doi:10.1109/LSP.2010.2091502.

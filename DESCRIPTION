@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/rhedley/locaR
 BugReports: https://github.com/rhedley/locaR/issues
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
 Suggests: 
     testthat (>= 2.0.0),

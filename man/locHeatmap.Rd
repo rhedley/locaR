@@ -27,6 +27,7 @@ This function can be used to create a heatmap from the localization grid search.
 this function should only be used internally, but it could be useful for making customized figures.
 }
 \examples{
+    \donttest{
     #Get filepaths for example data.
     fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = TRUE)
     #Add names.
@@ -60,4 +61,5 @@ this function should only be used internally, but it could be useful for making 
     locHeatmap(SearchMap = loc$SearchMap, SMap = loc$SMap,
                 NodeInfo = list(Num = 5, Pos = NodePos), location = loc$location,
                 mar = c(0,0,0,0))
+    }
 }

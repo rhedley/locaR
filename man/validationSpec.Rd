@@ -44,6 +44,7 @@ This function is used inside the \code{localize} function to create the panels o
 synchronized spectrograms for manual review.
 }
 \examples{
+    \donttest{
     #Get filepaths for example data.
     fp <- list.files(system.file('extdata', package = 'locaR'),
                       pattern = '.mp3', full.names = TRUE)
@@ -73,4 +74,5 @@ synchronized spectrograms for manual review.
     par(mfrow = c(6,1))
     validationSpec(wavList = wl, coordinates = crd, locationEstimate = loc$location,
                                  F_Low = row$F_Low, F_High = row$F_High)
+    }
 }

@@ -22,6 +22,7 @@
 #'     purposes, it is often desirable to set this to, e.g. intervals = 1:5, which
 #'     will create only the first five view windows, to ensure the function is working.
 #' @examples
+#'     \donttest{
 #'     #First need to convert mp3 example data to wav.
 #'     #list mp3 files.
 #'     f.in <- list.files(system.file('extdata', package = 'locaR'), full.names = TRUE, pattern='mp3$')
@@ -45,6 +46,7 @@
 #'     lm <- layoutMatrix(st = st, start = 'topleft', byrow = TRUE, nrow = 3, ncol = 3)
 #'     #create detection spectrograms.
 #'     omniSpectro(st, lm, intervalLength = 7)
+#'     }
 #' @export
 
 

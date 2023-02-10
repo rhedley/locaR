@@ -14,6 +14,7 @@
 #'     Elevation, Power. Data frame should only contain one row.
 #' @param mar Numeric vector with four elements. Passed to \code{oce::imagep()} for plotting.
 #' @examples
+#'     \donttest{
 #'     #Get filepaths for example data.
 #'     fp <- list.files(system.file('extdata', package = 'locaR'), pattern = '.mp3', full.names = TRUE)
 #'     #Add names.
@@ -47,6 +48,7 @@
 #'     locHeatmap(SearchMap = loc$SearchMap, SMap = loc$SMap,
 #'                 NodeInfo = list(Num = 5, Pos = NodePos), location = loc$location,
 #'                 mar = c(0,0,0,0))
+#'     }
 #' @export
 
 locHeatmap = function(SearchMap, SMap, NodeInfo, location, mar) {

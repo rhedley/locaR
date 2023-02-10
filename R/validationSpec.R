@@ -19,6 +19,7 @@
 #' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
 #'     to be localized.
 #' @examples
+#'     \donttest{
 #'     #Get filepaths for example data.
 #'     fp <- list.files(system.file('extdata', package = 'locaR'),
 #'                       pattern = '.mp3', full.names = TRUE)
@@ -48,6 +49,7 @@
 #'     par(mfrow = c(6,1))
 #'     validationSpec(wavList = wl, coordinates = crd, locationEstimate = loc$location,
 #'                                  F_Low = row$F_Low, F_High = row$F_High)
+#'     }
 #' @export
 
 validationSpec <- function(wavList, coordinates, locationEstimate, from,

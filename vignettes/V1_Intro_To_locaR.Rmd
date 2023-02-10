@@ -15,6 +15,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
+devtools::load_all(".")
 library(locaR)
 ```
 
@@ -53,7 +54,7 @@ Given a sound source originating within an array of synchronized microphones, lo
 If we have $k$ microphones, we will be able to calculate $k*(k-1)/2$ different cross-correlation functions. These cross-correlation functions give an idea of the relative time delay of the signal arriving at each microphone. **Note that we can only ever estimate the relative delay of a sound at pairs of microphones, where the nearest microphone to the sound source has delay = 0.** Once the cross-correlation functions have been calculated, and incorporating the speed of sound (which is known within a small margin of error), the algorithm can estimate the source location. 
 
 The following animation further illustrates the concept:
-![](https://richardwhedley.files.wordpress.com/2022/08/localizationanimation.gif)
+![](LocalizationAnimation-min.gif){width=100%}
 
 It is easy to see from this animation that the sound always arrives first at the nearest microphone, then the second nearest, and so on. The precise arrival times can be used to estimate the source location using a sound localization algorithm. 
 
