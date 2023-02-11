@@ -1,5 +1,5 @@
 ---
-title: "Introduction to the localize function"
+title: "Vignette 3: Introduction to the localize function"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to the localize function}

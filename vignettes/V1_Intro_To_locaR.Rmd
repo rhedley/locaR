@@ -1,5 +1,5 @@
 ---
-title: "Introduction to locaR"
+title: "Vignette 1: Introduction to locaR"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to locaR}

@@ -1,5 +1,5 @@
 ---
-title: "Guide to locaR data structures"
+title: "Vignette 5: Guide to locaR data structures"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Guide to locaR data structures}
