@@ -8,6 +8,7 @@
 
 ## rhub check_for_cran (Windows Server 2022, R-devel, 64 bit)
 [https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-5b9f84929d4348648621d2a0c75d36ce](https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-5b9f84929d4348648621d2a0c75d36ce)
+
 0 ERRORs, 0 WARNINGS, 2 NOTEs.
 ```
 * checking CRAN incoming feasibility ... NOTE
@@ -23,6 +24,7 @@ As noted in [R-hub issue #503](https://github.com/r-hub/rhub/issues/503), this c
 
 ## rhub check_for_cran (Fedora Linux, R-devel, clang, gfortran)
 [https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-b6ae975c951f4daa8d5ed18c550f09a8](https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-b6ae975c951f4daa8d5ed18c550f09a8)
+
 0 ERRORs, 0 WARNINGS, 2 NOTEs.
 
 ```
@@ -38,6 +40,7 @@ According to [this stackexchange answer](https://stackoverflow.com/questions/748
 
 ## rhub check_for_cran (Ubuntu Linux 20.04.1 LTS, R-release, GCC)
 [https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-1656b198d756493aa8e2f68ffa8d41f7](https://builder.r-hub.io/status/locaR_0.1.2.tar.gz-1656b198d756493aa8e2f68ffa8d41f7)
+
 0 ERRORs, 0 WARNINGS, 1 NOTE.
 ```
 * checking CRAN incoming feasibility ... [6s/24s] NOTE
