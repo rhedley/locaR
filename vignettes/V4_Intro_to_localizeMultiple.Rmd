@@ -3,7 +3,7 @@ title: "Introduction to localizeMultiple"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to localizeMultiple}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -101,7 +101,7 @@ st <- processSettings(settings = survey, getFilepaths = TRUE, types = 'wav')
 
 The primary advantage of using the `localizeMultiple()` function is that, once everything has been set up, the localization of many sounds within a recording session can be carried out with a single line of code:
 
-```{r}
+```{r eval=FALSE}
 locs <- localizeMultiple(st = st, indices = 'all')
 ```
 
@@ -109,13 +109,15 @@ The above code feeds the list of settings information (the `st` object) into the
 
 If the above code ran correctly, then the locs object should look like this:
 
-```{r}
-locs
+```{r echo=FALSE}
+read.csv(system.file('/extdata/Vignette_Detections_20200617_090000_Localized.csv', package = 'locaR'),
+         stringsAsFactors = FALSE)
 ```
 Estimated locations (x, y and z coordinates) can be found in the columns labeled Easting, Northing, and Elevation.
 
-```{r}
-locs[,c('Easting', 'Northing', 'Elevation')]
+```{r echo=FALSE}
+read.csv(system.file('/extdata/Vignette_Detections_20200617_090000_Localized.csv', package = 'locaR'),
+         stringsAsFactors = FALSE)[,c('Easting', 'Northing', 'Elevation')]
 ```
 
 In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/', in this case in the R Session's temporary directory. Interpreting these was covered in the "Introduction to localize" vignette.

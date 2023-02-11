@@ -20,4 +20,4 @@ Suggests:
     knitr,
     rmarkdown
 Config/testthat/edition: 2
-VignetteBuilder: rmarkdown
+VignetteBuilder: knitr

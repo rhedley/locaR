@@ -3,7 +3,7 @@ title: "Guide to locaR data structures"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Guide to locaR data structures}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 

@@ -3,7 +3,7 @@ title: "Introduction to the localize function"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to the localize function}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
@@ -130,12 +130,12 @@ jpg <- '0001.jpeg'
 
 Time to localize the sound of interest. We will leave most parameters at their default values.
 
-```{r}
+```{r eval=FALSE}
 loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
                   F_Low = row$F_Low, F_High = row$F_High, jpegName = jpg, keep.SearchMap = T)
 ```
 
-The process takes some time to run. A significant part (about half) of this computational process involves creating the "InitData", which is related to the spatial grid to be searched during localization. In this case, we are searching an area 64 meters by 101 meters by 28 meters, with a 1 meter resolution. There are therefore 180,992 grid cells to be searched, and each involves some computation. Fortunately, if localizing multiple sounds using the same set of microphones (as in the case of our Red-eyed Vireo, which sang six times in seven seconds), the InitData can be saved and re-used to speed up computation (argument keep.InitData = TRUE).
+The process takes some time to run. A significant part (about half) of this computational process involves creating the "InitData", which is related to the spatial grid to be searched during localization. In this case, we are searching an area 64 meters by 101 meters by 28 meters, with a 1 meter resolution. There are therefore 180,992 grid cells to be searched, and each involves some computation. If localizing multiple sounds of the same duration using the same set of microphones (as in the case of our Red-eyed Vireo, which sang six times in seven seconds), the InitData can be saved and re-used to speed up computation (argument keep.InitData = TRUE).
 
 Great, now let's look at the results. There are two relevant outputs. First, the object `loc`, which contains the results of the localization; second, a jpeg image for validation and quality control. 
 
@@ -143,9 +143,13 @@ Great, now let's look at the results. There are two relevant outputs. First, the
 
 The `loc` object includes multiple components combined into a list object. The first of these is the location estimate, which was calculated via a grid search followed by selecting the grid cell with the highest "power". The power can be thought of as a (unitless) estimate of the likelihood that the sound of interest originated from that location.
 
-```{r}
+```{r eval=FALSE}
 loc$location
 ```
+```{r echo=FALSE}
+read.csv(system.file('/extdata/Vignette_location1.csv', package = 'locaR'), stringsAsFactors = FALSE)
+```
+
 The other three components of the `loc` list are less important. The InitData, as mentioned above, can be recycled to save computation time when multiple localizations are being run using the same microphones. The SearchMap contains the x-, y- and z-coordinates of all the cells in the search grid. The SMap contains the power values of each grid cell. SearchMap and SMap objects would only be important if one wanted to do more involved analysis or a new visualization of the search grid - this is likely to be very rare.
 
 So to summarize, the most critical piece of the resulting list is the estimated location of the sound source.
@@ -175,7 +179,7 @@ If all else fails, it worth asking is whether the data point can be discarded. I
 
 It is impractical to write all the above code to localize a single sound. Naturally, it makes sense to use loops to run through many detections at once. Using the code above, let's use a loop to localize all seven detections in the example data.
 
-```{r}
+```{r eval=FALSE}
 for(i in 1:nrow(detections)) {
   #Select the ith row.
   row <- detections[i,]
@@ -191,7 +195,7 @@ for(i in 1:nrow(detections)) {
 
 
   #make a new wavList containing only the stations of interest.
-  pathSubset = filepaths[stationSubset]
+  pathSubset <- filepaths[stationSubset]
 
   #use createWavList() to create a list of wave objects.
   #We can set index = i, so that if there is an error, we can pinpoint which detection
@@ -213,16 +217,17 @@ for(i in 1:nrow(detections)) {
   loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
                   F_Low = F_Low, F_High = F_High, jpegName = jpg, keep.SearchMap = T)
 
-  if(i == 1) {OUT = cbind(row,loc$location)} else {OUT = rbind(OUT, cbind(row,loc$location))}
+  if(i == 1) {OUT <- cbind(row,loc$location)} else {OUT <- rbind(OUT, cbind(row,loc$location))}
 
 }
 
 ```
 
-Now we have localized all of the example sounds. Seven different jpegs have been created (0001.jpeg to 0007.jpeg), and the locations are stored in the OUT dataframe.
+Now we have localized all of the example sounds. Seven different jpegs have been created (0001.jpeg to 0007.jpeg), and the locations are stored in the OUT dataframe:
 
-```{r}
-OUT
+```{r echo=FALSE}
+read.csv(system.file('/extdata/Vignette_Detections_20200617_090000_Localized.csv', package = 'locaR'),
+         stringsAsFactors = FALSE)
 ```
 
 From looking at the locations in the OUT dataframe, we can see that the six Red-eyed Vireo (REVI) songs all were localized within about 2 meters of one another in the x-y plane, suggesting that the bird didn't move within the recording. Note that the z-axis locations are a bit more variable, because all the microphones were placed on a flat surface, which makes it difficult to resolve the z-axis. I don't generally trust the z-axis estimates much, but theoretically better 3D results could be attained by placing some microphones at different elevations (e.g. up in trees). 
