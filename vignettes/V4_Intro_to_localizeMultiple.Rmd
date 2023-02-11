@@ -3,7 +3,7 @@ title: "Introduction to localizeMultiple"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Introduction to localizeMultiple}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 

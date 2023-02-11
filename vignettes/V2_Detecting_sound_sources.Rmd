@@ -3,7 +3,7 @@ title: "Detecting sound sources"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{Detecting sound sources}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
 
