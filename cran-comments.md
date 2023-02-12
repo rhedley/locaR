@@ -6,7 +6,7 @@
 URI: Intro_To_locaR.html
 From: inst/doc/V3_Intro_to_localize.html
 
-This has been fixed.
+This has been fixed by removing the link, and simply referring to the other vignette by name.
 
 >The Description says
 Description: Sound localization in R.
