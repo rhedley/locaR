@@ -1,3 +1,21 @@
+## Notes
+
+### Second submission
+
+>Found the following (possibly) invalid file URI:
+URI: Intro_To_locaR.html
+From: inst/doc/V3_Intro_to_localize.html
+
+This has been fixed.
+
+>The Description says
+Description: Sound localization in R.
+Can you please elaborate which methods are implemented? Is there some
+reference about the method you can add in the Description field in the
+form Authors (year) <doi:10.....> or <arXiv:.....>?
+
+We have added a reference for Cobos et al. (2010), which is the method used in the package.
+
 ## Test environments
 * local Windows 10 install, R-devel
 * rhub check_for_cran

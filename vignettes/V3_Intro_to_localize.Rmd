@@ -55,7 +55,7 @@ filepaths <- list.files(system.file('extdata', package = 'locaR'), pattern = '.m
 names(filepaths) <- sapply(strsplit(basename(filepaths), '_'), '[[', 1)
 ```
 
-The above file path information leads to the full .wav files. To localize birds, we will need to extract only the relevant portions of the .wav file pertaining to one sound of interest at a time. When running the localization, we will also not use all nine microphones. I usually select five or six microphones to conduct the localization. These are generally the set of microphones on which the sound of interest appears clearest. As mentioned in the [introductory vignette](Intro_To_locaR.html), the aim is to ensure that the sound source lies within the convex hull of the selected microphones.
+The above file path information leads to the full .wav files. To localize birds, we will need to extract only the relevant portions of the .wav file pertaining to one sound of interest at a time. When running the localization, we will also not use all nine microphones. I usually select five or six microphones to conduct the localization. These are generally the set of microphones on which the sound of interest appears clearest. As mentioned in "Vignette 1: Introduction to locaR", the aim is to ensure that the sound source lies within the convex hull of the selected microphones.
 
 Let's read in detection data, which contains the above information.
 
