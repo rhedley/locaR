@@ -1,5 +1,17 @@
 ## Notes
 
+### Third submission
+
+>Found the following (possibly) invalid file URI:
+URI: Intro_To_locaR.html
+From: inst/doc/V3_Intro_to_localize.html
+
+This has been fixed by removing the link, and simply referring to the other vignette by name (I only fixed one instance in the second submission, and have now fixed the other instance in the same way).
+
+>The Description field should not start with the package name, 'This package' or similar.
+
+As far as I can see, the Description field starts with "This package", but maybe I am missing something.
+
 ### Second submission
 
 >Found the following (possibly) invalid file URI:
