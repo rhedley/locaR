@@ -21,6 +21,7 @@
 #' @param intervals Integer or 'all'. Which intervals to write to jpeg. For testing
 #'     purposes, it is often desirable to set this to, e.g. intervals = 1:5, which
 #'     will create only the first five view windows, to ensure the function is working.
+#' @return No return value.
 #' @examples
 #'     \donttest{
 #'     #First need to convert mp3 example data to wav.
@@ -92,6 +93,8 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
   #make plot of the microphone layout.
   jpeg(paste0(specDir,'/MicLayout.jpeg'), height=7, width=7, units='in', res=200)
   on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
+  oldpar <- par(no.readonly = TRUE)
+  on.exit(par(oldpar))
   par(mar=c(4,6,1,1))
   plot(st$files$Easting, st$files$Northing, pch=20, las=1,
        xlim=c(min(st$files$Easting)-30, max(st$files$Easting)+30),
@@ -171,13 +174,15 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
     #Create jpeg.
     jpeg(paste0(specDir, '/',output$text[i], '.jpeg'), width=30, height=15, units='in', res=200)
     on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
     par(mfrow=c(nrow(lm),ncol(lm)))
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))
     lapply(soundList, mySpec, Sound=output$text[i])
     dev.off()
 
-    print(paste0(output$begin[i], ' seconds'))
+    message(output$begin[i], ' seconds')
   }
 }
 

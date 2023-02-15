@@ -1,4 +1,4 @@
-#' locaR: Sound localization in R.
+#' locaR: A Set of Tools For Sound Localization.
 #'
 #' The locaR package contains functions for localizing sounds using R.
 #' Localizations are carried out using the modified steered response power

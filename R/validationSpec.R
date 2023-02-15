@@ -18,6 +18,7 @@
 #'     the speed of sound in air.
 #' @param F_Low,F_High Numeric. The low and high frequency, in Hz, of the sound
 #'     to be localized.
+#' @return No return value.
 #' @examples
 #'     \donttest{
 #'     #Get filepaths for example data.
@@ -46,9 +47,13 @@
 #'                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg',
 #'                keep.SearchMap = TRUE)
 #'     #Create validation spectrogram.
+#'     #Store old par
+#'     oldpar <- par()$mfrow
 #'     par(mfrow = c(6,1))
 #'     validationSpec(wavList = wl, coordinates = crd, locationEstimate = loc$location,
 #'                                  F_Low = row$F_Low, F_High = row$F_High)
+#'     #Reset old par values.
+#'     par(mfrow = oldpar)
 #'     }
 #' @export
 

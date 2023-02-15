@@ -13,6 +13,7 @@
 #' @param location Data frame. The location estimate of the sound source. Four columns: Easting, Northing,
 #'     Elevation, Power. Data frame should only contain one row.
 #' @param mar Numeric vector with four elements. Passed to \code{oce::imagep()} for plotting.
+#' @return No return value.
 #' @examples
 #'     \donttest{
 #'     #Get filepaths for example data.
