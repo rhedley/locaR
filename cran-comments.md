@@ -42,7 +42,7 @@ This example has been removed from the package since the function is not exporte
 >Please unwrap the examples if they are executable in < 5 sec, or replace
 dontrun{} with \donttest{}.
 
-All examples wrapped executed in >5 sec (the exception was the example above, which has been removed).
+All examples wrapped executed in >5 sec (the exception was the example above, which has been removed). All that are wrapped use \donttest{} rather than \dontrun{}. 
 
 >You write information messages to the console that cannot be easily
 suppressed.
