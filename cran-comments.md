@@ -4,7 +4,11 @@
 
 >Please omit the redundant "in R" at the end of your title.
 
+Changed the title to "A Set of Tools For Sound Localization".
+
 >Please omit the space within the doi specification to make it clickable.
+
+Done.
 
 >Please add \value to .Rd files regarding exported methods and explain
 the functions results in the documentation. Please write about the
@@ -16,11 +20,16 @@ function does not return a value, please document that too, e.g.
 >      omniSpectro.Rd: \value
 >      validationSpec.Rd: \value
 
+Added "@return No return value." to these functions.
+
 >You have examples for unexported functions. Please either omit these
 examples or export these functions.
 >Examples for unexported function
 >   MSRP_HT_Level2() in:
 >      parseWAFileNames.Rd
+
+Deleted the example in parseWAFileNames.Rd. Note: the function MSRP_HT_Level2() 
+is located in a different file and does not have an example, as far as I can see.
 
 >\dontrun{} should only be used if the example really cannot be executed
 (e.g. because of missing additional software, missing API keys, ...) by
@@ -28,8 +37,12 @@ the user. That's why wrapping examples in \dontrun{} adds the comment
 ("# Not run:") as a warning for the user. Does not seem necessary.
 >Please replace \dontrun with \donttest. -> parseWAFileNames.Rd
 
+This example has been removed from the package since the function is not exported (see previous bullet).
+
 >Please unwrap the examples if they are executable in < 5 sec, or replace
 dontrun{} with \donttest{}.
+
+All examples wrapped executed in >5 sec (the exception was the example above, which has been removed).
 
 >You write information messages to the console that cannot be easily
 suppressed.
@@ -39,6 +52,8 @@ Instead of print() rather use message()/warning() or
 if(verbose)print(..) (or maybe stop()) if you really have to write text
 to the console. (except for print, summary, interactive functions) ->
 R/omniSpectro.R
+
+Replaced print() with message() in omniSpectro.R.
 
 >Please make sure that you do not change the user's options, par or
 working directory. If you really have to do so within functions, please
@@ -58,6 +73,10 @@ function makes it possible to restore options before exiting a function
 even if the function breaks. Therefore it needs to be called immediately
 after the option change within a function.
 
+Added on.exit() call as follows, immediately prior to the par() calls:
+    oldpar <- par(no.readonly = TRUE)
+    on.exit(par(oldpar))
+
 >Please always make sure to reset to user's options(), working directory
 or par() after you changed it in examples and vignettes and demos. ->
 man/validationSpec.Rd
@@ -65,6 +84,11 @@ man/validationSpec.Rd
 >oldpar <- par(mfrow = c(1,2))
 >...
 >par(oldpar)
+
+Added code to reset par() for the user, as follows:
+    oldpar <- par()$mfrow
+    ...
+    par(mfrow = oldpar)
 
 ### Fourth submission
 
