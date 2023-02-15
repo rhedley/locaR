@@ -1,5 +1,71 @@
 ## Notes
 
+### Fifth submission
+
+>Please omit the redundant "in R" at the end of your title.
+
+>Please omit the space within the doi specification to make it clickable.
+
+>Please add \value to .Rd files regarding exported methods and explain
+the functions results in the documentation. Please write about the
+structure of the output (class) and also what the output means. (If a
+function does not return a value, please document that too, e.g.
+\value{No return value, called for side effects} or similar)
+>Missing Rd-tags:
+>      locHeatmap.Rd: \value
+>      omniSpectro.Rd: \value
+>      validationSpec.Rd: \value
+
+>You have examples for unexported functions. Please either omit these
+examples or export these functions.
+>Examples for unexported function
+>   MSRP_HT_Level2() in:
+>      parseWAFileNames.Rd
+
+>\dontrun{} should only be used if the example really cannot be executed
+(e.g. because of missing additional software, missing API keys, ...) by
+the user. That's why wrapping examples in \dontrun{} adds the comment
+("# Not run:") as a warning for the user. Does not seem necessary.
+>Please replace \dontrun with \donttest. -> parseWAFileNames.Rd
+
+>Please unwrap the examples if they are executable in < 5 sec, or replace
+dontrun{} with \donttest{}.
+
+>You write information messages to the console that cannot be easily
+suppressed.
+>It is more R like to generate objects that can be used to extract the
+information a user is interested in, and then print() that object.
+Instead of print() rather use message()/warning() or
+if(verbose)print(..) (or maybe stop()) if you really have to write text
+to the console. (except for print, summary, interactive functions) ->
+R/omniSpectro.R
+
+>Please make sure that you do not change the user's options, par or
+working directory. If you really have to do so within functions, please
+ensure with an *immediate* call of on.exit() that the settings are reset
+when the function is exited.
+>e.g.: -> R/localize.R; R/omniSpectro.R
+>...
+>oldpar <- par(no.readonly = TRUE) # code line i
+>on.exit(par(oldpar)) # code line i + 1
+>...
+>par(mfrow=c(2,2)) # somewhere after
+>...
+
+>e.g.:
+>If you're not familiar with the function, please check ?on.exit. This
+function makes it possible to restore options before exiting a function
+even if the function breaks. Therefore it needs to be called immediately
+after the option change within a function.
+
+>Please always make sure to reset to user's options(), working directory
+or par() after you changed it in examples and vignettes and demos. ->
+man/validationSpec.Rd
+>e.g.:
+>oldpar <- par(mfrow = c(1,2))
+>...
+>par(oldpar)
+
 ### Fourth submission
 
 >The Description field should not start with the package name, 'This package' or similar.
