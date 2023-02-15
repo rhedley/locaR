@@ -22,6 +22,9 @@ Elevation, Power. Data frame should only contain one row.}
 
 \item{mar}{Numeric vector with four elements. Passed to \code{oce::imagep()} for plotting.}
 }
+\value{
+No return value.
+}
 \description{
 This function can be used to create a heatmap from the localization grid search. In general,
 this function should only be used internally, but it could be useful for making customized figures.

@@ -173,9 +173,10 @@ omniSpectro = function(st, lm, intervalLength = 5, intervals = 'all') {
 
     #Create jpeg.
     jpeg(paste0(specDir, '/',output$text[i], '.jpeg'), width=30, height=15, units='in', res=200)
-    on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
     oldpar <- par(no.readonly = TRUE)
-    on.exit(par(oldpar))
+    on.exit(par(oldpar), add = TRUE)
+    on.exit(if(dev.cur()>1) {dev.off()}, add = TRUE)
+
     par(mfrow=c(nrow(lm),ncol(lm)))
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))

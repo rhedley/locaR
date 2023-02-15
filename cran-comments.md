@@ -77,7 +77,7 @@ Added on.exit() call as follows, immediately prior to the par() calls:
 
     oldpar <- par(no.readonly = TRUE)
 
-    on.exit(par(oldpar))
+    on.exit(par(oldpar), add = TRUE)
 
 >Please always make sure to reset to user's options(), working directory
 or par() after you changed it in examples and vignettes and demos. ->

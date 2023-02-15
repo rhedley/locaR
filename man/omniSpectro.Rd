@@ -23,6 +23,9 @@ create 6-second spectrogram views, with one second overlap (e.g.
 purposes, it is often desirable to set this to, e.g. intervals = 1:5, which
 will create only the first five view windows, to ensure the function is working.}
 }
+\value{
+No return value.
+}
 \description{
 \code{omniSpectro} creates a grid of time-synchronized spectrograms, to
 facilitate the manual detection of birds across a microphone array. By opening

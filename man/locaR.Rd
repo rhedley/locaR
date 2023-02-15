@@ -3,7 +3,7 @@
 \docType{package}
 \name{locaR}
 \alias{locaR}
-\title{locaR: Sound localization in R.}
+\title{locaR: A Set of Tools For Sound Localization.}
 \description{
 The locaR package contains functions for localizing sounds using R.
 Localizations are carried out using the modified steered response power

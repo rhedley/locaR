@@ -16,10 +16,3 @@ A data frame with prefix, channels, date, time and extension information.
 This function parses the information in file names that are structured according to Wildlife Acoustics'
 naming convention. Specifically, the format prefix_date_time.wav or prefix_mic_date_time.wav.
 }
-\examples{
-\dontrun{
-    parseWAFileNames("Ex-4_0+1_20200617$090000.wav") #One file.
-    parseWAFileNames(c("Ex-4_0+1_20200617$090000.wav",
-                     "Ex-4_0+1_20200618$053000.wav")) #Multiple files.
-}
-}

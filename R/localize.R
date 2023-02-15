@@ -209,9 +209,10 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
     jpeg(file.path(locFolder, jpegName),
          width = 15, height = 15, units = 'in', res=100)
-    on.exit(dev.off(), add = TRUE)
     oldpar <- par(no.readonly = TRUE)
-    on.exit(par(oldpar))
+    on.exit(par(oldpar), add = TRUE)
+    on.exit(dev.off(), add = TRUE)
+
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))
     m <- matrix(c(1:6,0,rep(7,4),0), ncol = 2)

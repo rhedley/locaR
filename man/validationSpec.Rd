@@ -39,6 +39,9 @@ the speed of sound in air.}
 \item{F_Low, F_High}{Numeric. The low and high frequency, in Hz, of the sound
 to be localized.}
 }
+\value{
+No return value.
+}
 \description{
 This function is used inside the \code{localize} function to create the panels of
 synchronized spectrograms for manual review.
@@ -71,8 +74,12 @@ synchronized spectrograms for manual review.
                F_Low = row$F_Low, F_High = row$F_High, jpegName = '0001.jpeg',
                keep.SearchMap = TRUE)
     #Create validation spectrogram.
+    #Store old par
+    oldpar <- par()$mfrow
     par(mfrow = c(6,1))
     validationSpec(wavList = wl, coordinates = crd, locationEstimate = loc$location,
                                  F_Low = row$F_Low, F_High = row$F_High)
+    #Reset old par values.
+    par(mfrow = oldpar)
     }
 }
