@@ -74,7 +74,9 @@ even if the function breaks. Therefore it needs to be called immediately
 after the option change within a function.
 
 Added on.exit() call as follows, immediately prior to the par() calls:
+
     oldpar <- par(no.readonly = TRUE)
+
     on.exit(par(oldpar))
 
 >Please always make sure to reset to user's options(), working directory
@@ -86,8 +88,11 @@ man/validationSpec.Rd
 >par(oldpar)
 
 Added code to reset par() for the user, as follows:
+
     oldpar <- par()$mfrow
+
     ...
+
     par(mfrow = oldpar)
 
 ### Fourth submission
