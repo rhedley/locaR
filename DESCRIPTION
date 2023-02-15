@@ -1,6 +1,6 @@
 Package: locaR
 Type: Package
-Title: A Set of Tools For Sound Localization
+Title: A Set of Tools for Sound Localization
 Version: 0.1.2
 Authors@R: c(
     person("Richard", "Hedley", email = "rwhedley@gmail.com", role = "cre"),

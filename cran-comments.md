@@ -1,5 +1,14 @@
 ## Notes
 
+### Sixth submission
+
+>The Title field should be in title case. Current version is:
+>  'A Set of Tools For Sound Localization'
+>  In title case that is:
+>  'A Set of Tools for Sound Localization'
+
+Change has been made.
+
 ### Fifth submission
 
 >Please omit the redundant "in R" at the end of your title.
