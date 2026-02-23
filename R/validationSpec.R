@@ -160,4 +160,47 @@ validationSpec <- function(wavList, coordinates, locationEstimate, from,
     rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000,
          border='red', lty=2, lwd=2)
   }
+
+  #Wrangle data for minimum spectrogram drawing.
+  #Extract dimensions of freq bins.
+  freq_bins <- sapply(sapply(SoundList, '[[', 2, simplify=F), length)
+  xdim <- min(freq_bins)
+  #Extract frequency bin values.
+  xvalues <- SoundList[[which.min(freq_bins)]]$freq
+
+  #Extract dimensions of time bins.
+  time_bins <- sapply(sapply(SoundList, '[[', 1, simplify=F), length)
+  ydim <- min(time_bins)
+  #Extract time bin values.
+  yvalues <- SoundList[[which.min(time_bins)]]$time
+
+  #Create empty array.
+  min_array <- array(NA, dim = c(xdim, ydim, length(SoundList)))
+
+  #Load amplitude matrices into the array.
+  for(i in 1:dim(min_array)[3]) {
+    min_array[,,i] <- SoundList[[i]]$amp[1:xdim, 1:ydim]
+  }
+
+  #Flatten the array.
+  flat <- apply(min_array, c(1,2), min)
+
+  #Draw seventh spectrogram (minimum).
+  oce::imagep(yvalues, xvalues, t(flat),
+              drawPalette = FALSE, ylim=c(0,10),xlim=c(0,1), mar=rep(0,4), axes = FALSE,
+              breaks=seq(-0,85,length.out=21), col=rev(gray.colors(20, 0,1)))
+
+  #Legend.
+  legend('topleft',
+         legend = 'Minimum spectrogram',
+         bty='n', cex=2)
+
+  axis(side = 1, labels = NA, tck = 0.015, at = seq(0,5,0.05))
+  abline(v = seq(0.05,5,0.1), lty = 2)
+  abline(v = seq(0,5,0.1), lty = 3)
+  box()
+
+  rect(xleft = xbox[1], xright = xbox[2], ybottom = ybox[1]/1000, ytop = ybox[2]/1000,
+       border='red', lty=2, lwd=2)
+
 }

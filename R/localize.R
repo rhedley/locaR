@@ -53,6 +53,9 @@
 #' @param indices Numeric or 'all'. Indices to be localized within a detection file.
 #'     Setting to 1 localizes the first row, c(7:10) localizes rows 7-10, and 'all'
 #'     localizes all rows (ignoring rows that have no entry in the Station1 column).
+#' @param plot_label Character. If provided, and plot=TRUE, text that will be
+#'     added to the bottom-right of the validation plots. Can be useful, for
+#'     example, to keep track of which song is being localized.
 #' @return List, containing the location of the sound source (global maximum),
 #'     and optionally the InitData and SearchMap lists.
 #' @references
@@ -118,15 +121,20 @@
 localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
                      resolution = 1, F_Low = 2000, F_High = 8000, tempC = 15,
                      soundSpeed, plot = TRUE, locFolder, jpegName = '000.jpeg',
-                     InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE) {
+                     InitData = NULL, keep.InitData = TRUE,keep.SearchMap = FALSE,
+                     plot_label) {
+
+  #Get station names
+  stations <- names(wavList)
 
   #check that names of wavList correspond with names of coordinates.
-  if(length(names(wavList)) < length(wavList)) {
+  if(length(stations) < length(wavList)) {
     stop('wavList must be named.')
   }
 
-  if(sum(!names(wavList) %in% coordinates$Station) > 0) {
-    stop('Some names in wavList not found in coordinates!')
+  if(sum(!stations %in% coordinates$Station) > 0) {
+    stop(paste('Some names in wavList not found in coordinates! Check the following names:',
+               stations[!stations %in% coordinates$Station]))
   }
 
   #If soundSpeed is missing, calculate based on tempC in air.
@@ -136,8 +144,10 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     Vc <- soundSpeed
   }
 
-  #Get station names
-  stations <- names(wavList)
+  if(missing(plot_label)) {
+    plot_label <- ''
+  }
+
 
   #Create NodePos object from station names. This also filters out stations
   #in the coordinates that are not in wavList.
@@ -215,7 +225,7 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
 
     par(mar=c(0,0,0,0))
     par(oma=c(0,0,0,0))
-    m <- matrix(c(1:6,0,rep(7,4),0), ncol = 2)
+    m <- matrix(c(1:6,7,rep(8,4),9), ncol = 2)
     layout(m)
 
     #Plot 1
@@ -227,6 +237,11 @@ localize <- function(wavList,coordinates,margin = 10,zMin = -1,zMax = 20,
     locHeatmap(SearchMap = SearchMap, SMap = SMap,
                NodeInfo = list(Num = nrow(NodePos), Pos = NodePos),
                location = location, mar = c(9,3,8,0))
+
+    #Add text to the plot.
+    par(mar=c(0,0,0,0))
+    plot(NA, xlim = c(0, 1), ylim = c(0,1), axes=F)
+    text(x = 0.5, y = 0.5, labels = plot_label, adj = c(0.5,0.5), cex = 2)
   }
 
   #Return list with location data.

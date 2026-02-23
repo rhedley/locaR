@@ -132,7 +132,7 @@ Time to localize the sound of interest. We will leave most parameters at their d
 
 ```{r eval=FALSE}
 loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
-                  F_Low = row$F_Low, F_High = row$F_High, jpegName = jpg, keep.SearchMap = T)
+                  F_Low = row$F_Low, F_High = row$F_High, jpegName = jpg, keep.SearchMap = T, plot_label = 'Example event')
 ```
 
 The process takes some time to run. A significant part (about half) of this computational process involves creating the "InitData", which is related to the spatial grid to be searched during localization. In this case, we are searching an area 64 meters by 101 meters by 28 meters, with a 1 meter resolution. There are therefore 180,992 grid cells to be searched, and each involves some computation. If localizing multiple sounds of the same duration using the same set of microphones (as in the case of our Red-eyed Vireo, which sang six times in seven seconds), the InitData can be saved and re-used to speed up computation (argument keep.InitData = TRUE).
@@ -156,12 +156,18 @@ So to summarize, the most critical piece of the resulting list is the estimated 
 
 ### The jpeg image for validation.
 
-The `localize()` function also created a .jpeg image in the folder you specified (`locFolder`). It should look like this:
+The `localize()` function also created a .jpeg image in the folder you specified (`locFolder`). You can open the `locFolder` through R by running the following code:
+
+```{r}
+utils::browseURL(locFolder)
+```
+
+The .jpeg should look like this:
 
 ![](0001.jpeg){width=100% height=100%}
-There are two panels, and it is worth understanding both. The left panel shows the spectrograms of the sound of interest **after correcting for the time delays to each microphone**. Put another way, the source's location is estimated first, then the delays are estimated from that source to each microphone, and those delays are subtracted out prior to creating the spectrograms. This is a very useful visualization, because a trained user can quickly compare all of the spectrograms. If the location is correct, all of the spectrograms will have successfully been brought into alignment, and no channel will be delayed relative to any other. If the localization algorithm failed in some way, then one or more channel will appear delayed relative to the others. Vertical lines occur every 0.05 seconds to facilitate comparison, and one second of sound is shown (unless, as is the case above, the sound is less than 1 second long). In the example above, it can be seen that the localization was successful, because the five spectrograms line up. 
+There are two types of plots, and it is worth understanding both. The left panels show the spectrograms of the sound of interest **after correcting for the time delays to each microphone**. Put another way, the source's location is estimated first, then the delays are estimated from that source to each microphone, and those delays are subtracted out prior to creating the spectrograms. This is a very useful visualization, because a trained user can quickly compare all of the spectrograms. If the location is correct, all of the spectrograms will have successfully been brought into alignment, and no channel will be delayed relative to any other. If the localization algorithm failed in some way, then one or more channel will appear delayed relative to the others. Vertical lines occur every 0.05 seconds to facilitate comparison, and one second of sound is shown (unless, as is the case above, the sound is less than 1 second long). In the example above, it can be seen that the localization was successful, because the five spectrograms line up. 
 
-Here's what the plot would have looked like if the estimated location had been 10 meters farther east:
+Here's what the left-hand panels would have looked like if the estimated location had been 10 meters farther east:
 
 ![](fakeLoc.png)
 
@@ -169,9 +175,13 @@ In the above image, the top two spectrograms and the bottom spectrogram are shif
 
 A note worth driving home is that this method of validation can only check for errors in the algorithm (see "Vignette 1: Introduction to locaR" for details). In other words, it checks that the algorithm did its job, given the data, but cannot check errors in microphone locations, errors in synchronization, or errors due to the source's location.
 
-The right panel is also useful, as it provides a spatial visualization of the source location (gray dot = the estimated source location). Two things to check for are 1) how concentrated the heat map is around the source, and 2) how close the source's estimated position is to the edge of the array. In this case, the heat map is well concentrated around the source, which tends to indicate an accurate location estimate. Sometimes, the heat map will appear "washed out", such that the highest power estimates are spread all across the array; this tends to correspond with a poor localization. The source is also estimated to be several meters from the edge of the convex hull around the microphones. So this localization looks great.
+The spectrogram on the top-right (labeled "minimum spectrogram") collapses the spectrograms on the left-hand side into a single spectrogram, by taking the minimum value of each pixel. This has the effect of reducing the influence of overlapping sounds that were not localized, and emphasizing the sound of interest.
 
-When localization results don't look good, there are a few options. Re-running the localization with different settings often gives a better result. For example, in my work, overlapping non-target species can disrupt a localization (the non-target bird gets localized instead of the target bird). In such cases, I will sometimes try to adjust the start/end time of the detection to only localize a short portion of the song that is not overlapped. This can be very effective. Adjusting the frequency bounds can also be worth trying. Selecting a different set of microphones (if other options are available) can also work very well. For example, if the source is too close to the edge of the array, are there other microphones that could be selected to surround the source? 
+The heat map on the right is also useful, as it provides a spatial visualization of the source location (gray dot = the estimated source location). Two things to check for are 1) how concentrated the heat map is around the source, and 2) how close the source's estimated position is to the edge of the array. In this case, the heat map is well concentrated around the source, which tends to indicate an accurate location estimate. Sometimes, the heat map will appear "washed out", such that the highest power estimates are spread all across the array; this tends to correspond with a poor localization. The source is also estimated to be several meters from the edge of the convex hull around the microphones. So this localization looks great.
+
+The bottom right of the jpeg simply prints the plot_label argument provided to the `localize()` function. This is useful as a way of tracking which event is being localized, by printing some information about that event (e.g. species, individual, start time, end time, etc.). This becomes useful when dealing with large volumes of localized data.
+
+When localization results don't look right, there are a few options. Re-running the localization with different settings often gives a better result. For example, in my work, overlapping non-target species can disrupt a localization (the non-target bird gets localized instead of the target bird). In such cases, I will sometimes try to adjust the start/end time of the detection to only localize a short portion of the song that is not overlapped. This can be very effective. Adjusting the frequency bounds can also be worth trying. Selecting a different set of microphones (if other options are available) can also work very well. For example, if the source is too close to the edge of the array, are there other microphones that could be selected to surround the source? 
 
 If all else fails, it worth asking is whether the data point can be discarded. If a bird sings multiple times in a row, I can often reasonably assume the bird hasn't moved (especially if I can localize the songs before and after the problem song). Sometimes, discarding the data point is the best option, since some sounds can't be localized.
 
@@ -215,7 +225,7 @@ for(i in 1:nrow(detections)) {
 
   #localize(). Will leave most parameters at their default values.
   loc <- localize(wavList = wl, coordinates = crd, locFolder = locFolder,
-                  F_Low = F_Low, F_High = F_High, jpegName = jpg, keep.SearchMap = T)
+                  F_Low = F_Low, F_High = F_High, jpegName = jpg, keep.SearchMap = T, plot_label = paste0('Species: ', row$Species, '\nFrom: ', row$From))
 
   if(i == 1) {OUT <- cbind(row,loc$location)} else {OUT <- rbind(OUT, cbind(row,loc$location))}
 

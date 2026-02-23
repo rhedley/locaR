@@ -76,6 +76,11 @@ localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
     }
   }
 
+  #Construct plot_label.
+  plot_label <- paste0('Species: ', row$Species,
+                       '\nIndividual: ', row$Individual,
+                       '\nFrom: ', row$From, ' seconds',
+                       '\nTo: ', row$To, ' seconds')
 
   OUT <- localize(wavList = wavList, coordinates = coordinates,
                   margin = st$margin, zMin = st$zMin, zMax = st$zMax,
@@ -83,7 +88,7 @@ localizeSingle <- function(st, index, plot = TRUE, InitData = NULL,
                   F_High =  row$F_High, locFolder = locFolder,
                   jpegName = jpegName, tempC = st$tempC, soundSpeed = soundSpeed, plot = plot,
                   InitData = InitData, keep.InitData = keep.InitData,
-                  keep.SearchMap = keep.SearchMap)
+                  keep.SearchMap = keep.SearchMap, plot_label = plot_label)
 
   return(OUT)
 }

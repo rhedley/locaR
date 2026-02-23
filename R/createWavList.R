@@ -86,6 +86,8 @@ createWavList <- function(paths, names, from, to, buffer,
     if(!channel %in% c(1,2)) {stop(paste('Channel must be set to 1 or 2. Index', index))}
     W <- tuneR::mono(W, which = ifelse(channel == 1, 'left', 'right'))
 
+    if(length(W) == 0) {stop(paste('Resulting sound file', names[i], 'has length 0. This error may be caused by selecting channel 2 from a mono sound file.'))}
+
     if(i == 1) {wavList <- list(W)} else {wavList <- append(wavList, list(W))}
 
   }

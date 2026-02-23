@@ -92,6 +92,9 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
     if(nrow(detections) > 0){
       detections[,paste0('Station', 1:6)][detections[,paste0('Station', 1:6)] == '' |
                                             detections[,paste0('Station', 1:6)] == 'NaN'] <- NA
+      if(any(detections$to < detections$from)) {
+        stop('Some detections have negative duration.')
+      }
     }
   } else {detections <- NA}
 
@@ -109,20 +112,18 @@ processSettings <- function(settingsFile, settings, getFilepaths = FALSE, types 
     coords <- coords[coords$Station %in% channels$Station,]
 
     #Check that all stations listed in channels file have coordinates.
-    if(sum(channels$Station %in% coords$Station) != nrow(channels)) {
-      stop('Some stations listed in channelsFile were missing coordinates')
+    if(!all(channels$Station %in% coords$Station)) {
+      stop(paste('Some stations listed in channelsFile were missing coordinates. Check stations', channels$Station[!(channels$Station %in% coords$Station)]))
     }
-    if(sum(is.na(coords$Easting)) > 0 |
-       sum(is.na(coords$Northing)) > 0 |
-       sum(is.na(coords$Elevation)) > 0) {
+    if(any(is.na(c(coords$Easting, coords$Northing, coords$Elevation)))) {
       stop('Some stations listed in channelsFile were missing coordinates')
     }
 
     #Check that all stations listed in detections file have coordinates.
     statVec <- unique(unlist(c(detections[paste0('Station', 1:6)])))
     statVec <- statVec[!is.na(statVec)]
-    if(sum(statVec %in% coords$Station) != length(statVec)) {
-      stop('Some stations listed in detectionsFile were missing coordinates')
+    if(!all(statVec %in% coords$Station)) {
+      stop('Some stations listed in detectionsFile were missing coordinates. Check stations', statVec[!(statVec %in% coords$Station)])
     }
   }
 

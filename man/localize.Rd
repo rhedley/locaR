@@ -21,7 +21,8 @@ localize(
   jpegName = "000.jpeg",
   InitData = NULL,
   keep.InitData = TRUE,
-  keep.SearchMap = FALSE
+  keep.SearchMap = FALSE,
+  plot_label
 )
 
 localizeMultiple(st, indices = "all", plot = TRUE, InitData = NULL)
@@ -70,6 +71,10 @@ power estimates and coordinates of each grid cell.
 Should only be set to TRUE if the SearchMap is needed
 for some other reason (e.g. making a publication-ready figure or
 conducting more involved analysis with overlapping sources, etc.).}
+
+\item{plot_label}{Character. If provided, and plot=TRUE, text that will be
+added to the bottom-right of the validation plots. Can be useful, for
+example, to keep track of which song is being localized.}
 
 \item{st}{List. Localization settings object generated using
 \code{\link{processSettings}}. Only needed for \code{localizeSingle} or

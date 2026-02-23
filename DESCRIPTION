@@ -1,9 +1,9 @@
 Package: locaR
 Type: Package
 Title: A Set of Tools for Sound Localization
-Version: 0.1.2
+Version: 0.1.2.9000
 Authors@R: c(
-    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = "cre"),
+    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = c("cre", "aut")),
     person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "aut"),
     person("Tim", "Huang", role = "aut"))
 Maintainer: Richard Hedley <rwhedley@gmail.com>
@@ -13,8 +13,18 @@ Encoding: UTF-8
 LazyData: true
 URL: https://github.com/rhedley/locaR
 BugReports: https://github.com/rhedley/locaR/issues
-RoxygenNote: 7.2.3
-Imports: seewave, tuneR, matrixStats, oce, signal, SynchWave
+RoxygenNote: 7.3.3
+Imports: 
+    seewave,
+    tuneR,
+    matrixStats,
+    oce,
+    signal,
+    SynchWave,
+    stats,
+    utils,
+    graphics,
+    grDevices
 Suggests: 
     testthat (>= 2.0.0),
     knitr,
