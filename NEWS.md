@@ -1,4 +1,4 @@
-# locaR (development version)
+# locaR 0.2.0
 
 -Update to use the "_Package" sentinel value as recommended by CRAN.
 -Minor updates to author list for accuracy.
