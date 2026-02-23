@@ -120,7 +120,12 @@ read.csv(system.file('/extdata/Vignette_Detections_20200617_090000_Localized.csv
          stringsAsFactors = FALSE)[,c('Easting', 'Northing', 'Elevation')]
 ```
 
-In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/', in this case in the R Session's temporary directory. Interpreting these was covered in the "Introduction to localize" vignette.
+In addition, the jpeg images will have been created in the folder './20200617_090000/Run1/Localizations/', in this case in the R Session's temporary directory. Interpreting these was covered in the "Introduction to localize" vignette. To open your temporary directory, run the following:
+
+```{r}
+utils::browseURL(locFolder)
+```
+
 
 # Conclusion.
 
