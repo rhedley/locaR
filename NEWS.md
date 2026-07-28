@@ -1,3 +1,7 @@
+# locaR 0.3.0
+
+- Add spatialEntropy function to quantify uncertainty.
+
 # locaR 0.2.0
 
 - Update to use the "_Package" sentinel value as recommended by CRAN.
