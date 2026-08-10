@@ -9,7 +9,8 @@ spatialEntropy(
   SMap,
   location,
   buffer_size = 10,
-  method = c("cylinder", "sphere")
+  method = c("cylinder", "sphere"),
+  alpha = 5
 )
 }
 \arguments{
@@ -25,6 +26,10 @@ Elevation, Power. Data frame should only contain one row.}
 \item{buffer_size}{Numeric. The distance from `location` within which the spatial entropy should
 be calculated. If method == `cylinder`, all cells within this distance in the x-y direction are
 used. If method == `sphere`, distance is calculated in three dimensions.}
+
+\item{alpha}{Numeric. Tuning parameter which scales the sensitivity when converting from power values
+to a probability density function. Smaller alpha values will push entropy values closer to 1, and larger
+alpha values will push entropy values towards zero.}
 }
 \value{
 Numeric. Spatial entropy of the location estimate.
@@ -68,6 +73,6 @@ and resolution of the array.
 
     #Calculate spatial entropy.
     spatialEntropy(SearchMap = loc$SearchMap, SMap = loc$SMap, location = loc$location,
-          buffer_size = 10, method = 'cylinder')
+          buffer_size = 10, method = 'cylinder', alpha = 5)
     }
 }

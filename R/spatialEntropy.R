@@ -17,6 +17,9 @@
 #' @param buffer_size Numeric. The distance from `location` within which the spatial entropy should
 #'     be calculated. If method == `cylinder`, all cells within this distance in the x-y direction are
 #'     used. If method == `sphere`, distance is calculated in three dimensions.
+#' @param alpha Numeric. Tuning parameter which scales the sensitivity when converting from power values
+#'     to a probability density function. Smaller alpha values will push entropy values closer to 1, and larger
+#'     alpha values will push entropy values towards zero.
 #' @return Numeric. Spatial entropy of the location estimate.
 #' @examples
 #'     \donttest{
@@ -48,11 +51,12 @@
 #'
 #'     #Calculate spatial entropy.
 #'     spatialEntropy(SearchMap = loc$SearchMap, SMap = loc$SMap, location = loc$location,
-#'           buffer_size = 10, method = 'cylinder')
+#'           buffer_size = 10, method = 'cylinder', alpha = 5)
 #'     }
 #' @export
 
-spatialEntropy <- function(SearchMap, SMap, location, buffer_size = 10, method = c('cylinder', 'sphere')) {
+spatialEntropy <- function(SearchMap, SMap, location, buffer_size = 10, method = c('cylinder', 'sphere'),
+                           alpha = 5) {
 
   method <- match.arg(method)
 
@@ -71,7 +75,7 @@ spatialEntropy <- function(SearchMap, SMap, location, buffer_size = 10, method =
   search_values <- SMap[nearby]
 
   #Normalize to Probability Density Function (PDF).
-  prob_map <- exp(search_values) / sum(exp(search_values))
+  prob_map <- exp(alpha*search_values) / sum(exp(alpha*search_values))
 
   #Calculate spatial entropy. Adding normalization by dividing by log(N).
   spat_ent <- -sum(prob_map*log(prob_map)) / log(length(prob_map))
