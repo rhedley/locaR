@@ -2,11 +2,17 @@
 #'
 #' This function returns a measure of spatial entropy within a user-specified distance of the
 #' estimated source location. The Power values from the location search are first restricted to
-#' the desired buffer_size distance (i.e. within buffer_size meters of the maximum value), then
-#' converted to a probability density function. Normalized spatial entropy (Shannon's entropy) is then
-#' calculated using the probability density function values. By default, entropy is calculated
-#' within 10 meters of the location estimate, but other values may be desirable depending on the size
-#' and resolution of the array.
+#' the desired buffer_size distance (i.e. within buffer_size meters of the maximum value). The user
+#' can specify whether the buffer_size distance is calculated in three dimensions (a sphere) or
+#' two dimensions (a cylinder). Next, Power values are converted to a probability density function using the formula
+#' \deqn{p_{x,y,z} = \frac{\exp(\alpha \cdot power_{x,y,z})}{\sum_{x,y,z} \exp(\alpha \cdot power_{x,y,z})}}
+#' Where alpha is a tuning parameter.
+#' Normalized spatial entropy (Shannon's entropy) is then calculated using the probability density
+#' function values with the following formula
+#' \deqn{spatialEntropy = \frac{-\sum_{i=1}^N(p_{i} \cdot ln(p_{i}))}{ln(N)}}
+#' Where N is the number of pixels included within the restricted search area.
+#' By default, entropy is calculated within 10 meters of the location estimate,
+#' but other values may be desirable depending on the size and resolution of the array.
 #'
 #' @param SearchMap An array created by the localize() function containing x, y and z coordinates.
 #'     Created by setting keep.SearchMap = TRUE when running the localize() function.
@@ -17,6 +23,8 @@
 #' @param buffer_size Numeric. The distance from `location` within which the spatial entropy should
 #'     be calculated. If method == `cylinder`, all cells within this distance in the x-y direction are
 #'     used. If method == `sphere`, distance is calculated in three dimensions.
+#' @param method Character. Either `cylinder` or `sphere` to extract power values based on two- or
+#'     three-dimensional distances, respectively.
 #' @param alpha Numeric. Tuning parameter which scales the sensitivity when converting from power values
 #'     to a probability density function. Smaller alpha values will push entropy values closer to 1, and larger
 #'     alpha values will push entropy values towards zero.

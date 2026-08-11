@@ -179,6 +179,19 @@ The spectrogram on the top-right (labeled "minimum spectrogram") collapses the s
 
 The heat map on the right is also useful, as it provides a spatial visualization of the source location (gray dot = the estimated source location). Two things to check for are 1) how concentrated the heat map is around the source, and 2) how close the source's estimated position is to the edge of the array. In this case, the heat map is well concentrated around the source, which tends to indicate an accurate location estimate. Sometimes, the heat map will appear "washed out", such that the highest power estimates are spread all across the array; this tends to correspond with a poor localization. The source is also estimated to be several meters from the edge of the convex hull around the microphones. So this localization looks great.
 
+**Update**: Version 0.3.0 implemented a new function called spatialEntropy. The function is intended to provide a quantification of the uncertainty of localizations. It does so by extracting the power values in the vicinity of the maximum value, then calculating how much entropy exists in those values. The spatial entropy varies from 0 (highly focused) to 1 (highly washed out). To calculate spatial entropy, run the following code:
+
+```{r eval=FALSE}
+spat_ent <- spatialEntropy(SearchMap = loc$SearchMap, SMap = loc$SMap, location = loc$location,
+                           buffer_size = 10, method = 'cylinder', alpha = 5)
+spat_ent
+```
+```{r echo=FALSE}
+spat_ent <- 0.09231874
+spat_ent
+```
+Some parameters (buffer_size, method and alpha) can be adjusted at the user's discretion. The calculated spatial entropy value is not expected to correspond perfectly with localization accuracy, but can be used as a guide to identify higher and lower quality localizations. **End update**
+
 The bottom right of the jpeg simply prints the plot_label argument provided to the `localize()` function. This is useful as a way of tracking which event is being localized, by printing some information about that event (e.g. species, individual, start time, end time, etc.). This becomes useful when dealing with large volumes of localized data.
 
 When localization results don't look right, there are a few options. Re-running the localization with different settings often gives a better result. For example, in my work, overlapping non-target species can disrupt a localization (the non-target bird gets localized instead of the target bird). In such cases, I will sometimes try to adjust the start/end time of the detection to only localize a short portion of the song that is not overlapped. This can be very effective. Adjusting the frequency bounds can also be worth trying. Selecting a different set of microphones (if other options are available) can also work very well. For example, if the source is too close to the edge of the array, are there other microphones that could be selected to surround the source? 
