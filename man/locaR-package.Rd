@@ -27,7 +27,7 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Richard Hedley \email{rwhedley@gmail.com}
+\strong{Maintainer}: Richard Hedley \email{rwhedley@gmail.com} (\href{https://orcid.org/0000-0001-9588-5515}{ORCID})
 
 Authors:
 \itemize{

@@ -16,19 +16,19 @@ the use of the `locaR` package. The vignettes are available at the
 following links:
 
 [Vignette 1: Introduction to
-locaR](https://cran.r-project.org/web/packages/locaR/vignettes/V1_Intro_To_locaR.html)
+locaR](https://cran.r-project.org/package=locaR/vignettes/V1_Intro_To_locaR.html)
 
 [Vignette 2: Detecting sound
-sources](https://cran.r-project.org/web/packages/locaR/vignettes/V2_Detecting_sound_sources.html)
+sources](https://cran.r-project.org/package=locaR/vignettes/V2_Detecting_sound_sources.html)
 
 [Vignette 3: Introduction to the localize
-function](https://cran.r-project.org/web/packages/locaR/vignettes/V3_Intro_to_localize.html)
+function](https://cran.r-project.org/package=locaR/vignettes/V3_Intro_to_localize.html)
 
 [Vignette 4: Introduction to
-localizeMultiple](https://cran.r-project.org/web/packages/locaR/vignettes/V4_Intro_to_localizeMultiple.html)
+localizeMultiple](https://cran.r-project.org/package=locaR/vignettes/V4_Intro_to_localizeMultiple.html)
 
 [Vignette 5: Guide to locaR data
-structures](https://cran.r-project.org/web/packages/locaR/vignettes/V5_Guide_to_data_structures.html)
+structures](https://cran.r-project.org/package=locaR/vignettes/V5_Guide_to_data_structures.html)
 
 ## Issues
 
