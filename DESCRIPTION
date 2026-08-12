@@ -3,7 +3,7 @@ Type: Package
 Title: A Set of Tools for Sound Localization
 Version: 0.3.0
 Authors@R: c(
-    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = c("cre", "aut")),
+    person("Richard", "Hedley", email = "rwhedley@gmail.com", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-9588-5515")),
     person("Marcus", "Becker", email = "mabecker@ualberta.ca", role = "aut"),
     person("Tim", "Huang", role = "aut"))
 Maintainer: Richard Hedley <rwhedley@gmail.com>
